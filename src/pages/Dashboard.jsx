@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DashboardActions from "../components/dashboard/DashboardActions";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
 import DashboardStats from "../components/dashboard/DashboardStats";
 import Toolbar from "../components/dashboard/Toolbar";
@@ -24,6 +25,7 @@ function Dashboard() {
     complaints,
     loading,
     deleteComplaint,
+    fetchComplaints,
 } = useComplaints();
 
 const {
@@ -58,6 +60,10 @@ const {
 
         <div className="max-w-7xl mx-auto px-6 py-8">
 
+            <DashboardActions
+                onRefresh={fetchComplaints}
+            />
+
             <DashboardHeader
                 user={user}
                 notifications={notifications}
@@ -80,7 +86,7 @@ const {
             </div>
 
             {/* Complaint Header */}
-            <div className="mt-12">
+            <section className="mt-12">
 
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mb-8">
 
@@ -102,7 +108,7 @@ const {
                     />
                 )}
 
-            </div>
+            </section>
 
         </div>
 

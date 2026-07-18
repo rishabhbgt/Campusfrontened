@@ -1,13 +1,27 @@
 import ComplaintCard from "./ComplaintCard";
+// import EmptyComplaint from "./EmptyComplaint";
 
 function ComplaintGrid({
     complaints,
     deleteComplaint,
 }) {
 
+    // if (!complaints || complaints.length === 0) {
+    //     return <EmptyComplaint />;
+    // }
+
     return (
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7">
+        <section
+            className="
+                grid
+                grid-cols-1
+                sm:grid-cols-2
+                xl:grid-cols-3
+                2xl:grid-cols-4
+                gap-7
+            "
+        >
 
             {complaints.map((complaint) => (
 
@@ -19,7 +33,7 @@ function ComplaintGrid({
 
             ))}
 
-        </div>
+        </section>
 
     );
 }
