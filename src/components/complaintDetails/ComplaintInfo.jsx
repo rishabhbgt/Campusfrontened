@@ -57,8 +57,8 @@ function ComplaintInfo({ complaint }) {
                     value={
                         complaint.dueDate
                             ? new Date(
-                                  complaint.dueDate
-                              ).toLocaleDateString()
+                                complaint.dueDate
+                            ).toLocaleDateString()
                             : "Not Set"
                     }
                 />
