@@ -7,7 +7,6 @@ import Toolbar from "../components/dashboard/Toolbar";
 import ComplaintGrid from "../components/dashboard/ComplaintGrid";
 import EmptyComplaint from "../components/dashboard/EmptyComplaint";
 import LoadingGrid from "../components/dashboard/LoadingGrid";
-import SectionHeader from "../components/dashboard/SectionHeader";
 import useComplaints from "../hooks/useComplaints";
 import useNotifications from "../hooks/useNotifications";
 
@@ -60,9 +59,9 @@ const {
 
         <div className="max-w-7xl mx-auto px-6 py-8">
 
-            <DashboardActions
+            {/* <DashboardActions
                 onRefresh={fetchComplaints}
-            />
+            /> */}
 
             <DashboardHeader
                 user={user}
@@ -87,15 +86,12 @@ const {
 
             {/* Complaint Header */}
             <section className="mt-12">
+            
 
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mb-8">
-
-                    <SectionHeader
-                        title="My Complaints"
-                        subtitle={`Showing ${filteredComplaints.length} complaint(s)`}
+                    <DashboardActions
+                        onRefresh={fetchComplaints}
                     />
-
-                </div>
+                
 
                 {loading ? (
                     <LoadingGrid />

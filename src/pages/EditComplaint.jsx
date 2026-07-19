@@ -1,7 +1,9 @@
 import { useParams } from "react-router-dom";
 
 import EditHeader from "../components/editComplaint/EditHeader";
-import EditComplaintForm from "../components/editComplaint/EditComplaintForm";
+import ComplaintForm from "../components/complaintForm/ComplaintForm";
+import TitleInput from "../components/complaintForm/TitleInput";
+import DescriptionInput from "../components/complaintForm/DescriptionInput";
 import CategorySelect from "../components/complaintForm/CategorySelect";
 import ImageUpload from "../components/complaintForm/ImageUpload";
 import SubmitButton from "../components/complaintForm/SubmitButton";
@@ -23,11 +25,17 @@ function EditComplaint() {
         setCategory,
 
         image,
-        setImage,
+        preview,
+
+        setPreview,
+        setShowPreview,
 
         currentImage,
 
         loading,
+
+        handleImage,
+        removeImage,
 
         updateComplaint,
 
@@ -43,13 +51,17 @@ function EditComplaint() {
 
                     <EditHeader />
 
-                    <EditComplaintForm
-                        title={title}
-                        setTitle={setTitle}
-                        description={description}
-                        setDescription={setDescription}
-                        handleSubmit={updateComplaint}
-                    >
+                    <ComplaintForm handleSubmit={updateComplaint}>
+
+                        <TitleInput
+                            title={title}
+                            setTitle={setTitle}
+                        />
+
+                        <DescriptionInput
+                            description={description}
+                            setDescription={setDescription}
+                        />
 
                         <CategorySelect
                             category={category}
@@ -58,15 +70,17 @@ function EditComplaint() {
 
                         <ImageUpload
                             image={image}
-                            setImage={setImage}
+                            preview={preview}
                             currentImage={currentImage}
+                            setPreview={setPreview}
+                            setShowPreview={setShowPreview}
+                            handleImage={handleImage}
+                            removeImage={removeImage}
                         />
 
-                        <SubmitButton
-                            loading={loading}
-                        />
+                        <SubmitButton loading={loading} />
 
-                    </EditComplaintForm>
+                    </ComplaintForm>
 
                 </div>
 

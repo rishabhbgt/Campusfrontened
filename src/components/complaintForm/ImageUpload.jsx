@@ -4,10 +4,12 @@ import toast from "react-hot-toast";
 function ImageUpload({
 
     image,
-    setImage,
 
     preview,
-    setPreview,
+    currentImage = "",
+
+    handleImage,
+    removeImage,
 
     setShowPreview,
 
@@ -93,85 +95,73 @@ function ImageUpload({
 
                     }
 
-                    setImage(file);
-
-                    setPreview(URL.createObjectURL(file));
-
-                    setShowPreview(false);
+                    handleImage(file);
 
                 }}
 
             />
 
-            {
+            {(preview || currentImage) && (
 
-                preview && (
+                <div className="mt-5">
 
-                    <div className="mt-5">
+                    <img
 
-                        <img
+                        src={preview || currentImage}
 
-                            src={preview}
+                        alt="Preview"
 
-                            alt="Preview"
+                        onClick={() => setShowPreview(true)}
 
-                            onClick={() => setShowPreview(true)}
+                        className="
+                            w-full
+                            h-72
+                            object-cover
+                            rounded-2xl
+                            shadow
+                            cursor-pointer
+                            hover:scale-[1.02]
+                            transition
+                        "
 
-                            className="
-                                w-full
-                                h-72
-                                object-cover
-                                rounded-2xl
-                                shadow
-                                cursor-pointer
-                                hover:scale-[1.02]
-                                transition
-                            "
+                    />
 
-                        />
+                    {image && (
 
                         <p className="mt-3 text-center text-sm text-gray-500">
 
-                            {image?.name}
+                            {image.name}
 
                         </p>
 
-                        <button
+                    )}
 
-                            type="button"
+                    <button
 
-                            onClick={() => {
+                        type="button"
 
-                                setImage(null);
+                        onClick={removeImage}
 
-                                setPreview("");
+                        className="
+                            mt-3
+                            w-full
+                            py-2
+                            rounded-xl
+                            bg-red-50
+                            text-red-600
+                            hover:bg-red-100
+                            transition
+                        "
 
-                                setShowPreview(false);
+                    >
 
-                            }}
+                        Remove Image
 
-                            className="
-                                mt-3
-                                w-full
-                                py-2
-                                rounded-xl
-                                bg-red-50
-                                text-red-600
-                                hover:bg-red-100
-                                transition
-                            "
+                    </button>
 
-                        >
+                </div>
 
-                            Remove Image
-
-                        </button>
-
-                    </div>
-
-                )
-
-            }
+            )}
 
         </div>
 

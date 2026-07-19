@@ -15,7 +15,9 @@ function useCreateComplaint() {
     const [showPreview, setShowPreview] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const handleImage = (file) => {
+    const handleImage = (e) => {
+
+        const file = e.target.files[0];
 
         if (!file) return;
 
@@ -42,10 +44,9 @@ function useCreateComplaint() {
 
         }
 
-        const imageUrl = URL.createObjectURL(file);
-
         setImage(file);
-        setPreview(imageUrl);
+        setPreview(URL.createObjectURL(file));
+        setShowPreview(false);
 
     };
 
