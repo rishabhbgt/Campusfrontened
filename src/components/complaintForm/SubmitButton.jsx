@@ -7,21 +7,23 @@ function SubmitButton({ loading }) {
             disabled={loading}
             className={`
                 w-full
-                py-3
-                rounded-xl
+                py-4
+                rounded-2xl
                 font-semibold
                 text-white
                 transition-all
                 duration-300
+                shadow-lg
+
                 ${
                     loading
                         ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-blue-600 hover:bg-blue-700 hover:shadow-lg"
+                        : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl"
                 }
             `}
         >
 
-            {loading ? "Updating..." : "Update Complaint"}
+            {loading ? "Submitting..." : "Submit Complaint"}
 
         </button>
 

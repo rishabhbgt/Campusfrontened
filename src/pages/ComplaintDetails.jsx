@@ -55,37 +55,76 @@ function ComplaintDetails() {
 
     return (
 
-        <div className="min-h-screen bg-gray-100 flex justify-center p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 py-10 px-6">
 
-            <div className="bg-white shadow-xl rounded-xl p-8 max-w-3xl w-full">
+        <div className="max-w-5xl mx-auto">
 
-                <h1 className="text-3xl font-bold text-blue-600 mb-6">
+            {/* Page Header */}
+            <div className="mb-8">
+
+                <h1 className="text-4xl font-bold text-slate-800">
                     Complaint Details
                 </h1>
 
+                <p className="text-slate-500 mt-2">
+                    View complaint status, progress timeline and discussion.
+                </p>
+
+            </div>
+
+            <div
+                className="
+                bg-white/80
+                backdrop-blur-lg
+                rounded-3xl
+                shadow-2xl
+                border
+                border-white/40
+                overflow-hidden
+                "
+            >
+
                 <ComplaintImage image={complaint.image} />
 
-                <ComplaintInfo complaint={complaint} />
+                <div className="p-8">
 
-                <ComplaintTimeline status={complaint.status} />
+                    <ComplaintInfo complaint={complaint} />
 
-                <OverdueAlert complaint={complaint} />
+                    <div className="mt-8">
+                        <ComplaintTimeline
+                            status={complaint.status}
+                        />
+                    </div>
 
-                <hr className="my-8" />
+                    <div className="mt-8">
+                        <OverdueAlert complaint={complaint} />
+                    </div>
 
-                <CommentForm
-                    message={message}
-                    setMessage={setMessage}
-                    handleComment={handleComment}
-                />
+                    <div className="my-10 border-t"></div>
 
-                <CommentList comments={comments} />
+                    <CommentForm
+                        message={message}
+                        setMessage={setMessage}
+                        handleComment={handleComment}
+                    />
+
+                    <div className="mt-8">
+
+                        <CommentList
+                            comments={comments}
+                        />
+
+                    </div>
+
+                </div>
 
             </div>
 
         </div>
 
-    );
+    </div>
+
+);
 }
 
 export default ComplaintDetails;

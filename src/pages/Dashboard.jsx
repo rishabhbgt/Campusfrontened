@@ -5,7 +5,7 @@ import DashboardHeader from "../components/dashboard/DashboardHeader";
 import DashboardStats from "../components/dashboard/DashboardStats";
 import Toolbar from "../components/dashboard/Toolbar";
 import ComplaintGrid from "../components/dashboard/ComplaintGrid";
-import EmptyState from "../components/dashboard/EmptyState";
+import EmptyComplaint from "../components/dashboard/EmptyComplaint";
 import LoadingGrid from "../components/dashboard/LoadingGrid";
 import SectionHeader from "../components/dashboard/SectionHeader";
 import useComplaints from "../hooks/useComplaints";
@@ -100,7 +100,7 @@ const {
                 {loading ? (
                     <LoadingGrid />
                 ) : filteredComplaints.length === 0 ? (
-                    <EmptyState />
+                    <EmptyComplaint />
                 ) : (
                     <ComplaintGrid
                         complaints={filteredComplaints}

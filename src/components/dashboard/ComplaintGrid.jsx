@@ -1,14 +1,14 @@
 import ComplaintCard from "./ComplaintCard";
-// import EmptyComplaint from "./EmptyComplaint";
+import EmptyComplaint from "./EmptyComplaint";
 
 function ComplaintGrid({
     complaints,
     deleteComplaint,
 }) {
 
-    // if (!complaints || complaints.length === 0) {
-    //     return <EmptyComplaint />;
-    // }
+    if (!complaints || complaints.length === 0) {
+        return <EmptyComplaint />;
+    }
 
     return (
 

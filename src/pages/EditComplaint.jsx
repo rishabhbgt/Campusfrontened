@@ -2,9 +2,9 @@ import { useParams } from "react-router-dom";
 
 import EditHeader from "../components/editComplaint/EditHeader";
 import EditComplaintForm from "../components/editComplaint/EditComplaintForm";
-import CategorySelect from "../components/editComplaint/CategorySelect";
-import ImageUpload from "../components/editComplaint/ImageUpload";
-import SubmitButton from "../components/editComplaint/SubmitButton";
+import CategorySelect from "../components/complaintForm/CategorySelect";
+import ImageUpload from "../components/complaintForm/ImageUpload";
+import SubmitButton from "../components/complaintForm/SubmitButton";
 
 import useEditComplaint from "../hooks/useEditComplaint";
 

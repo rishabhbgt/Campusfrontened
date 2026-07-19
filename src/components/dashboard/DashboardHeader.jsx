@@ -1,10 +1,9 @@
 import {
-    Bell,
     LogOut,
     UserCircle2,
 } from "lucide-react";
 
-import NotificationPanel from "./NotificationPanel";
+import NotificationBell from "../notifications/NotificationBell";
 
 function DashboardHeader({
     user,
@@ -15,8 +14,6 @@ function DashboardHeader({
     handleLogout,
 }) {
 
-    const unreadCount =
-        notifications.filter((n) => !n.isRead).length;
 
     return (
 
@@ -85,71 +82,12 @@ function DashboardHeader({
 
             <div className="flex items-center gap-4">
 
-                <div className="relative">
-                <button
-                    onClick={() => {
-
-                        setShowNotifications(!showNotifications);
-
-                        if (!showNotifications) {
-                            markNotificationsAsRead();
-                        }
-
-                    }}
-                    className="
-                    relative
-                    w-12
-                    h-12
-                    rounded-2xl
-                    bg-slate-100
-                    hover:bg-blue-100
-                    flex
-                    items-center
-                    justify-center
-                    transition
-                    "
-                >
-
-                    <Bell size={24} />
-
-                    {unreadCount > 0 && (
-
-                        <span
-                            className="
-                            absolute
-                            -top-1
-                            -right-1
-                            w-6
-                            h-6
-                            rounded-full
-                            bg-red-500
-                            text-white
-                            text-xs
-                            flex
-                            items-center
-                            justify-center
-                            font-bold
-                            animate-pulse
-                            "
-                        >
-
-                            {unreadCount}
-
-                        </span>
-
-                    )}
-
-                </button>
-
-                {showNotifications && (
-                    <div className="absolute right-0 top-16 z-50">
-                        <NotificationPanel
-                            notifications={notifications}
-                        />
-                    </div>
-                )}
-
-            </div>
+                <NotificationBell
+                    notifications={notifications}
+                    showNotifications={showNotifications}
+                    setShowNotifications={setShowNotifications}
+                    markNotificationsAsRead={markNotificationsAsRead}
+                />
 
                 <button
                     onClick={handleLogout}
