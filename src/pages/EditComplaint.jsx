@@ -1,18 +1,18 @@
 import { useParams } from "react-router-dom";
 
-import useEditComplaint from "../hooks/useEditComplaint";
-
+import EditHeader from "../components/editComplaint/EditHeader";
 import EditComplaintForm from "../components/editComplaint/EditComplaintForm";
 import CategorySelect from "../components/editComplaint/CategorySelect";
 import ImageUpload from "../components/editComplaint/ImageUpload";
 import SubmitButton from "../components/editComplaint/SubmitButton";
+
+import useEditComplaint from "../hooks/useEditComplaint";
 
 function EditComplaint() {
 
     const { id } = useParams();
 
     const {
-
         title,
         setTitle,
 
@@ -35,41 +35,40 @@ function EditComplaint() {
 
     return (
 
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 py-10">
 
-            <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8">
+            <div className="max-w-3xl mx-auto">
 
-                <h1 className="text-3xl font-bold text-center text-blue-600 mb-8">
+                <div className="bg-white rounded-3xl shadow-xl p-8">
 
-                    Edit Complaint
-
-                </h1>
-
-                <form onSubmit={updateComplaint}>
+                    <EditHeader />
 
                     <EditComplaintForm
                         title={title}
                         setTitle={setTitle}
                         description={description}
                         setDescription={setDescription}
-                    />
+                        handleSubmit={updateComplaint}
+                    >
 
-                    <CategorySelect
-                        category={category}
-                        setCategory={setCategory}
-                    />
+                        <CategorySelect
+                            category={category}
+                            setCategory={setCategory}
+                        />
 
-                    <ImageUpload
-                        image={image}
-                        setImage={setImage}
-                        currentImage={currentImage}
-                    />
+                        <ImageUpload
+                            image={image}
+                            setImage={setImage}
+                            currentImage={currentImage}
+                        />
 
-                    <SubmitButton
-                        loading={loading}
-                    />
+                        <SubmitButton
+                            loading={loading}
+                        />
 
-                </form>
+                    </EditComplaintForm>
+
+                </div>
 
             </div>
 
