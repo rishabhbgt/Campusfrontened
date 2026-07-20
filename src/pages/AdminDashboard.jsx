@@ -6,7 +6,12 @@ import AnalyticsCards from "../components/AnalyticsCards";
 import StatusPieChart from "../components/StatusPieChart";
 import CategoryBarChart from "../components/CategoryBarChart";
 import RecentActivity from "../components/RecentActivity";
-import ComplaintCard from "../components/ComplaintCard";
+import AdminComplaintHeader from "../components/adminComplaints/AdminComplaintHeader";
+import ComplaintFilters from "../components/adminComplaints/ComplaintFilters";
+import ComplaintStats from "../components/adminComplaints/ComplaintStats";
+import ComplaintTable from "../components/adminComplaints/ComplaintTable";
+import LoadingComplaints from "../components/adminComplaints/LoadingComplaints";
+import EmptyComplaints from "../components/adminComplaints/EmptyComplaints";
 import AdminNotificationBell from "../components/AdminNotificationBell";
 
 function AdminDashboard() {
@@ -14,57 +19,74 @@ function AdminDashboard() {
     const navigate = useNavigate();
 
     const [complaints, setComplaints] = useState([]);
+
     const [search, setSearch] = useState("");
-    const [filter, setFilter] = useState("All");
+
+    const [statusFilter, setStatusFilter] = useState("All");
+
+    const [priorityFilter, setPriorityFilter] = useState("All");
+
+    const [loading, setLoading] = useState(true);
 
     const fetchComplaints = async () => {
-        try {
-            const token = localStorage.getItem("token");
 
-            const response = await api.get("/complaints/all", {
+    try {
+
+        setLoading(true);
+
+        const token = localStorage.getItem("token");
+
+        const response = await api.get("/complaints/all", {
+            headers: {
+                Authorization: token,
+            },
+        });
+
+        setComplaints(response.data.complaints);
+
+    } catch (error) {
+
+        console.log(error);
+
+    } finally {
+
+        setLoading(false);
+
+    }
+};
+
+    const updateStatus = async (id, data) => {
+
+    try {
+
+        const token = localStorage.getItem("token");
+
+        await api.put(
+            `/complaints/${id}`,
+            data,
+            {
                 headers: {
                     Authorization: token,
                 },
-            });
+            }
+        );
 
-            console.log("Complaints:", response.data.complaints);
+        toast.success("Complaint Updated");
 
-            setComplaints(response.data.complaints);
-        } catch (error) {
-            console.log(error);
-        }
-    };
+        fetchComplaints();
 
-    const updateStatus = async (id, status, priority, dueDate) => {
-        try {
-            const token = localStorage.getItem("token");
+    } catch (error) {
 
-            await api.put(
-                `/complaints/${id}`,
-                {
-                    status,
-                    priority,
-                    dueDate,
-                },
-                {
-                    headers: {
-                        Authorization: token,
-                    },
-                }
-            );
+        console.log(error);
 
-            toast.success("Status Updated ✅");
+        toast.error(
+            error.response?.data?.message ||
+            "Failed to update"
+        );
 
-            fetchComplaints();
-        } catch (error) {
-            console.log(error);
-            toast.error(
-                error.response?.data?.message ||
-                "Failed to update status"
-            );
-        }
-    };
+    }
 
+};
     const downloadExcel = async () => {
     try {
         const token = localStorage.getItem("token");
@@ -192,32 +214,50 @@ const downloadPDF = async () => {
     };
 
     const filteredComplaints = complaints
-        .filter((c) =>
-            filter === "All"
-                ? true
-                : c.status === filter
-        )
-        .filter((c) =>
-            c.title
+    .filter((complaint) => {
+
+        const matchSearch =
+            complaint.title
                 .toLowerCase()
-                .includes(search.toLowerCase())
-        )
-        .sort((a, b) => {
-            if (
-                priorityOrder[b.priority] !==
-                priorityOrder[a.priority]
-            ) {
-                return (
-                    priorityOrder[b.priority] -
-                    priorityOrder[a.priority]
-                );
-            }
+                .includes(search.toLowerCase());
+
+        const matchStatus =
+            statusFilter === "All"
+                ? true
+                : complaint.status === statusFilter;
+
+        const matchPriority =
+            priorityFilter === "All"
+                ? true
+                : complaint.priority === priorityFilter;
+
+        return (
+            matchSearch &&
+            matchStatus &&
+            matchPriority
+        );
+
+    })
+    .sort((a, b) => {
+
+        if (
+            priorityOrder[b.priority] !==
+            priorityOrder[a.priority]
+        ) {
 
             return (
-                new Date(b.createdAt) -
-                new Date(a.createdAt)
+                priorityOrder[b.priority] -
+                priorityOrder[a.priority]
             );
-        });
+
+        }
+
+        return (
+            new Date(b.createdAt) -
+            new Date(a.createdAt)
+        );
+
+    });
 
     const recentComplaints =
         filteredComplaints.slice(0, 5);
@@ -269,9 +309,7 @@ const downloadPDF = async () => {
 
         <div className="flex justify-between items-center mb-6">
 
-                <h1 className="text-3xl font-bold text-blue-600">
-                    Admin Dashboard
-                </h1>
+                <AdminComplaintHeader />
 
                 <div className="flex items-center gap-4">
 
@@ -289,8 +327,7 @@ const downloadPDF = async () => {
 
             <button
                 onClick={() => navigate("/admin/users")}
-                className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 mb-6"
-            >
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg hover:scale-105 transition mb-6">
                 Manage Users
             </button>
 
@@ -303,7 +340,9 @@ const downloadPDF = async () => {
                 overdue={overdue}
             />
 
-            <div className="flex justify-end mb-6">
+            <ComplaintStats complaints={complaints} />
+
+            <div className="flex justify-end gap-3 mb-6">
 
                 <button
                     onClick={downloadExcel}
@@ -334,53 +373,46 @@ const downloadPDF = async () => {
 
             </div>
 
-            <input
-                type="text"
-                placeholder="Search complaints..."
-                value={search}
-                onChange={(e) =>
-                    setSearch(e.target.value)
-                }
-                className="border p-2 w-full mb-4 rounded"
+            <ComplaintFilters
+                search={search}
+                setSearch={setSearch}
+
+                statusFilter={statusFilter}
+                setStatusFilter={setStatusFilter}
+
+                priorityFilter={priorityFilter}
+                setPriorityFilter={setPriorityFilter}
             />
 
-            <div className="flex gap-3 mb-4">
-                {[
-                    "All",
-                    "Pending",
-                    "In Progress",
-                    "Resolved",
-                ].map((status) => (
-                    <button
-                        key={status}
-                        onClick={() =>
-                            setFilter(status)
-                        }
-                        className="px-3 py-1 border rounded"
-                    >
-                        {status}
-                    </button>
-                ))}
+            <div className="mb-8">
+
+                <RecentActivity
+                    recentComplaints={recentComplaints}
+                />
+
             </div>
 
-            <RecentActivity
-                recentComplaints={
-                    recentComplaints
-                }
+            
+            {loading ? (
+
+            <LoadingComplaints />
+
+        ) : filteredComplaints.length === 0 ? (
+
+            <EmptyComplaints />
+
+        ) : (
+
+            <ComplaintTable
+                complaints={filteredComplaints}
+                faculties={[]}
+                updateComplaintStatus={updateStatus}
             />
 
-            {filteredComplaints.map(
-                (complaint) => (
-                    <ComplaintCard
-                        key={complaint._id}
-                        complaint={complaint}
-                        updateStatus={
-                            updateStatus
-                        }
-                    />
-                )
-            )}
-        </div>
+        )}
+
+                    
+    </div>
     );
 }
 
