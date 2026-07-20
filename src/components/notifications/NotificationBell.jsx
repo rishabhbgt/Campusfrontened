@@ -1,5 +1,5 @@
+import { useEffect, useRef, useState } from "react";
 import { Bell } from "lucide-react";
-import { useEffect, useRef } from "react";
 
 import NotificationBadge from "./NotificationBadge";
 import NotificationDropdown from "./NotificationDropdown";
@@ -7,84 +7,88 @@ import NotificationDropdown from "./NotificationDropdown";
 function NotificationBell({
 
     notifications,
-    showNotifications,
-    setShowNotifications,
-    markNotificationsAsRead,
+
+    markAsRead,
+
+    markAllAsRead,
 
 }) {
 
+    const [open, setOpen] = useState(false);
+
     const dropdownRef = useRef(null);
 
-    const unreadCount =
-    notifications?.filter(
+    const unreadCount = notifications.filter(
         (notification) => !notification.isRead
-    ).length || 0;
+    ).length;
 
     useEffect(() => {
 
-        function handleClickOutside(event) {
+        const handleClickOutside = (event) => {
 
             if (
                 dropdownRef.current &&
                 !dropdownRef.current.contains(event.target)
             ) {
 
-                setShowNotifications(false);
+                setOpen(false);
 
             }
 
-        }
+        };
 
-        document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener(
+            "mousedown",
+            handleClickOutside
+        );
 
-        return () => {
+        return () =>
 
             document.removeEventListener(
                 "mousedown",
                 handleClickOutside
             );
 
-        };
-
-    }, [setShowNotifications]);
+    }, []);
 
     return (
 
         <div
-            ref={dropdownRef}
             className="relative"
+            ref={dropdownRef}
         >
 
             <button
-                onClick={() =>{
-                const next = !showNotifications;
 
-                setShowNotifications(next);
-
-                if (next) {
-                    markNotificationsAsRead();
+                onClick={() =>
+                    setOpen(!open)
                 }
-
-                }}
 
                 className="
                     relative
-                    p-3
+                    w-12
+                    h-12
                     rounded-2xl
                     bg-white
                     border
                     border-slate-200
                     shadow-md
-                    hover:shadow-xl
-                    hover:bg-blue-50
+                    flex
+                    items-center
+                    justify-center
+                    hover:bg-indigo-50
+                    hover:border-indigo-300
                     transition-all
                     duration-300
                 "
+
             >
 
                 <Bell
-                    size={24}
-                    className="text-gray-700"
+                    size={22}
+                    className="
+                        text-slate-700
+                    "
                 />
 
                 <NotificationBadge
@@ -93,23 +97,19 @@ function NotificationBell({
 
             </button>
 
-            {
+            {open && (
 
-                showNotifications && (
+                <NotificationDropdown
 
-                    <NotificationDropdown
+                    notifications={notifications}
 
-                        notifications={notifications}
+                    markAsRead={markAsRead}
 
-                        markNotificationsAsRead={
-                            markNotificationsAsRead
-                        }
+                    markAllAsRead={markAllAsRead}
 
-                    />
+                />
 
-                )
-
-            }
+            )}
 
         </div>
 

@@ -5,16 +5,16 @@ function ProtectedRoute({ children, role }) {
     const user = JSON.parse(localStorage.getItem("user"));
 
     if (!user) {
-        return <Navigate to="/" />;
+        return <Navigate to="/" replace />;
     }
 
     if (role && user.role !== role) {
 
         if (user.role === "admin") {
-            return <Navigate to="/admin-dashboard" />;
+            return <Navigate to="/admin-dashboard" replace />;
         }
 
-        return <Navigate to="/" />;
+        return <Navigate to="/dashboard" replace />;
     }
 
     return children;

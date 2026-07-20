@@ -1,100 +1,191 @@
-import { Bell, CheckCircle2 } from "lucide-react";
+import {
+    Bell,
+    CheckCircle2,
+    AlertTriangle,
+} from "lucide-react";
 
-function NotificationItem({ notification }) {
+function NotificationItem({
+
+    notification,
+
+    markAsRead,
+
+}) {
+
+    const getIcon = () => {
+
+        if (
+            notification.message
+                ?.toLowerCase()
+                .includes("resolved")
+        ) {
+
+            return (
+                <CheckCircle2
+                    size={20}
+                    className="text-green-600"
+                />
+            );
+
+        }
+
+        if (
+            notification.message
+                ?.toLowerCase()
+                .includes("pending")
+        ) {
+
+            return (
+                <AlertTriangle
+                    size={20}
+                    className="text-yellow-500"
+                />
+            );
+
+        }
+
+        return (
+            <Bell
+                size={20}
+                className="text-indigo-600"
+            />
+        );
+
+    };
+
+    const getTime = (date) => {
+
+        const now = new Date();
+
+        const created = new Date(date);
+
+        const diff =
+            Math.floor(
+                (now - created) / 1000
+            );
+
+        if (diff < 60)
+            return `${diff}s ago`;
+
+        if (diff < 3600)
+            return `${Math.floor(
+                diff / 60
+            )}m ago`;
+
+        if (diff < 86400)
+            return `${Math.floor(
+                diff / 3600
+            )}h ago`;
+
+        return created.toLocaleDateString();
+
+    };
 
     return (
 
         <div
+
+            onClick={() =>
+                markAsRead(notification._id)
+            }
+
             className={`
-                relative
                 flex
-                items-start
                 gap-4
-                px-5
-                py-4
+                p-5
+                cursor-pointer
                 transition-all
                 duration-300
-                hover:bg-slate-50
                 border-b
-                last:border-none
-                ${notification.isRead ? "opacity-70" : "bg-blue-50/40"}
+                border-slate-100
+                hover:bg-indigo-50
+                ${
+                    !notification.isRead
+                        ? "bg-indigo-50/60"
+                        : "bg-white"
+                }
             `}
-        >
 
-            {/* Icon */}
+        >
 
             <div
                 className="
-                    w-12
-                    h-12
-                    rounded-full
-                    bg-blue-100
+                    w-11
+                    h-11
+                    rounded-2xl
+                    bg-gradient-to-br
+                    from-indigo-100
+                    to-purple-100
                     flex
                     items-center
                     justify-center
                     shrink-0
                 "
             >
-                {
-                    notification.type === "STATUS_UPDATE"
-                    ? (
-                        <CheckCircle2
-                            className="text-green-600"
-                            size={22}
-                        />
-                    )
-                    : (
-                        <Bell
-                            className="text-blue-600"
-                            size={22}
-                        />
-                    )
-                }
-            </div>
 
-            {/* Content */}
+                {getIcon()}
+
+            </div>
 
             <div className="flex-1">
 
-                <p className="text-gray-800 leading-relaxed break-words">
+                <div
+                    className="
+                        flex
+                        justify-between
+                        items-start
+                        gap-3
+                    "
+                >
 
-                    {notification.message}
+                    <p
+                        className={`
+                            text-sm
+                            leading-relaxed
+                            ${
+                                !notification.isRead
+                                    ? "font-semibold text-slate-800"
+                                    : "text-slate-600"
+                            }
+                        `}
+                    >
 
-                </p>
+                        {notification.message}
 
-                <p className="text-xs text-gray-500 mt-2">
+                    </p>
 
-                    {
-                        new Date(notification.createdAt).toLocaleString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                    })
-                    }
+                    {!notification.isRead && (
+
+                        <span
+                            className="
+                                w-2.5
+                                h-2.5
+                                rounded-full
+                                bg-indigo-600
+                                mt-2
+                                shrink-0
+                            "
+                        />
+
+                    )}
+
+                </div>
+
+                <p
+                    className="
+                        text-xs
+                        text-slate-400
+                        mt-2
+                    "
+                >
+
+                    {getTime(
+                        notification.createdAt
+                    )}
 
                 </p>
 
             </div>
-
-            {/* Unread Dot */}
-
-            {
-                !notification.isRead && (
-
-                    <span
-                        className="
-                            mt-2
-                            w-3
-                            h-3
-                            rounded-full
-                            bg-blue-600
-                            shrink-0
-                        "
-                    />
-
-                )
-            }
 
         </div>
 

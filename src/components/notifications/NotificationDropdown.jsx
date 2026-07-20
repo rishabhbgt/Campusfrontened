@@ -1,9 +1,15 @@
 import NotificationItem from "./NotificationItem";
+import NotificationHeader from "./NotificationHeader";
 import EmptyNotification from "./EmptyNotification";
 
 function NotificationDropdown({
+
     notifications,
-    markNotificationsAsRead,
+
+    markAsRead,
+
+    markAllAsRead,
+
 }) {
 
     return (
@@ -12,86 +18,63 @@ function NotificationDropdown({
             className="
                 absolute
                 right-0
-                mt-3
-                w-[380px]
-                bg-white
-                rounded-2xl
+                mt-4
+                w-[400px]
+                bg-white/95
+                backdrop-blur-xl
+                rounded-3xl
                 shadow-2xl
                 border
-                border-gray-200
+                border-slate-200
                 overflow-hidden
                 z-50
                 animate-in
                 fade-in
-                slide-in-from-top-2
+                zoom-in-95
+                duration-200
             "
         >
 
-            {/* Header */}
+            <NotificationHeader
 
-            <div
-                className="
-                    flex
-                    items-center
-                    justify-between
-                    px-5
-                    py-4
-                    border-b
-                    bg-gray-50
-                "
-            >
-
-                <h2 className="font-bold text-lg text-gray-800">
-                    Notifications
-                </h2>
-
-                {
-                    notifications?.length > 0 && (
-
-                        <button
-                            onClick={markNotificationsAsRead}
-                            className="
-                                text-sm
-                                text-blue-600
-                                hover:text-blue-700
-                                font-medium
-                            "
-                        >
-                            Mark all read
-                        </button>
-
-                    )
+                unreadCount={
+                    notifications.filter(
+                        (notification) => !notification.isRead
+                    ).length
                 }
 
-            </div>
+                markAllAsRead={markAllAsRead}
 
-            {/* Body */}
+            />
 
             <div
                 className="
-                    max-h-[420px]
+                    max-h-[450px]
                     overflow-y-auto
                 "
             >
 
-                {
-                    notifications?.length === 0
-                    ? (
-                        <EmptyNotification />
-                    )
-                    : (
+                {notifications.length === 0 ? (
 
-                        notifications.map((notification) => (
+                    <EmptyNotification />
 
-                            <NotificationItem
-                                key={notification._id}
-                                notification={notification}
-                            />
+                ) : (
 
-                        ))
+                    notifications.map((notification) => (
 
-                    )
-                }
+                        <NotificationItem
+
+                            key={notification._id}
+
+                            notification={notification}
+
+                            markAsRead={markAsRead}
+
+                        />
+
+                    ))
+
+                )}
 
             </div>
 

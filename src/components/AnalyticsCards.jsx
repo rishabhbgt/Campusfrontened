@@ -1,3 +1,12 @@
+import {
+    ClipboardList,
+    Clock3,
+    LoaderCircle,
+    CheckCircle2,
+    AlertTriangle,
+    AlarmClock,
+} from "lucide-react";
+
 function AnalyticsCards({
     total,
     pending,
@@ -6,41 +15,138 @@ function AnalyticsCards({
     highPriority,
     overdue,
 }) {
+
+    const cards = [
+        {
+            title: "Total Complaints",
+            value: total,
+            icon: ClipboardList,
+            bg: "from-indigo-500 to-blue-600",
+        },
+        {
+            title: "Pending",
+            value: pending,
+            icon: Clock3,
+            bg: "from-yellow-400 to-orange-500",
+        },
+        {
+            title: "In Progress",
+            value: inProgress,
+            icon: LoaderCircle,
+            bg: "from-sky-500 to-cyan-500",
+        },
+        {
+            title: "Resolved",
+            value: resolved,
+            icon: CheckCircle2,
+            bg: "from-green-500 to-emerald-600",
+        },
+        {
+            title: "High Priority",
+            value: highPriority,
+            icon: AlertTriangle,
+            bg: "from-red-500 to-rose-600",
+        },
+        {
+            title: "Overdue",
+            value: overdue,
+            icon: AlarmClock,
+            bg: "from-orange-500 to-red-500",
+        },
+    ];
+
     return (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
 
-            <div className="bg-white shadow rounded-lg p-4 text-center">
-                <h3 className="text-gray-500">Total</h3>
-                <p className="text-3xl font-bold">{total}</p>
-            </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-6 mb-8">
 
-            <div className="bg-yellow-100 shadow rounded-lg p-4 text-center">
-                <h3 className="text-yellow-700">Pending</h3>
-                <p className="text-3xl font-bold">{pending}</p>
-            </div>
+            {cards.map((card, index) => {
 
-            <div className="bg-blue-100 shadow rounded-lg p-4 text-center">
-                <h3 className="text-blue-700">In Progress</h3>
-                <p className="text-3xl font-bold">{inProgress}</p>
-            </div>
+                const Icon = card.icon;
 
-            <div className="bg-green-100 shadow rounded-lg p-4 text-center">
-                <h3 className="text-green-700">Resolved</h3>
-                <p className="text-3xl font-bold">{resolved}</p>
-            </div>
+                return (
 
-            <div className="bg-red-100 shadow rounded-lg p-4 text-center">
-                <h3 className="text-red-700">High Priority</h3>
-                <p className="text-3xl font-bold">{highPriority}</p>
-            </div>
+                    <div
+                        key={index}
+                        className="
+                            relative
+                            overflow-hidden
+                            rounded-3xl
+                            bg-white
+                            border
+                            border-slate-200
+                            shadow-lg
+                            hover:shadow-2xl
+                            hover:-translate-y-2
+                            transition-all
+                            duration-300
+                            group
+                        "
+                    >
 
-            <div className="bg-orange-100 shadow rounded-lg p-4 text-center">
-                <h3 className="text-orange-700">Overdue</h3>
-                <p className="text-3xl font-bold">{overdue}</p>
-            </div>
+                        <div
+                            className={`
+                                absolute
+                                inset-x-0
+                                top-0
+                                h-1
+                                bg-gradient-to-r
+                                ${card.bg}
+                            `}
+                        />
+
+                        <div className="p-6 flex items-center justify-between">
+
+                            <div>
+
+                                <p className="text-sm text-slate-500 font-medium">
+
+                                    {card.title}
+
+                                </p>
+
+                                <h2 className="text-4xl font-bold text-slate-800 mt-2">
+
+                                    {card.value}
+
+                                </h2>
+
+                            </div>
+
+                            <div
+                                className={`
+                                    w-16
+                                    h-16
+                                    rounded-2xl
+                                    bg-gradient-to-r
+                                    ${card.bg}
+                                    flex
+                                    items-center
+                                    justify-center
+                                    shadow-lg
+                                    group-hover:scale-110
+                                    transition
+                                `}
+                            >
+
+                                <Icon
+                                    size={30}
+                                    className="text-white"
+                                />
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                );
+
+            })}
 
         </div>
+
     );
+
 }
 
 export default AnalyticsCards;
