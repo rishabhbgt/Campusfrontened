@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react";
-import socket from "../socket";
-import api from "../services/api";
 
-import NotificationBadge from "./notifications/NotificationBadge";
-import NotificationDropdown from "./notifications/NotificationDropdown";
+import socket from "../../socket";
+import api from "../../services/api";
+
+import NotificationBadge from "../notifications/NotificationBadge";
+import NotificationDropdown from "../notifications/NotificationDropdown";
 
 function AdminNotificationBell() {
 
     const [notifications, setNotifications] = useState([]);
     const [open, setOpen] = useState(false);
 
-    // Fetch all notifications
+
+    // ================= FETCH NOTIFICATIONS =================
+
     const fetchNotifications = async () => {
 
         try {
 
-            const token = localStorage.getItem("token");
+            const token =
+                localStorage.getItem("token");
 
             const response = await api.get(
                 "/notifications",
@@ -27,24 +31,29 @@ function AdminNotificationBell() {
             );
 
             setNotifications(
-                response.data.notifications
+                response.data.notifications || []
             );
 
         } catch (error) {
 
-            console.log(error);
+            console.error(
+                "Failed to fetch notifications:",
+                error
+            );
 
         }
 
     };
 
 
-    // Mark one notification as read
+    // ================= MARK ONE AS READ =================
+
     const markAsRead = async (id) => {
 
         try {
 
-            const token = localStorage.getItem("token");
+            const token =
+                localStorage.getItem("token");
 
             await api.put(
                 `/notifications/${id}/read`,
@@ -56,23 +65,38 @@ function AdminNotificationBell() {
                 }
             );
 
-            fetchNotifications();
+            // Update UI immediately
+            setNotifications((prev) =>
+                prev.map((notification) =>
+                    notification._id === id
+                        ? {
+                            ...notification,
+                            isRead: true,
+                        }
+                        : notification
+                )
+            );
 
         } catch (error) {
 
-            console.log(error);
+            console.error(
+                "Failed to mark notification as read:",
+                error
+            );
 
         }
 
     };
 
 
-    // Mark all notifications as read
+    // ================= MARK ALL AS READ =================
+
     const markAllAsRead = async () => {
 
         try {
 
-            const token = localStorage.getItem("token");
+            const token =
+                localStorage.getItem("token");
 
             await api.put(
                 "/notifications/read-all",
@@ -84,18 +108,28 @@ function AdminNotificationBell() {
                 }
             );
 
-            fetchNotifications();
+            // Update UI immediately
+            setNotifications((prev) =>
+                prev.map((notification) => ({
+                    ...notification,
+                    isRead: true,
+                }))
+            );
 
         } catch (error) {
 
-            console.log(error);
+            console.error(
+                "Failed to mark all notifications as read:",
+                error
+            );
 
         }
 
     };
 
 
-    // Fetch notifications when component loads
+    // ================= INITIAL FETCH =================
+
     useEffect(() => {
 
         fetchNotifications();
@@ -103,7 +137,8 @@ function AdminNotificationBell() {
     }, []);
 
 
-    // Socket notification listener
+    // ================= SOCKET =================
+
     useEffect(() => {
 
         const user = JSON.parse(
@@ -119,16 +154,19 @@ function AdminNotificationBell() {
 
         }
 
+
         const handleNewNotification = () => {
 
             fetchNotifications();
 
         };
 
+
         socket.on(
             "newNotification",
             handleNewNotification
         );
+
 
         return () => {
 
@@ -142,6 +180,8 @@ function AdminNotificationBell() {
     }, []);
 
 
+    // ================= UNREAD COUNT =================
+
     const unreadCount =
         notifications.filter(
             (notification) =>
@@ -149,15 +189,23 @@ function AdminNotificationBell() {
         ).length;
 
 
+    // ================= UI =================
+
     return (
 
-        <div className="relative">
+        <div
+            className="
+                relative
+                z-[9999]
+            "
+        >
 
             <NotificationBadge
                 unreadCount={unreadCount}
                 open={open}
                 setOpen={setOpen}
             />
+
 
             {open && (
 

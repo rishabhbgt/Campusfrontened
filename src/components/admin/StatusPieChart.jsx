@@ -37,7 +37,10 @@ function StatusPieChart({ pieData, COLORS }) {
 
             </div>
 
-            <ResponsiveContainer width="100%" height={340}>
+            <ResponsiveContainer
+                width="100%"
+                height={340}
+            >
 
                 <PieChart>
 
@@ -81,6 +84,7 @@ function StatusPieChart({ pieData, COLORS }) {
         </div>
 
     );
+
 }
 
 export default StatusPieChart;

@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 
 import NotificationBadge from "./NotificationBadge";
@@ -18,13 +17,16 @@ function NotificationBell({
     ).length;
 
     useEffect(() => {
+
         const handleClickOutside = (event) => {
+
             if (
                 dropdownRef.current &&
                 !dropdownRef.current.contains(event.target)
             ) {
                 setOpen(false);
             }
+
         };
 
         document.addEventListener(
@@ -33,18 +35,26 @@ function NotificationBell({
         );
 
         return () => {
+
             document.removeEventListener(
                 "mousedown",
                 handleClickOutside
             );
+
         };
+
     }, []);
 
     return (
+
         <div
-            className="relative z-[9999]"
             ref={dropdownRef}
+            className="
+                relative
+                z-[9999]
+            "
         >
+
             <NotificationBadge
                 unreadCount={unreadCount}
                 open={open}
@@ -52,15 +62,19 @@ function NotificationBell({
             />
 
             {open && (
+
                 <NotificationDropdown
                     notifications={notifications}
                     markAsRead={markAsRead}
                     markAllAsRead={markAllAsRead}
                 />
+
             )}
+
         </div>
+
     );
+
 }
 
 export default NotificationBell;
-

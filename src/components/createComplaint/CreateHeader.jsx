@@ -1,51 +1,82 @@
+import { FilePlus2 } from "lucide-react";
+
 function CreateHeader() {
 
     return (
 
-        <div className="mb-10 text-center">
+        <div className="mb-8 sm:mb-10">
 
             <div
                 className="
-                    w-20
-                    h-20
-                    mx-auto
-                    rounded-3xl
-                    bg-gradient-to-r
-                    from-blue-600
-                    to-indigo-600
                     flex
+                    flex-col
                     items-center
-                    justify-center
-                    shadow-lg
-                    mb-5
+                    text-center
                 "
             >
 
-                <span className="text-4xl">
-                    📝
-                </span>
+                {/* ICON */}
+
+                <div
+                    className="
+                        w-16
+                        h-16
+                        sm:w-20
+                        sm:h-20
+                        rounded-3xl
+                        bg-gradient-to-br
+                        from-blue-600
+                        to-indigo-600
+                        text-white
+                        flex
+                        items-center
+                        justify-center
+                        shadow-lg
+                        mb-5
+                    "
+                >
+
+                    <FilePlus2
+                        size={34}
+                        className="sm:w-10 sm:h-10"
+                    />
+
+                </div>
+
+
+                {/* TITLE */}
+
+                <h1
+                    className="
+                        text-3xl
+                        sm:text-4xl
+                        font-extrabold
+                        text-slate-800
+                        tracking-tight
+                    "
+                >
+                    Raise a Complaint
+                </h1>
+
+
+                {/* DESCRIPTION */}
+
+                <p
+                    className="
+                        mt-3
+                        text-sm
+                        sm:text-base
+                        lg:text-lg
+                        text-slate-500
+                        max-w-xl
+                        leading-7
+                    "
+                >
+                    Submit your issue with accurate details
+                    and track its progress in real time.
+                </p>
 
             </div>
-
-            <h1
-                className="
-                    text-4xl
-                    font-bold
-                    text-slate-800
-                "
-            >
-                Raise a Complaint
-            </h1>
-
-            <p
-                className="
-                    mt-3
-                    text-slate-500
-                    text-lg
-                "
-            >
-                Submit your issue and track its progress in real time.
-            </p>
 
         </div>
 

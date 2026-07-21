@@ -2,17 +2,22 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import toast from "react-hot-toast";
-import AnalyticsCards from "../components/AnalyticsCards";
-import StatusPieChart from "../components/StatusPieChart";
-import CategoryBarChart from "../components/CategoryBarChart";
-import RecentActivity from "../components/RecentActivity";
+
+import AnalyticsCards from "../components/admin/AnalyticsCards";
+import StatusPieChart from "../components/admin/StatusPieChart";
+import CategoryBarChart from "../components/admin/CategoryBarChart";
+import RecentActivity from "../components/admin/RecentActivity";
+import AdminNotificationBell from "../components/admin/AdminNotificationBell";
+
 import AdminComplaintHeader from "../components/adminComplaints/AdminComplaintHeader";
 import ComplaintFilters from "../components/adminComplaints/ComplaintFilters";
 import ComplaintStats from "../components/adminComplaints/ComplaintStats";
 import ComplaintTable from "../components/adminComplaints/ComplaintTable";
 import LoadingComplaints from "../components/adminComplaints/LoadingComplaints";
 import EmptyComplaints from "../components/adminComplaints/EmptyComplaints";
-import AdminNotificationBell from "../components/AdminNotificationBell";
+
+
+
 
 function AdminDashboard() {
 
@@ -28,178 +33,261 @@ function AdminDashboard() {
 
     const [loading, setLoading] = useState(true);
 
+
+    // ================= FETCH COMPLAINTS =================
+
     const fetchComplaints = async () => {
 
-    try {
+        try {
 
-        setLoading(true);
+            setLoading(true);
 
-        const token = localStorage.getItem("token");
+            const token =
+                localStorage.getItem("token");
 
-        const response = await api.get("/complaints/all", {
-            headers: {
-                Authorization: token,
-            },
-        });
+            const response = await api.get(
+                "/complaints/all",
+                {
+                    headers: {
+                        Authorization: token,
+                    },
+                }
+            );
 
-        setComplaints(response.data.complaints);
+            setComplaints(
+                response.data.complaints || []
+            );
 
-    } catch (error) {
+        } catch (error) {
 
-        console.log(error);
+            console.log(error);
 
-    } finally {
+            toast.error(
+                "Failed to load complaints"
+            );
 
-        setLoading(false);
+        } finally {
 
-    }
-};
+            setLoading(false);
+
+        }
+
+    };
+
+
+    // ================= UPDATE STATUS =================
 
     const updateStatus = async (id, data) => {
 
-    try {
+        try {
 
-        const token = localStorage.getItem("token");
+            const token =
+                localStorage.getItem("token");
 
-        await api.put(
-            `/complaints/${id}`,
-            data,
-            {
-                headers: {
-                    Authorization: token,
-                },
-            }
-        );
+            await api.put(
+                `/complaints/${id}`,
+                data,
+                {
+                    headers: {
+                        Authorization: token,
+                    },
+                }
+            );
 
-        toast.success("Complaint Updated");
+            toast.success(
+                "Complaint Updated"
+            );
 
-        fetchComplaints();
+            fetchComplaints();
 
-    } catch (error) {
+        } catch (error) {
 
-        console.log(error);
+            console.log(error);
 
-        toast.error(
-            error.response?.data?.message ||
-            "Failed to update"
-        );
+            toast.error(
+                error.response?.data?.message ||
+                "Failed to update"
+            );
 
-    }
+        }
 
-};
+    };
+
+
+    // ================= DOWNLOAD EXCEL =================
+
     const downloadExcel = async () => {
-    try {
-        const token = localStorage.getItem("token");
 
-        const response = await api.get("/reports/excel", {
-            headers: {
-                Authorization: token,
-            },
-            responseType: "blob",
-        });
+        try {
 
-        const url = window.URL.createObjectURL(
-            new Blob([response.data])
-        );
+            const token =
+                localStorage.getItem("token");
 
-        const link = document.createElement("a");
+            const response = await api.get(
+                "/reports/excel",
+                {
+                    headers: {
+                        Authorization: token,
+                    },
+                    responseType: "blob",
+                }
+            );
 
-        link.href = url;
-        link.setAttribute(
-            "download",
-            "Complaint_Report.xlsx"
-        );
+            const url =
+                window.URL.createObjectURL(
+                    new Blob([response.data])
+                );
 
-        document.body.appendChild(link);
+            const link =
+                document.createElement("a");
 
-        link.click();
+            link.href = url;
 
-        link.remove();
+            link.setAttribute(
+                "download",
+                "Complaint_Report.xlsx"
+            );
 
-    } catch (error) {
+            document.body.appendChild(link);
 
-        console.log(error);
+            link.click();
 
-        toast.error("Failed to download report");
+            link.remove();
 
-    }
-};
+            window.URL.revokeObjectURL(url);
 
-const downloadPDF = async () => {
-    try {
-        const token = localStorage.getItem("token");
+        } catch (error) {
 
-        const response = await api.get("/reports/pdf", {
-            headers: {
-                Authorization: token,
-            },
-            responseType: "blob",
-        });
+            console.log(error);
 
-        const url = window.URL.createObjectURL(
-            new Blob([response.data])
-        );
+            toast.error(
+                "Failed to download report"
+            );
 
-        const link = document.createElement("a");
+        }
 
-        link.href = url;
+    };
 
-        link.setAttribute(
-            "download",
-            "Complaint_Report.pdf"
-        );
 
-        document.body.appendChild(link);
+    // ================= DOWNLOAD PDF =================
 
-        link.click();
+    const downloadPDF = async () => {
 
-        link.remove();
+        try {
 
-    } catch (error) {
+            const token =
+                localStorage.getItem("token");
 
-        console.log(error);
+            const response = await api.get(
+                "/reports/pdf",
+                {
+                    headers: {
+                        Authorization: token,
+                    },
+                    responseType: "blob",
+                }
+            );
 
-        toast.error("Failed to download PDF");
+            const url =
+                window.URL.createObjectURL(
+                    new Blob([response.data])
+                );
 
-    }
-};
+            const link =
+                document.createElement("a");
+
+            link.href = url;
+
+            link.setAttribute(
+                "download",
+                "Complaint_Report.pdf"
+            );
+
+            document.body.appendChild(link);
+
+            link.click();
+
+            link.remove();
+
+            window.URL.revokeObjectURL(url);
+
+        } catch (error) {
+
+            console.log(error);
+
+            toast.error(
+                "Failed to download PDF"
+            );
+
+        }
+
+    };
+
+
+    // ================= INITIAL FETCH =================
 
     useEffect(() => {
+
         fetchComplaints();
+
     }, []);
 
-    const total = complaints.length;
 
-    const pending = complaints.filter(
-        (c) => c.status === "Pending"
-    ).length;
+    // ================= STATISTICS =================
 
-    const inProgress = complaints.filter(
-        (c) => c.status === "In Progress"
-    ).length;
+    const total =
+        complaints.length;
 
-    const resolved = complaints.filter(
-        (c) => c.status === "Resolved"
-    ).length;
+    const pending =
+        complaints.filter(
+            (c) => c.status === "Pending"
+        ).length;
+
+    const inProgress =
+        complaints.filter(
+            (c) => c.status === "In Progress"
+        ).length;
+
+    const resolved =
+        complaints.filter(
+            (c) => c.status === "Resolved"
+        ).length;
+
+    const highPriority =
+        complaints.filter(
+            (c) => c.priority === "High"
+        ).length;
+
+    const overdue =
+        complaints.filter(
+            (c) =>
+                c.dueDate &&
+                new Date(c.dueDate) < new Date() &&
+                c.status !== "Resolved"
+        ).length;
 
 
-    const highPriority = complaints.filter(
-        (c) => c.priority === "High"
-    ).length;
-
-    
-    const overdue = complaints.filter(
-        (c) =>
-            c.dueDate &&
-            new Date(c.dueDate) < new Date() &&
-            c.status !== "Resolved"
-    ).length;
+    // ================= PIE DATA =================
 
     const pieData = [
-        { name: "Pending", value: pending },
-        { name: "In Progress", value: inProgress },
-        { name: "Resolved", value: resolved },
+
+        {
+            name: "Pending",
+            value: pending,
+        },
+
+        {
+            name: "In Progress",
+            value: inProgress,
+        },
+
+        {
+            name: "Resolved",
+            value: resolved,
+        },
+
     ];
+
 
     const COLORS = [
         "#FACC15",
@@ -207,215 +295,542 @@ const downloadPDF = async () => {
         "#22C55E",
     ];
 
+
+    // ================= FILTER =================
+
     const priorityOrder = {
         High: 3,
         Medium: 2,
         Low: 1,
     };
 
+
     const filteredComplaints = complaints
-    .filter((complaint) => {
 
-        const matchSearch =
-            complaint.title
-                .toLowerCase()
-                .includes(search.toLowerCase());
+        .filter((complaint) => {
 
-        const matchStatus =
-            statusFilter === "All"
-                ? true
-                : complaint.status === statusFilter;
+            const matchSearch =
+                complaint.title
+                    ?.toLowerCase()
+                    .includes(
+                        search.toLowerCase()
+                    );
 
-        const matchPriority =
-            priorityFilter === "All"
-                ? true
-                : complaint.priority === priorityFilter;
+            const matchStatus =
+                statusFilter === "All" ||
+                complaint.status === statusFilter;
 
-        return (
-            matchSearch &&
-            matchStatus &&
-            matchPriority
-        );
-
-    })
-    .sort((a, b) => {
-
-        if (
-            priorityOrder[b.priority] !==
-            priorityOrder[a.priority]
-        ) {
+            const matchPriority =
+                priorityFilter === "All" ||
+                complaint.priority === priorityFilter;
 
             return (
-                priorityOrder[b.priority] -
-                priorityOrder[a.priority]
+                matchSearch &&
+                matchStatus &&
+                matchPriority
             );
 
-        }
+        })
 
-        return (
-            new Date(b.createdAt) -
-            new Date(a.createdAt)
-        );
+        .sort((a, b) => {
 
-    });
+            const priorityA =
+                priorityOrder[a.priority] || 0;
+
+            const priorityB =
+                priorityOrder[b.priority] || 0;
+
+            if (
+                priorityB !== priorityA
+            ) {
+
+                return (
+                    priorityB -
+                    priorityA
+                );
+
+            }
+
+            return (
+                new Date(b.createdAt) -
+                new Date(a.createdAt)
+            );
+
+        });
+
+
+    // ================= RECENT COMPLAINTS =================
 
     const recentComplaints =
         filteredComplaints.slice(0, 5);
 
-    const categoryData = [
-        {
-            category: "Hostel",
-            complaints: complaints.filter(
-                (c) => c.category === "Hostel"
-            ).length,
-        },
-        {
-            category: "Mess",
-            complaints: complaints.filter(
-                (c) => c.category === "Mess"
-            ).length,
-        },
-        {
-            category: "Library",
-            complaints: complaints.filter(
-                (c) => c.category === "Library"
-            ).length,
-        },
-        {
-            category: "Classroom",
-            complaints: complaints.filter(
-                (c) => c.category === "Classroom"
-            ).length,
-        },
-        {
-            category: "Other",
-            complaints: complaints.filter(
-                (c) => c.category === "Other"
-            ).length,
-        },
+
+    // ================= CATEGORY DATA =================
+
+    const categories = [
+        "Hostel",
+        "Mess",
+        "Library",
+        "Classroom",
+        "Other",
     ];
 
+
+    const categoryData =
+        categories.map(
+            (category) => ({
+
+                category,
+
+                complaints:
+                    complaints.filter(
+                        (c) =>
+                            c.category === category
+                    ).length,
+
+            })
+        );
+
+
+    // ================= LOGOUT =================
+
     const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
 
-    toast.success("Logged Out");
+        localStorage.removeItem("token");
 
-    navigate("/");
-};
+        localStorage.removeItem("user");
+
+        toast.success(
+            "Logged Out"
+        );
+
+        navigate("/");
+
+    };
+
 
     return (
-        <div className="min-h-screen bg-gray-100 p-8">
 
-        <div className="flex justify-between items-center mb-6">
+        <div
+            className="
+                min-h-screen
+                bg-gradient-to-br
+                from-slate-100
+                via-blue-50
+                to-indigo-100
+            "
+        >
 
-                <AdminComplaintHeader />
+            <main
+                className="
+                    max-w-[1600px]
+                    mx-auto
 
-                <div className="flex items-center gap-4">
+                    px-4
+                    sm:px-6
+                    lg:px-8
 
-                <AdminNotificationBell />
+                    py-6
+                    sm:py-8
+                "
+            >
 
-                <button
-                    onClick={handleLogout}
-                    className="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700"
+
+                {/* ================= HEADER ================= */}
+
+                <header
+                    className="
+                        relative
+                        z-50
+
+                        bg-white/80
+                        backdrop-blur-xl
+
+                        rounded-3xl
+
+                        shadow-xl
+
+                        border
+                        border-white/60
+
+                        px-5
+                        sm:px-8
+
+                        py-5
+                        sm:py-6
+
+                        mb-8
+                    "
                 >
-                    Logout
-                </button>
 
-            </div>
+                    <div
+                        className="
+                            flex
+                            flex-col
+                            md:flex-row
+
+                            md:items-center
+                            md:justify-between
+
+                            gap-5
+                        "
+                    >
+
+                        {/* LEFT */}
+
+                        <AdminComplaintHeader />
+
+
+                        {/* RIGHT */}
+
+                        <div
+                            className="
+                                flex
+                                items-center
+                                justify-end
+
+                                gap-3
+                                sm:gap-4
+                            "
+                        >
+
+                            {/* Notification */}
+
+                            <div
+                                className="
+                                    relative
+                                    z-[9999]
+                                "
+                            >
+
+                                <AdminNotificationBell />
+
+                            </div>
+
+
+                            {/* Manage Users */}
+
+                            <button
+                                onClick={() =>
+                                    navigate(
+                                        "/admin/users"
+                                    )
+                                }
+                                className="
+                                    hidden
+                                    sm:flex
+
+                                    items-center
+                                    justify-center
+
+                                    bg-gradient-to-r
+                                    from-purple-600
+                                    to-indigo-600
+
+                                    text-white
+
+                                    px-5
+                                    py-3
+
+                                    rounded-2xl
+
+                                    shadow-lg
+
+                                    hover:shadow-xl
+                                    hover:-translate-y-0.5
+
+                                    transition-all
+                                    duration-300
+                                "
+                            >
+                                Manage Users
+                            </button>
+
+
+                            {/* Logout */}
+
+                            <button
+                                onClick={
+                                    handleLogout
+                                }
+                                className="
+                                    flex
+                                    items-center
+                                    justify-center
+
+                                    gap-2
+
+                                    bg-gradient-to-r
+                                    from-red-500
+                                    to-red-600
+
+                                    hover:from-red-600
+                                    hover:to-red-700
+
+                                    text-white
+
+                                    px-4
+                                    sm:px-5
+
+                                    py-3
+
+                                    rounded-2xl
+
+                                    shadow-lg
+                                    hover:shadow-xl
+
+                                    transition-all
+                                    duration-300
+
+                                    active:scale-95
+                                "
+                            >
+
+                                Logout
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    {/* Mobile Manage Users */}
+
+                    <button
+                        onClick={() =>
+                            navigate(
+                                "/admin/users"
+                            )
+                        }
+                        className="
+                            sm:hidden
+
+                            w-full
+
+                            mt-5
+
+                            bg-gradient-to-r
+                            from-purple-600
+                            to-indigo-600
+
+                            text-white
+
+                            px-5
+                            py-3
+
+                            rounded-2xl
+
+                            shadow-lg
+                        "
+                    >
+                        Manage Users
+                    </button>
+
+                </header>
+
+
+                {/* ================= ANALYTICS ================= */}
+
+                <section className="mb-8">
+
+                    <AnalyticsCards
+                        total={total}
+                        pending={pending}
+                        inProgress={inProgress}
+                        resolved={resolved}
+                        highPriority={highPriority}
+                        overdue={overdue}
+                    />
+
+                </section>
+
+
+                {/* ================= COMPLAINT STATS ================= */}
+
+                <section className="mb-8">
+
+                    <ComplaintStats
+                        complaints={complaints}
+                    />
+
+                </section>
+
+
+                {/* ================= REPORT BUTTONS ================= */}
+
+                <section
+                    className="
+                        flex
+                        flex-col
+                        sm:flex-row
+
+                        justify-end
+
+                        gap-3
+
+                        mb-8
+                    "
+                >
+
+                    <button
+                        onClick={
+                            downloadExcel
+                        }
+                        className="
+                            flex-1
+                            sm:flex-none
+
+                            bg-green-600
+                            text-white
+
+                            px-5
+                            py-3
+
+                            rounded-xl
+
+                            hover:bg-green-700
+
+                            shadow-md
+
+                            transition
+                        "
+                    >
+                        📊 Download Excel Report
+                    </button>
+
+
+                    <button
+                        onClick={
+                            downloadPDF
+                        }
+                        className="
+                            flex-1
+                            sm:flex-none
+
+                            bg-red-600
+                            text-white
+
+                            px-5
+                            py-3
+
+                            rounded-xl
+
+                            hover:bg-red-700
+
+                            shadow-md
+
+                            transition
+                        "
+                    >
+                        📄 Download PDF
+                    </button>
+
+                </section>
+
+
+                {/* ================= CHARTS ================= */}
+
+                <section
+                    className="
+                        grid
+                        grid-cols-1
+                        lg:grid-cols-2
+
+                        gap-6
+
+                        mb-8
+                    "
+                >
+
+                    <StatusPieChart
+                        pieData={pieData}
+                        COLORS={COLORS}
+                    />
+
+                    <CategoryBarChart
+                        categoryData={
+                            categoryData
+                        }
+                    />
+
+                </section>
+
+
+                {/* ================= FILTERS ================= */}
+
+                <section className="mb-8">
+
+                    <ComplaintFilters
+                        search={search}
+                        setSearch={setSearch}
+
+                        statusFilter={
+                            statusFilter
+                        }
+                        setStatusFilter={
+                            setStatusFilter
+                        }
+
+                        priorityFilter={
+                            priorityFilter
+                        }
+                        setPriorityFilter={
+                            setPriorityFilter
+                        }
+                    />
+
+                </section>
+
+
+                {/* ================= RECENT ACTIVITY ================= */}
+
+                <section className="mb-8">
+
+                    <RecentActivity
+                        recentComplaints={
+                            recentComplaints
+                        }
+                    />
+
+                </section>
+
+
+                {/* ================= COMPLAINT TABLE ================= */}
+
+                <section>
+
+                    {loading ? (
+
+                        <LoadingComplaints />
+
+                    ) : filteredComplaints.length === 0 ? (
+
+                        <EmptyComplaints />
+
+                    ) : (
+
+                        <ComplaintTable
+                            complaints={
+                                filteredComplaints
+                            }
+                            faculties={[]}
+                            updateComplaintStatus={
+                                updateStatus
+                            }
+                        />
+
+                    )}
+
+                </section>
+
+
+            </main>
+
         </div>
 
-            <button
-                onClick={() => navigate("/admin/users")}
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg hover:scale-105 transition mb-6">
-                Manage Users
-            </button>
-
-            <AnalyticsCards
-                total={total}
-                pending={pending}
-                inProgress={inProgress}
-                resolved={resolved}
-                highPriority={highPriority}
-                overdue={overdue}
-            />
-
-            <ComplaintStats complaints={complaints} />
-
-            <div className="flex justify-end gap-3 mb-6">
-
-                <button
-                    onClick={downloadExcel}
-                    className="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700"
-                >
-                    📊 Download Excel Report
-                </button>
-
-                <button
-                    onClick={downloadPDF}
-                    className="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700"
-                >
-                    📄 Download PDF
-                </button>
-
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-
-                <StatusPieChart
-                    pieData={pieData}
-                    COLORS={COLORS}
-                />
-
-                <CategoryBarChart
-                    categoryData={categoryData}
-                />
-
-            </div>
-
-            <ComplaintFilters
-                search={search}
-                setSearch={setSearch}
-
-                statusFilter={statusFilter}
-                setStatusFilter={setStatusFilter}
-
-                priorityFilter={priorityFilter}
-                setPriorityFilter={setPriorityFilter}
-            />
-
-            <div className="mb-8">
-
-                <RecentActivity
-                    recentComplaints={recentComplaints}
-                />
-
-            </div>
-
-            
-            {loading ? (
-
-            <LoadingComplaints />
-
-        ) : filteredComplaints.length === 0 ? (
-
-            <EmptyComplaints />
-
-        ) : (
-
-            <ComplaintTable
-                complaints={filteredComplaints}
-                faculties={[]}
-                updateComplaintStatus={updateStatus}
-            />
-
-        )}
-
-                    
-    </div>
     );
+
 }
-
-
 
 export default AdminDashboard;

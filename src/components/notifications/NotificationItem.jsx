@@ -5,20 +5,16 @@ import {
 } from "lucide-react";
 
 function NotificationItem({
-
     notification,
-
     markAsRead,
-
 }) {
 
     const getIcon = () => {
 
-        if (
-            notification.message
-                ?.toLowerCase()
-                .includes("resolved")
-        ) {
+        const message =
+            notification.message?.toLowerCase() || "";
+
+        if (message.includes("resolved")) {
 
             return (
                 <CheckCircle2
@@ -30,9 +26,8 @@ function NotificationItem({
         }
 
         if (
-            notification.message
-                ?.toLowerCase()
-                .includes("pending")
+            message.includes("pending") ||
+            message.includes("rejected")
         ) {
 
             return (
@@ -53,81 +48,126 @@ function NotificationItem({
 
     };
 
+
     const getTime = (date) => {
 
-        const now = new Date();
+        if (!date) return "";
 
+        const now = new Date();
         const created = new Date(date);
 
-        const diff =
-            Math.floor(
-                (now - created) / 1000
-            );
+        const diff = Math.floor(
+            (now - created) / 1000
+        );
 
-        if (diff < 60)
-            return `${diff}s ago`;
+        if (diff < 60) {
 
-        if (diff < 3600)
+            return diff <= 1
+                ? "Just now"
+                : `${diff}s ago`;
+
+        }
+
+        if (diff < 3600) {
+
             return `${Math.floor(
                 diff / 60
             )}m ago`;
 
-        if (diff < 86400)
+        }
+
+        if (diff < 86400) {
+
             return `${Math.floor(
                 diff / 3600
             )}h ago`;
+
+        }
+
+        if (diff < 604800) {
+
+            return `${Math.floor(
+                diff / 86400
+            )}d ago`;
+
+        }
 
         return created.toLocaleDateString();
 
     };
 
+
+    const handleClick = () => {
+
+        if (!notification.isRead) {
+
+            markAsRead(
+                notification._id
+            );
+
+        }
+
+    };
+
+
     return (
 
         <div
-
-            onClick={() =>
-                markAsRead(notification._id)
-            }
-
+            onClick={handleClick}
             className={`
                 flex
                 gap-4
+
                 p-5
+
                 cursor-pointer
-                transition-all
-                duration-300
+
                 border-b
                 border-slate-100
+
+                transition-all
+                duration-300
+
                 hover:bg-indigo-50
+
                 ${
                     !notification.isRead
                         ? "bg-indigo-50/60"
                         : "bg-white"
                 }
             `}
-
         >
 
+            {/* Notification Icon */}
+
             <div
-                className="
+                className={`
                     w-11
                     h-11
                     rounded-2xl
-                    bg-gradient-to-br
-                    from-indigo-100
-                    to-purple-100
+
                     flex
                     items-center
                     justify-center
+
                     shrink-0
-                "
+
+                    ${
+                        !notification.isRead
+                            ? "bg-indigo-100"
+                            : "bg-slate-100"
+                    }
+                `}
             >
 
                 {getIcon()}
 
             </div>
 
-            <div className="flex-1">
+
+            {/* Content */}
+
+            <div className="flex-1 min-w-0">
 
                 <div
                     className="
@@ -142,6 +182,9 @@ function NotificationItem({
                         className={`
                             text-sm
                             leading-relaxed
+
+                            break-words
+
                             ${
                                 !notification.isRead
                                     ? "font-semibold text-slate-800"
@@ -154,6 +197,9 @@ function NotificationItem({
 
                     </p>
 
+
+                    {/* Unread Indicator */}
+
                     {!notification.isRead && (
 
                         <span
@@ -161,15 +207,23 @@ function NotificationItem({
                                 w-2.5
                                 h-2.5
                                 rounded-full
+
                                 bg-indigo-600
-                                mt-2
+
+                                mt-1.5
+
                                 shrink-0
+
+                                shadow-sm
                             "
                         />
 
                     )}
 
                 </div>
+
+
+                {/* Time */}
 
                 <p
                     className="

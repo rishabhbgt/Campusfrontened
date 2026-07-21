@@ -5,11 +5,11 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./components/admin/ProtectedRoute";
 import CreateComplaint from "./pages/CreateComplaint";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsers from "./pages/AdminUsers";
-import AdminRoute from "./components/AdminRoute";
+import AdminRoute from "./components/admin/AdminRoute";
 import EditComplaint from "./pages/EditComplaint";
 import ComplaintDetails from "./pages/ComplaintDetails";
 
@@ -38,7 +38,7 @@ function App() {
       <Route
       path="/admin-dashboard"
       element={
-        <AdminRoute role="admin">
+        <AdminRoute>
           <AdminDashboard />
         </AdminRoute>
       }
@@ -47,7 +47,7 @@ function App() {
     <Route
       path="/admin/users"
       element={
-        <AdminRoute role="admin">
+        <AdminRoute>
           <AdminUsers />
         </AdminRoute>
       }
