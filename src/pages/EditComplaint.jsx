@@ -43,48 +43,111 @@ function EditComplaint() {
 
     return (
 
-        <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 py-10">
+        <div
+            className="
+                min-h-screen
+                bg-gradient-to-br
+                from-slate-100
+                via-blue-50
+                to-indigo-100
+                px-4
+                sm:px-6
+                lg:px-8
+                py-8
+                sm:py-10
+                lg:py-12
+            "
+        >
 
-            <div className="max-w-3xl mx-auto">
+            <main
+                className="
+                    max-w-3xl
+                    mx-auto
+                "
+            >
 
-                <div className="bg-white rounded-3xl shadow-xl p-8">
+                {/* ================= EDIT COMPLAINT CARD ================= */}
 
-                    <EditHeader />
+                <div
+                    className="
+                        bg-white/80
+                        backdrop-blur-xl
+                        rounded-3xl
+                        shadow-2xl
+                        border
+                        border-white/60
+                        overflow-hidden
+                    "
+                >
 
-                    <ComplaintForm handleSubmit={updateComplaint}>
+                    {/* ================= HEADER ================= */}
 
-                        <TitleInput
-                            title={title}
-                            setTitle={setTitle}
-                        />
+                    <div className="px-5 sm:px-8 pt-6 sm:pt-8">
 
-                        <DescriptionInput
-                            description={description}
-                            setDescription={setDescription}
-                        />
+                        <EditHeader />
 
-                        <CategorySelect
-                            category={category}
-                            setCategory={setCategory}
-                        />
+                    </div>
 
-                        <ImageUpload
-                            image={image}
-                            preview={preview}
-                            currentImage={currentImage}
-                            setPreview={setPreview}
-                            setShowPreview={setShowPreview}
-                            handleImage={handleImage}
-                            removeImage={removeImage}
-                        />
 
-                        <SubmitButton loading={loading} />
+                    {/* ================= FORM ================= */}
 
-                    </ComplaintForm>
+                    <div className="px-5 sm:px-8 pb-8">
+
+                        <ComplaintForm
+                            handleSubmit={updateComplaint}
+                        >
+
+                            {/* Title */}
+
+                            <TitleInput
+                                title={title}
+                                setTitle={setTitle}
+                            />
+
+
+                            {/* Description */}
+
+                            <DescriptionInput
+                                description={description}
+                                setDescription={setDescription}
+                            />
+
+
+                            {/* Category */}
+
+                            <CategorySelect
+                                category={category}
+                                setCategory={setCategory}
+                            />
+
+
+                            {/* Image */}
+
+                            <ImageUpload
+                                image={image}
+                                preview={preview}
+                                currentImage={currentImage}
+                                setPreview={setPreview}
+                                setShowPreview={setShowPreview}
+                                handleImage={handleImage}
+                                removeImage={removeImage}
+                            />
+
+
+                            {/* Submit */}
+
+                            <SubmitButton
+                                loading={loading}
+                                buttonText="Submit Complaint"
+                            />
+
+                        </ComplaintForm>
+
+                    </div>
 
                 </div>
 
-            </div>
+            </main>
 
         </div>
 
@@ -93,3 +156,4 @@ function EditComplaint() {
 }
 
 export default EditComplaint;
+

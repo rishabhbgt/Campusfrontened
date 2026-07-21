@@ -1,26 +1,10 @@
 function NotificationHeader({
-
     unreadCount,
-
     markAllAsRead,
-
 }) {
-
     return (
-
-        <div
-            className="
-                flex
-                items-center
-                justify-between
-                px-5
-                py-4
-                border-b
-            "
-        >
-
+        <div className="flex items-center justify-between px-5 py-4 border-b">
             <div>
-
                 <h2 className="text-lg font-bold">
                     Notifications
                 </h2>
@@ -28,7 +12,6 @@ function NotificationHeader({
                 <p className="text-sm text-slate-500">
                     {unreadCount} unread
                 </p>
-
             </div>
 
             <button
@@ -42,11 +25,8 @@ function NotificationHeader({
             >
                 Mark all read
             </button>
-
         </div>
-
     );
-
 }
 
 export default NotificationHeader;

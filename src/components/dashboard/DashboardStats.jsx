@@ -23,88 +23,203 @@ function DashboardStats({ complaints }) {
 
     const stats = [
         {
-            title: "Total",
+            title: "Total Complaints",
             value: total,
-            icon: <FileText size={28} />,
+            icon: FileText,
             bg: "from-indigo-500 to-blue-600",
+            lightBg: "bg-indigo-50",
+            iconColor: "text-indigo-600",
         },
         {
             title: "Pending",
             value: pending,
-            icon: <Clock3 size={28} />,
+            icon: Clock3,
             bg: "from-yellow-400 to-orange-500",
+            lightBg: "bg-yellow-50",
+            iconColor: "text-orange-500",
         },
         {
             title: "In Progress",
             value: progress,
-            icon: <LoaderCircle size={28} />,
+            icon: LoaderCircle,
             bg: "from-sky-500 to-cyan-500",
+            lightBg: "bg-sky-50",
+            iconColor: "text-sky-600",
         },
         {
             title: "Resolved",
             value: resolved,
-            icon: <CheckCircle2 size={28} />,
+            icon: CheckCircle2,
             bg: "from-green-500 to-emerald-600",
+            lightBg: "bg-green-50",
+            iconColor: "text-green-600",
         },
     ];
 
     return (
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mt-8">
+        <section className="mt-8">
 
-            {stats.map((item) => (
+            <div
+                className="
+                    grid
+                    grid-cols-1
+                    sm:grid-cols-2
+                    xl:grid-cols-4
+                    gap-5
+                "
+            >
 
-                <div
-                    key={item.title}
-                    className="
-                    bg-white
-                    rounded-3xl
-                    shadow-lg
-                    hover:shadow-2xl
-                    hover:-translate-y-1
-                    transition-all
-                    duration-300
-                    p-6
-                    "
-                >
+                {stats.map((item) => {
 
-                    <div className="flex items-center justify-between">
+                    const Icon = item.icon;
 
-                        <div>
-
-                            <p className="text-slate-500 text-sm">
-                                {item.title}
-                            </p>
-
-                            <h2 className="text-4xl font-bold mt-2 text-slate-800">
-                                {item.value}
-                            </h2>
-
-                        </div>
+                    return (
 
                         <div
-                            className={`
-                            w-14
-                            h-14
-                            rounded-2xl
-                            flex
-                            items-center
-                            justify-center
-                            text-white
-                            bg-gradient-to-r
-                            ${item.bg}
-                            `}
+                            key={item.title}
+                            className="
+                                group
+                                relative
+                                overflow-hidden
+                                bg-white/80
+                                backdrop-blur-xl
+                                border
+                                border-white/60
+                                rounded-3xl
+                                shadow-lg
+                                p-6
+                                transition-all
+                                duration-300
+                                hover:-translate-y-1
+                                hover:shadow-2xl
+                            "
                         >
-                            {item.icon}
+
+                            {/* Background Glow */}
+
+                            <div
+                                className={`
+                                    absolute
+                                    -right-10
+                                    -top-10
+                                    w-28
+                                    h-28
+                                    rounded-full
+                                    bg-gradient-to-br
+                                    ${item.bg}
+                                    opacity-10
+                                    group-hover:scale-150
+                                    transition-transform
+                                    duration-500
+                                `}
+                            />
+
+
+                            <div
+                                className="
+                                    relative
+                                    flex
+                                    items-center
+                                    justify-between
+                                "
+                            >
+
+                                {/* Text */}
+
+                                <div>
+
+                                    <p
+                                        className="
+                                            text-sm
+                                            font-medium
+                                            text-slate-500
+                                        "
+                                    >
+                                        {item.title}
+                                    </p>
+
+                                    <h2
+                                        className="
+                                            mt-2
+                                            text-4xl
+                                            font-extrabold
+                                            text-slate-800
+                                        "
+                                    >
+                                        {item.value}
+                                    </h2>
+
+                                    <p
+                                        className="
+                                            mt-1
+                                            text-xs
+                                            text-slate-400
+                                        "
+                                    >
+                                        {item.title === "Total Complaints"
+                                            ? "All submitted complaints"
+                                            : item.title === "Pending"
+                                            ? "Waiting for action"
+                                            : item.title === "In Progress"
+                                            ? "Currently being handled"
+                                            : "Successfully completed"
+                                        }
+                                    </p>
+
+                                </div>
+
+
+                                {/* Icon */}
+
+                                <div
+                                    className={`
+                                        w-14
+                                        h-14
+                                        rounded-2xl
+                                        ${item.lightBg}
+                                        flex
+                                        items-center
+                                        justify-center
+                                        transition-all
+                                        duration-300
+                                        group-hover:scale-110
+                                    `}
+                                >
+
+                                    <Icon
+                                        size={28}
+                                        className={item.iconColor}
+                                    />
+
+                                </div>
+
+                            </div>
+
+
+                            {/* Bottom Gradient Line */}
+
+                            <div
+                                className={`
+                                    absolute
+                                    bottom-0
+                                    left-0
+                                    w-full
+                                    h-1
+                                    bg-gradient-to-r
+                                    ${item.bg}
+                                `}
+                            />
+
                         </div>
 
-                    </div>
+                    );
 
-                </div>
+                })}
 
-            ))}
+            </div>
 
-        </div>
+        </section>
 
     );
 }

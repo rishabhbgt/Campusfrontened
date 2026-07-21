@@ -1,17 +1,11 @@
 import { Bell } from "lucide-react";
 
 function NotificationBadge({
-
     unreadCount,
-
     open,
-
     setOpen,
-
 }) {
-
     return (
-
         <button
             onClick={() => setOpen(!open)}
             className="
@@ -32,14 +26,12 @@ function NotificationBadge({
                 justify-center
             "
         >
-
             <Bell
                 size={22}
                 className="text-slate-700"
             />
 
             {unreadCount > 0 && (
-
                 <span
                     className="
                         absolute
@@ -62,17 +54,14 @@ function NotificationBadge({
                         ring-white
                     "
                 >
-
-                    {unreadCount > 99 ? "99+" : unreadCount}
-
+                    {unreadCount > 99
+                        ? "99+"
+                        : unreadCount}
                 </span>
-
             )}
-
         </button>
-
     );
-
 }
 
 export default NotificationBadge;
+

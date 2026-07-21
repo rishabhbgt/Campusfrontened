@@ -9,57 +9,96 @@ function EmptyComplaint() {
 
         <div
             className="
-                bg-white
+                bg-white/80
+                backdrop-blur-lg
                 rounded-3xl
-                shadow-lg
+                shadow-xl
                 border
-                border-slate-200
-                py-20
-                px-8
+                border-white/60
+                py-16
+                sm:py-20
+                px-6
+                sm:px-8
                 text-center
+                transition-all
+                duration-300
+                hover:shadow-2xl
             "
         >
 
+            {/* Icon */}
+
             <div
                 className="
-                    w-24
-                    h-24
+                    w-20
+                    h-20
+                    sm:w-24
+                    sm:h-24
                     mx-auto
-                    rounded-full
-                    bg-blue-100
+                    rounded-3xl
+                    bg-gradient-to-br
+                    from-blue-100
+                    to-indigo-100
                     flex
                     items-center
                     justify-center
                     mb-6
+                    shadow-inner
                 "
             >
 
                 <FileSearch
                     size={42}
-                    className="text-blue-600"
+                    className="text-indigo-600"
                 />
 
             </div>
 
-            <h2 className="text-3xl font-bold text-slate-800">
 
+            {/* Heading */}
+
+            <h2
+                className="
+                    text-2xl
+                    sm:text-3xl
+                    font-extrabold
+                    text-slate-800
+                "
+            >
                 No Complaints Found
-
             </h2>
 
-            <p className="mt-3 text-slate-500 max-w-md mx-auto">
 
+            {/* Description */}
+
+            <p
+                className="
+                    mt-3
+                    text-sm
+                    sm:text-base
+                    text-slate-500
+                    max-w-lg
+                    mx-auto
+                    leading-relaxed
+                "
+            >
                 You haven't submitted any complaints yet.
-                Create your first complaint and track its status in real time.
-
+                Raise your first complaint and track its status
+                easily from your dashboard.
             </p>
 
+
+            {/* Button */}
+
             <button
-                onClick={() => navigate("/create-complaint")}
+                onClick={() =>
+                    navigate("/create-complaint")
+                }
                 className="
                     mt-8
                     inline-flex
                     items-center
+                    justify-center
                     gap-2
                     px-6
                     py-3
@@ -72,6 +111,9 @@ function EmptyComplaint() {
                     text-white
                     font-semibold
                     shadow-lg
+                    hover:shadow-xl
+                    hover:-translate-y-0.5
+                    active:scale-95
                     transition-all
                     duration-300
                 "
