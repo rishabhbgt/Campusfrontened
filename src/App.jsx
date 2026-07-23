@@ -12,6 +12,7 @@ import AdminUsers from "./pages/AdminUsers";
 import AdminRoute from "./components/admin/AdminRoute";
 import EditComplaint from "./pages/EditComplaint";
 import ComplaintDetails from "./pages/ComplaintDetails";
+import FacultyDashboard from "./pages/FacultyDashboard";
 
 
 function App() {
@@ -34,6 +35,15 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      <Route
+    path="/faculty-dashboard"
+    element={
+        <ProtectedRoute role="faculty">
+            <FacultyDashboard />
+        </ProtectedRoute>
+    }
+/>
 
       <Route
       path="/admin-dashboard"

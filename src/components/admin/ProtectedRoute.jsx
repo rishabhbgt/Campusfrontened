@@ -1,18 +1,57 @@
 import { Navigate } from "react-router-dom";
 
-function ProtectedRoute({ children, role }) {
+function ProtectedRoute({
+    children,
+    role,
+}) {
 
-    const user = JSON.parse(
-        localStorage.getItem("user") || "null"
-    );
+    const token =
+        localStorage.getItem("token");
 
-    if (!user) {
+    const storedUser =
+        localStorage.getItem("user");
+
+
+    if (!token || !storedUser) {
+
         return (
             <Navigate
                 to="/"
                 replace
             />
         );
+
+    }
+
+    let user;
+
+    try {
+
+        user =
+            JSON.parse(storedUser);
+
+    } catch (error) {
+
+        console.error(
+            "Invalid user data:",
+            error
+        );
+
+        localStorage.removeItem(
+            "token"
+        );
+
+        localStorage.removeItem(
+            "user"
+        );
+
+        return (
+            <Navigate
+                to="/"
+                replace
+            />
+        );
+
     }
 
     if (
@@ -20,24 +59,58 @@ function ProtectedRoute({ children, role }) {
         user.role !== role
     ) {
 
-        if (user.role === "admin") {
+
+        if (
+            user.role === "student"
+        ) {
+
+            return (
+                <Navigate
+                    to="/dashboard"
+                    replace
+                />
+            );
+
+        }
+
+        if (
+            user.role === "faculty"
+        ) {
+
+            return (
+                <Navigate
+                    to="/faculty-dashboard"
+                    replace
+                />
+            );
+
+        } 
+
+        if (
+            user.role === "admin"
+        ) {
+
             return (
                 <Navigate
                     to="/admin-dashboard"
                     replace
                 />
             );
+
         }
+
 
         return (
             <Navigate
-                to="/dashboard"
+                to="/"
                 replace
             />
         );
+
     }
 
     return children;
+
 }
 
 export default ProtectedRoute;
