@@ -1,14 +1,14 @@
 import RoleBadge from "../adminUsers/RoleBadge";
 import StatusDropdown from "./StatusDropdown";
 import PriorityDropdown from "./PriorityDropdown";
-// import AssignFaculty from "./AssignFaculty";
+import AssignFaculty from "./AssignFaculty";
 import ComplaintActions from "./ComplaintActions";
 
 function ComplaintRow({
 
     complaint,
 
-    // faculties,
+    faculties,
 
     updateComplaintStatus,
 
@@ -123,7 +123,7 @@ function ComplaintRow({
 
             <td className="px-6 py-5 text-center">
 
-                {/* <AssignFaculty
+                <AssignFaculty
 
                     complaint={complaint}
 
@@ -131,7 +131,7 @@ function ComplaintRow({
 
                     updateComplaintStatus={updateComplaintStatus}
 
-                /> */}
+                />
 
             </td>
 

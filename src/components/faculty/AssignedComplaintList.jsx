@@ -3,6 +3,7 @@ import AssignedComplaintCard from "./AssignedComplaintCard";
 function AssignedComplaintList({
     complaints = [],
     onView,
+    onStatusUpdate,
 }) {
 
 
@@ -122,6 +123,7 @@ function AssignedComplaintList({
                         key={complaint._id}
                         complaint={complaint}
                         onView={onView}
+                        onStatusUpdate={onStatusUpdate}
                     />
 
                 )

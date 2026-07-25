@@ -12,6 +12,7 @@ import ComplaintStatusBadge from "./ComplaintStatusBadge";
 function AssignedComplaintCard({
     complaint,
     onView,
+    onStatusUpdate,
 }) {
 
     const {
@@ -243,11 +244,54 @@ function AssignedComplaintCard({
 
                 {/* Status */}
 
-                <div className="shrink-0">
+                <div className="flex shrink-0 flex-col items-end gap-2">
 
                     <ComplaintStatusBadge
                         status={status}
                     />
+
+                    <select
+                        value={status}
+                        onChange={(e) =>
+                            onStatusUpdate?.(
+                                complaint._id,
+                                e.target.value
+                            )
+                        }
+                        className="
+                            rounded-xl
+                            border
+                            border-slate-200
+                            bg-white
+                            px-3
+                            py-2
+                            text-xs
+                            font-semibold
+                            text-slate-700
+                            shadow-sm
+                            outline-none
+                            transition-all
+                            duration-200
+                            hover:border-indigo-300
+                            focus:border-indigo-500
+                            focus:ring-2
+                            focus:ring-indigo-200
+                        "
+                    >
+
+                        <option value="Pending">
+                            Pending
+                        </option>
+
+                        <option value="In Progress">
+                            In Progress
+                        </option>
+
+                        <option value="Resolved">
+                            Resolved
+                        </option>
+
+                    </select>
 
                 </div>
 

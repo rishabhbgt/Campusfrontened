@@ -33,6 +33,8 @@ function AdminDashboard() {
 
     const [loading, setLoading] = useState(true);
 
+    const [faculties, setFaculties] = useState([]);
+
 
     // ================= FETCH COMPLAINTS =================
 
@@ -73,6 +75,49 @@ function AdminDashboard() {
         }
 
     };
+
+    // ================= FETCH FACULTIES =================
+
+const fetchFaculties = async () => {
+
+    try {
+
+        const token =
+            localStorage.getItem("token");
+
+        const response = await api.get(
+            "/users",
+            {
+                headers: {
+                    Authorization: token,
+                },
+            }
+        );
+
+        const facultyUsers =
+            (response.data.users || [])
+                .filter(
+                    (user) =>
+                        user.role === "faculty" &&
+                        !user.isBlocked
+                );
+
+        setFaculties(facultyUsers);
+
+    } catch (error) {
+
+        console.error(
+            "Failed to fetch faculties:",
+            error
+        );
+
+        toast.error(
+            "Failed to load faculty list"
+        );
+
+    }
+
+};
 
 
     // ================= UPDATE STATUS =================
@@ -229,8 +274,9 @@ function AdminDashboard() {
     useEffect(() => {
 
         fetchComplaints();
+        fetchFaculties();
 
-    }, []);
+}, []);
 
 
     // ================= STATISTICS =================
@@ -814,7 +860,7 @@ function AdminDashboard() {
                             complaints={
                                 filteredComplaints
                             }
-                            faculties={[]}
+                            faculties={faculties}
                             updateComplaintStatus={
                                 updateStatus
                             }
