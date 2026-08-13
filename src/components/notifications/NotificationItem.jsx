@@ -2,28 +2,44 @@ import {
     Bell,
     CheckCircle2,
     AlertTriangle,
+    ArrowUpRight,
 } from "lucide-react";
+
+import { useNavigate } from "react-router-dom";
 
 function NotificationItem({
     notification,
     markAsRead,
+    onClose,
 }) {
+
+    const navigate = useNavigate();
+
+
+    // ==========================================
+    // NOTIFICATION ICON
+    // ==========================================
 
     const getIcon = () => {
 
         const message =
             notification.message?.toLowerCase() || "";
 
-        if (message.includes("resolved")) {
+
+        if (
+            message.includes("resolved") ||
+            message.includes("completed")
+        ) {
 
             return (
                 <CheckCircle2
                     size={20}
-                    className="text-green-600"
+                    className="text-emerald-600"
                 />
             );
 
         }
+
 
         if (
             message.includes("pending") ||
@@ -33,11 +49,12 @@ function NotificationItem({
             return (
                 <AlertTriangle
                     size={20}
-                    className="text-yellow-500"
+                    className="text-amber-500"
                 />
             );
 
         }
+
 
         return (
             <Bell
@@ -49,16 +66,29 @@ function NotificationItem({
     };
 
 
+    // ==========================================
+    // TIME FORMAT
+    // ==========================================
+
     const getTime = (date) => {
 
-        if (!date) return "";
+        if (!date) {
+            return "";
+        }
 
-        const now = new Date();
-        const created = new Date(date);
 
-        const diff = Math.floor(
-            (now - created) / 1000
-        );
+        const now =
+            new Date();
+
+        const created =
+            new Date(date);
+
+
+        const diff =
+            Math.floor(
+                (now - created) / 1000
+            );
+
 
         if (diff < 60) {
 
@@ -68,6 +98,7 @@ function NotificationItem({
 
         }
 
+
         if (diff < 3600) {
 
             return `${Math.floor(
@@ -75,6 +106,7 @@ function NotificationItem({
             )}m ago`;
 
         }
+
 
         if (diff < 86400) {
 
@@ -84,6 +116,7 @@ function NotificationItem({
 
         }
 
+
         if (diff < 604800) {
 
             return `${Math.floor(
@@ -92,43 +125,75 @@ function NotificationItem({
 
         }
 
-        return created.toLocaleDateString();
+
+        return created.toLocaleDateString(
+            "en-IN",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+            }
+        );
 
     };
 
 
-    const handleClick = () => {
+    // ==========================================
+    // CLICK NOTIFICATION
+    // ==========================================
 
-        if (!notification.isRead) {
+    const handleClick = async () => {
 
-            markAsRead(
+    const success =
+        notification.isRead
+            ? true
+            : await markAsRead(
                 notification._id
             );
 
-        }
+    if (!success) {
+        return;
+    }
 
-    };
+    onClose?.();
+
+    if (notification.complaint?._id) {
+
+        navigate(
+            `/complaint/${notification.complaint._id}`
+        );
+
+    }
+
+};
 
 
     return (
 
-        <div
+        <button
+            type="button"
             onClick={handleClick}
             className={`
+                group
                 flex
+                w-full
                 gap-4
-
                 p-5
-
-                cursor-pointer
+                text-left
 
                 border-b
                 border-slate-100
 
                 transition-all
-                duration-300
+                duration-200
 
                 hover:bg-indigo-50
+
+                focus:outline-none
+                focus:bg-indigo-50
+                focus:ring-2
+                focus:ring-inset
+                focus:ring-indigo-500
 
                 ${
                     !notification.isRead
@@ -138,19 +203,22 @@ function NotificationItem({
             `}
         >
 
-            {/* Notification Icon */}
+            {/* Icon */}
 
             <div
                 className={`
-                    w-11
-                    h-11
-                    rounded-2xl
-
                     flex
+                    h-11
+                    w-11
+                    shrink-0
                     items-center
                     justify-center
+                    rounded-2xl
 
-                    shrink-0
+                    transition-transform
+                    duration-200
+
+                    group-hover:scale-105
 
                     ${
                         !notification.isRead
@@ -167,13 +235,13 @@ function NotificationItem({
 
             {/* Content */}
 
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
 
                 <div
                     className="
                         flex
-                        justify-between
                         items-start
+                        justify-between
                         gap-3
                     "
                 >
@@ -182,7 +250,6 @@ function NotificationItem({
                         className={`
                             text-sm
                             leading-relaxed
-
                             break-words
 
                             ${
@@ -192,30 +259,25 @@ function NotificationItem({
                             }
                         `}
                     >
-
                         {notification.message}
-
                     </p>
 
 
-                    {/* Unread Indicator */}
+                    {/* Unread Dot */}
 
                     {!notification.isRead && (
 
                         <span
                             className="
-                                w-2.5
-                                h-2.5
-                                rounded-full
-
-                                bg-indigo-600
-
                                 mt-1.5
-
+                                h-2.5
+                                w-2.5
                                 shrink-0
-
+                                rounded-full
+                                bg-indigo-600
                                 shadow-sm
                             "
+                            aria-label="Unread"
                         />
 
                     )}
@@ -223,25 +285,46 @@ function NotificationItem({
                 </div>
 
 
-                {/* Time */}
-
-                <p
+                <div
                     className="
-                        text-xs
-                        text-slate-400
                         mt-2
+                        flex
+                        items-center
+                        justify-between
+                        gap-3
                     "
                 >
 
-                    {getTime(
-                        notification.createdAt
-                    )}
+                    <p
+                        className="
+                            text-xs
+                            text-slate-400
+                        "
+                    >
+                        {getTime(
+                            notification.createdAt
+                        )}
+                    </p>
 
-                </p>
+
+                    {/* Open indicator */}
+
+                    <ArrowUpRight
+                        size={15}
+                        className="
+                            shrink-0
+                            text-slate-300
+                            transition-colors
+                            duration-200
+                            group-hover:text-indigo-500
+                        "
+                    />
+
+                </div>
 
             </div>
 
-        </div>
+        </button>
 
     );
 

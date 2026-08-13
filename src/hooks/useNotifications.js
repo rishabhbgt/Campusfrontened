@@ -1,74 +1,225 @@
-import { useEffect, useState } from "react";
+import {
+    useCallback,
+    useEffect,
+    useState,
+} from "react";
+
 import api from "../services/api";
 import socket from "../socket";
 import toast from "react-hot-toast";
 
+
 function useNotifications(user) {
 
-    const [notifications, setNotifications] = useState([]);
-    const [showNotifications, setShowNotifications] = useState(false);
+    const [
+        notifications,
+        setNotifications,
+    ] = useState([]);
 
-    const fetchNotifications = async () => {
+    const fetchNotifications =
+        useCallback(async () => {
 
-        try {
+            try {
 
-            const token = localStorage.getItem("token");
+                const token =
+                    localStorage.getItem("token");
 
-            const response = await api.get("/notifications", {
-                headers: {
-                    Authorization: token,
-                },
-            });
 
-            setNotifications(response.data.notifications);
-
-        } catch (error) {
-
-            console.log(error);
-
-        }
-
-    };
-
-    const markNotificationsAsRead = async () => {
-
-        try {
-
-            const token = localStorage.getItem("token");
-
-            await api.put(
-                "/notifications/read",
-                {},
-                {
-                    headers: {
-                        Authorization: token,
-                    },
+                if (!token) {
+                    return;
                 }
-            );
 
-            fetchNotifications();
 
-        } catch (error) {
+                const response =
+                    await api.get(
+                        "/notifications",
+                        {
+                            headers: {
+                                Authorization:
+                                    token,
+                            },
+                        }
+                    );
 
-            console.log(error);
 
-        }
+                setNotifications(
+                    response.data?.notifications || []
+                );
 
-    };
+
+            } catch (error) {
+
+                console.error(
+                    "Fetch Notifications Error:",
+                    error
+                );
+
+            }
+
+        }, []);
+
+    const markAsRead =
+        useCallback(async (id) => {
+
+            try {
+
+                const token =
+                    localStorage.getItem("token");
+
+
+                if (!token) {
+                    return false;
+                }
+
+
+                await api.put(
+
+                    `/notifications/${id}/read`,
+
+                    {},
+
+                    {
+                        headers: {
+                            Authorization:
+                                token,
+                        },
+                    }
+
+                );
+
+                setNotifications(
+                    (prevNotifications) =>
+                        prevNotifications.map(
+                            (notification) =>
+                                notification._id === id
+                                    ? {
+                                        ...notification,
+                                        isRead: true,
+                                    }
+                                    : notification
+                        )
+                );
+
+
+                return true;
+
+
+            } catch (error) {
+
+                console.error(
+                    "Mark Notification Read Error:",
+                    error
+                );
+
+
+                toast.error(
+                    error.response
+                        ?.data
+                        ?.message ||
+                    "Failed to mark notification as read"
+                );
+
+
+                return false;
+
+            }
+
+        }, []);
+
+    const markAllAsRead =
+        useCallback(async () => {
+
+            try {
+
+                const token =
+                    localStorage.getItem("token");
+
+
+                if (!token) {
+                    return false;
+                }
+
+
+                await api.put(
+
+                    "/notifications/read-all",
+
+                    {},
+
+                    {
+                        headers: {
+                            Authorization:
+                                token,
+                        },
+                    }
+
+                );
+
+                setNotifications(
+                    (prevNotifications) =>
+                        prevNotifications.map(
+                            (notification) => ({
+                                ...notification,
+                                isRead: true,
+                            })
+                        )
+                );
+
+
+                toast.success(
+                    "All notifications marked as read"
+                );
+
+
+                return true;
+
+
+            } catch (error) {
+
+                console.error(
+                    "Mark All Notifications Read Error:",
+                    error
+                );
+
+
+                toast.error(
+                    error.response
+                        ?.data
+                        ?.message ||
+                    "Failed to mark all notifications as read"
+                );
+
+
+                return false;
+
+            }
+
+        }, []);
 
     useEffect(() => {
 
         fetchNotifications();
 
-    }, []);
+    }, [
+        fetchNotifications,
+    ]);
 
     useEffect(() => {
 
+        if (!user?.id) {
+            return;
+        }
+
+
         const registerUser = () => {
 
-            socket.emit("register", user.id);
+            socket.emit(
+                "register",
+                user.id
+            );
 
         };
+
 
         if (socket.connected) {
 
@@ -76,36 +227,68 @@ function useNotifications(user) {
 
         } else {
 
-            socket.on("connect", registerUser);
+            socket.on(
+                "connect",
+                registerUser
+            );
 
         }
 
-        socket.on("newNotification", (data) => {
+
+        const handleNewNotification = (
+            data
+        ) => {
 
             fetchNotifications();
 
-            toast.success(data.message);
 
-        });
+            if (data?.message) {
 
-        return () => {
+                toast.success(
+                    data.message
+                );
 
-            socket.off("connect", registerUser);
-            socket.off("newNotification");
+            }
 
         };
 
-    }, []);
+
+        socket.on(
+            "newNotification",
+            handleNewNotification
+        );
+
+
+        return () => {
+
+            socket.off(
+                "connect",
+                registerUser
+            );
+
+            socket.off(
+                "newNotification",
+                handleNewNotification
+            );
+
+        };
+
+    }, [
+        user?.id,
+        fetchNotifications,
+    ]);
 
     return {
 
         notifications,
-        showNotifications,
-        setShowNotifications,
-        markNotificationsAsRead,
+
+        // New notification API
+        markAsRead,
+        markAllAsRead,
 
     };
 
 }
+
 
 export default useNotifications;

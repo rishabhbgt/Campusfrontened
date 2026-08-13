@@ -67,6 +67,7 @@ function NotificationBell({
                     notifications={notifications}
                     markAsRead={markAsRead}
                     markAllAsRead={markAllAsRead}
+                    onClose={() => setOpen(false)}
                 />
 
             )}

@@ -6,13 +6,24 @@ import api from "../../services/api";
 import NotificationBadge from "../notifications/NotificationBadge";
 import NotificationDropdown from "../notifications/NotificationDropdown";
 
+import toast from "react-hot-toast";
+
 function AdminNotificationBell() {
 
-    const [notifications, setNotifications] = useState([]);
-    const [open, setOpen] = useState(false);
+    const [
+        notifications,
+        setNotifications,
+    ] = useState([]);
+
+    const [
+        open,
+        setOpen,
+    ] = useState(false);
 
 
-    // ================= FETCH NOTIFICATIONS =================
+    // ==========================================
+    // FETCH NOTIFICATIONS
+    // ==========================================
 
     const fetchNotifications = async () => {
 
@@ -21,18 +32,27 @@ function AdminNotificationBell() {
             const token =
                 localStorage.getItem("token");
 
-            const response = await api.get(
-                "/notifications",
-                {
-                    headers: {
-                        Authorization: token,
-                    },
-                }
-            );
+
+            if (!token) {
+                return;
+            }
+
+
+            const response =
+                await api.get(
+                    "/notifications",
+                    {
+                        headers: {
+                            Authorization: token,
+                        },
+                    }
+                );
+
 
             setNotifications(
-                response.data.notifications || []
+                response.data?.notifications || []
             );
+
 
         } catch (error) {
 
@@ -46,7 +66,9 @@ function AdminNotificationBell() {
     };
 
 
-    // ================= MARK ONE AS READ =================
+    // ==========================================
+    // MARK ONE AS READ
+    // ==========================================
 
     const markAsRead = async (id) => {
 
@@ -55,27 +77,46 @@ function AdminNotificationBell() {
             const token =
                 localStorage.getItem("token");
 
+
+            if (!token) {
+                throw new Error(
+                    "Authentication token missing"
+                );
+            }
+
+
             await api.put(
+
                 `/notifications/${id}/read`,
+
                 {},
+
                 {
                     headers: {
                         Authorization: token,
                     },
                 }
+
             );
 
+
             // Update UI immediately
-            setNotifications((prev) =>
-                prev.map((notification) =>
-                    notification._id === id
-                        ? {
-                            ...notification,
-                            isRead: true,
-                        }
-                        : notification
-                )
+            setNotifications(
+                (prev) =>
+                    prev.map(
+                        (notification) =>
+                            notification._id === id
+                                ? {
+                                    ...notification,
+                                    isRead: true,
+                                }
+                                : notification
+                    )
             );
+
+
+            return true;
+
 
         } catch (error) {
 
@@ -84,12 +125,25 @@ function AdminNotificationBell() {
                 error
             );
 
+
+            toast.error(
+                error.response
+                    ?.data
+                    ?.message ||
+                "Failed to mark notification as read"
+            );
+
+
+            return false;
+
         }
 
     };
 
 
-    // ================= MARK ALL AS READ =================
+    // ==========================================
+    // MARK ALL AS READ
+    // ==========================================
 
     const markAllAsRead = async () => {
 
@@ -98,23 +152,47 @@ function AdminNotificationBell() {
             const token =
                 localStorage.getItem("token");
 
+
+            if (!token) {
+                throw new Error(
+                    "Authentication token missing"
+                );
+            }
+
+
             await api.put(
+
                 "/notifications/read-all",
+
                 {},
+
                 {
                     headers: {
                         Authorization: token,
                     },
                 }
+
             );
 
-            // Update UI immediately
-            setNotifications((prev) =>
-                prev.map((notification) => ({
-                    ...notification,
-                    isRead: true,
-                }))
+
+            setNotifications(
+                (prev) =>
+                    prev.map(
+                        (notification) => ({
+                            ...notification,
+                            isRead: true,
+                        })
+                    )
             );
+
+
+            toast.success(
+                "All notifications marked as read"
+            );
+
+
+            return true;
+
 
         } catch (error) {
 
@@ -123,12 +201,25 @@ function AdminNotificationBell() {
                 error
             );
 
+
+            toast.error(
+                error.response
+                    ?.data
+                    ?.message ||
+                "Failed to mark all notifications as read"
+            );
+
+
+            return false;
+
         }
 
     };
 
 
-    // ================= INITIAL FETCH =================
+    // ==========================================
+    // INITIAL FETCH
+    // ==========================================
 
     useEffect(() => {
 
@@ -137,19 +228,50 @@ function AdminNotificationBell() {
     }, []);
 
 
-    // ================= SOCKET =================
+    // ==========================================
+    // SOCKET
+    // ==========================================
 
     useEffect(() => {
 
-        const user = JSON.parse(
-            localStorage.getItem("user")
-        );
+        const storedUser =
+            localStorage.getItem("user");
 
-        if (user) {
+
+        if (!storedUser) {
+            return;
+        }
+
+
+        let user;
+
+        try {
+
+            user =
+                JSON.parse(storedUser);
+
+        } catch (error) {
+
+            console.error(
+                "Invalid user data:",
+                error
+            );
+
+            return;
+
+        }
+
+
+        const userId =
+            user?._id ||
+            user?.id;
+
+
+        if (userId) {
 
             socket.emit(
                 "register",
-                user._id || user.id
+                userId
             );
 
         }
@@ -180,7 +302,9 @@ function AdminNotificationBell() {
     }, []);
 
 
-    // ================= UNREAD COUNT =================
+    // ==========================================
+    // UNREAD COUNT
+    // ==========================================
 
     const unreadCount =
         notifications.filter(
@@ -189,7 +313,9 @@ function AdminNotificationBell() {
         ).length;
 
 
-    // ================= UI =================
+    // ==========================================
+    // UI
+    // ==========================================
 
     return (
 
@@ -210,9 +336,21 @@ function AdminNotificationBell() {
             {open && (
 
                 <NotificationDropdown
-                    notifications={notifications}
-                    markAsRead={markAsRead}
-                    markAllAsRead={markAllAsRead}
+                    notifications={
+                        notifications
+                    }
+
+                    markAsRead={
+                        markAsRead
+                    }
+
+                    markAllAsRead={
+                        markAllAsRead
+                    }
+
+                    onClose={() =>
+                        setOpen(false)
+                    }
                 />
 
             )}

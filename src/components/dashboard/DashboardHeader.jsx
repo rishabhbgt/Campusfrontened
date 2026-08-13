@@ -8,9 +8,8 @@ import NotificationBell from "../notifications/NotificationBell";
 function DashboardHeader({
     user,
     notifications,
-    showNotifications,
-    setShowNotifications,
-    markNotificationsAsRead,
+    markAsRead,
+    markAllAsRead,
     handleLogout,
 }) {
 
@@ -133,19 +132,10 @@ function DashboardHeader({
                     "
                 >
 
-                    {/* ONLY ONE NOTIFICATION BELL */}
-
                     <NotificationBell
                         notifications={notifications}
-                        showNotifications={
-                            showNotifications
-                        }
-                        setShowNotifications={
-                            setShowNotifications
-                        }
-                        markNotificationsAsRead={
-                            markNotificationsAsRead
-                        }
+                        markAsRead={markAsRead}
+                        markAllAsRead={markAllAsRead}
                     />
 
 

@@ -6,6 +6,7 @@ function NotificationDropdown({
     notifications,
     markAsRead,
     markAllAsRead,
+    onClose,
 }) {
 
     const unreadCount = notifications.filter(
@@ -77,6 +78,7 @@ function NotificationDropdown({
                             key={notification._id}
                             notification={notification}
                             markAsRead={markAsRead}
+                            onClose={onClose}
                         />
 
                     ))

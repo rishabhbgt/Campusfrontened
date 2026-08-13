@@ -27,9 +27,8 @@ function Dashboard() {
 
     const {
         notifications,
-        showNotifications,
-        setShowNotifications,
-        markNotificationsAsRead,
+        markAsRead,
+        markAllAsRead,
     } = useNotifications(user);
 
     const handleLogout = () => {
@@ -86,11 +85,8 @@ function Dashboard() {
                 <DashboardHeader
                     user={user}
                     notifications={notifications}
-                    showNotifications={showNotifications}
-                    setShowNotifications={setShowNotifications}
-                    markNotificationsAsRead={
-                        markNotificationsAsRead
-                    }
+                    markAsRead={markAsRead}
+                    markAllAsRead={markAllAsRead}
                     handleLogout={handleLogout}
                 />
 
