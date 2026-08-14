@@ -8,12 +8,68 @@ import UserSearch from "../components/adminUsers/UserSearch";
 import UserTable from "../components/adminUsers/UserTable";
 import EmptyUsers from "../components/adminUsers/EmptyUsers";
 import LoadingUsers from "../components/adminUsers/LoadingUsers";
+import CreateUserModal from "../components/adminUsers/CreateUserModal";
 
 function AdminUsers() {
 
     const [users, setUsers] = useState([]);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
+    const [
+    showCreateUser,
+    setShowCreateUser,
+] = useState(false);
+
+    const [
+        creatingUser,
+        setCreatingUser,
+    ] = useState(false);
+
+    const createUser = async (formData) => {
+
+    try {
+
+        setCreatingUser(true);
+
+        const token =
+            localStorage.getItem("token");
+
+
+        await api.post(
+            "/users/create",
+            formData,
+            {
+                headers: {
+                    Authorization: token,
+                },
+            }
+        );
+
+
+        toast.success(
+            "User created successfully"
+        );
+
+
+        setShowCreateUser(false);
+
+        fetchUsers();
+
+
+    } catch (error) {
+
+        toast.error(
+            error.response?.data?.message ||
+            "Failed to create user"
+        );
+
+    } finally {
+
+        setCreatingUser(false);
+
+    }
+
+};
 
     const currentUser = JSON.parse(localStorage.getItem("user"));
 
@@ -170,7 +226,11 @@ function AdminUsers() {
 
             <div className="max-w-7xl mx-auto">
 
-                <AdminHeader />
+                <AdminHeader
+                    onCreateUser={() =>
+                        setShowCreateUser(true)
+                    }
+                />
 
                 <AdminStats users={users} />
 
@@ -201,6 +261,16 @@ function AdminUsers() {
                 )}
 
             </div>
+
+            {showCreateUser && (
+                <CreateUserModal
+                    onClose={() =>
+                        setShowCreateUser(false)
+                    }
+                    onCreate={createUser}
+                    loading={creatingUser}
+                />
+            )}
 
         </div>
 

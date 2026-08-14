@@ -29,15 +29,13 @@ import FacultyFilters
 import AssignedComplaintList
     from "../components/faculty/AssignedComplaintList";
 
+import useNotifications
+    from "../hooks/useNotifications";
+
 
 function FacultyDashboard() {
 
     const navigate = useNavigate();
-
-
-    // ==================================================
-    // CURRENT USER
-    // ==================================================
 
     const storedUser =
         localStorage.getItem("user");
@@ -49,12 +47,15 @@ function FacultyDashboard() {
 
 
     const facultyName =
-        currentUser?.fullName || "Faculty";
+        currentUser?.fullName ||
+        "Faculty";
 
+    const {
+        notifications,
+        markAsRead,
+        markAllAsRead,
+    } = useNotifications(currentUser);
 
-    // ==================================================
-    // STATES
-    // ==================================================
 
     const [
         complaints,
@@ -97,11 +98,6 @@ function FacultyDashboard() {
         setCategoryFilter,
     ] = useState("All");
 
-
-    // ==================================================
-    // FETCH ASSIGNED COMPLAINTS
-    // ==================================================
-
     const fetchAssignedComplaints =
         useCallback(async () => {
 
@@ -113,7 +109,9 @@ function FacultyDashboard() {
 
 
                 const token =
-                    localStorage.getItem("token");
+                    localStorage.getItem(
+                        "token"
+                    );
 
 
                 if (!token) {
@@ -138,7 +136,8 @@ function FacultyDashboard() {
 
 
                 setComplaints(
-                    response.data?.complaints || []
+                    response.data?.complaints ||
+                    []
                 );
 
 
@@ -160,9 +159,6 @@ function FacultyDashboard() {
                 setError(message);
 
 
-                toast.error(message);
-
-
                 if (
                     error.response?.status === 401
                 ) {
@@ -177,7 +173,12 @@ function FacultyDashboard() {
 
                     navigate("/");
 
+                    return;
+
                 }
+
+
+                toast.error(message);
 
 
             } finally {
@@ -188,11 +189,6 @@ function FacultyDashboard() {
 
         }, [navigate]);
 
-
-    // ==================================================
-    // INITIAL LOAD
-    // ==================================================
-
     useEffect(() => {
 
         fetchAssignedComplaints();
@@ -201,49 +197,63 @@ function FacultyDashboard() {
         fetchAssignedComplaints,
     ]);
 
-
-    // ==================================================
-    // FILTER COMPLAINTS
-    // ==================================================
-
     const filteredComplaints =
         useMemo(() => {
+
+            const searchText =
+                search
+                    .trim()
+                    .toLowerCase();
+
 
             return complaints.filter(
                 (complaint) => {
 
-                    const searchText =
-                        search
-                            .trim()
-                            .toLowerCase();
+                    const title =
+                        complaint.title
+                            ?.toLowerCase() ||
+                        "";
+
+                    const description =
+                        complaint.description
+                            ?.toLowerCase() ||
+                        "";
+
+                    const category =
+                        complaint.category
+                            ?.toLowerCase() ||
+                        "";
 
 
                     const matchesSearch =
                         !searchText ||
-                        complaint.title
-                            ?.toLowerCase()
-                            .includes(searchText) ||
-                        complaint.description
-                            ?.toLowerCase()
-                            .includes(searchText) ||
-                        complaint.category
-                            ?.toLowerCase()
-                            .includes(searchText);
+                        title.includes(
+                            searchText
+                        ) ||
+                        description.includes(
+                            searchText
+                        ) ||
+                        category.includes(
+                            searchText
+                        );
 
 
                     const matchesStatus =
                         statusFilter === "All" ||
-                        complaint.status === statusFilter;
+                        complaint.status ===
+                            statusFilter;
 
 
                     const matchesPriority =
                         priorityFilter === "All" ||
-                        complaint.priority === priorityFilter;
+                        complaint.priority ===
+                            priorityFilter;
 
 
                     const matchesCategory =
                         categoryFilter === "All" ||
-                        complaint.category === categoryFilter;
+                        complaint.category ===
+                            categoryFilter;
 
 
                     return (
@@ -263,11 +273,6 @@ function FacultyDashboard() {
             priorityFilter,
             categoryFilter,
         ]);
-
-
-    // ==================================================
-    // LOGOUT
-    // ==================================================
 
     const handleLogout = () => {
 
@@ -289,66 +294,35 @@ function FacultyDashboard() {
 
     };
 
-
-    // ==================================================
-    // VIEW COMPLAINT
-    // ==================================================
-
     const handleViewComplaint =
-        (complaint) => {
+        useCallback(
+            (complaint) => {
 
-            navigate(
-                `/complaint/${complaint._id}`
-            );
+                navigate(
+                    `/complaint/${complaint._id}`
+                );
 
-        };
-
-
-    // ==================================================
-    // UPDATE COMPLAINT STATUS
-    // OPTIMIZED
-    // ==================================================
+            },
+            [navigate]
+        );
 
     const handleStatusUpdate =
-        async (
-            complaintId,
-            status
-        ) => {
+        useCallback(
+            async (
+                complaintId,
+                status
+            ) => {
 
-            try {
-
-                const token =
-                    localStorage.getItem(
-                        "token"
+                const oldComplaint =
+                    complaints.find(
+                        (complaint) =>
+                            complaint._id ===
+                            complaintId
                     );
 
 
-                // ------------------------------------------
-                // UPDATE STATUS IN BACKEND
-                // ------------------------------------------
-
-                await api.put(
-
-                    `/complaints/${complaintId}`,
-
-                    {
-                        status,
-                    },
-
-                    {
-                        headers: {
-                            Authorization:
-                                token,
-                        },
-                    }
-
-                );
-
-
-                // ------------------------------------------
-                // UPDATE UI LOCALLY
-                // No extra GET API call
-                // ------------------------------------------
+                const oldStatus =
+                    oldComplaint?.status;
 
                 setComplaints(
                     (prevComplaints) =>
@@ -357,45 +331,92 @@ function FacultyDashboard() {
                                 complaint._id ===
                                 complaintId
                                     ? {
-                                          ...complaint,
-                                          status,
-                                      }
+                                        ...complaint,
+                                        status,
+                                    }
                                     : complaint
                         )
                 );
 
 
-                toast.success(
-                    "Complaint status updated successfully"
-                );
+                try {
+
+                    const token =
+                        localStorage.getItem(
+                            "token"
+                        );
 
 
-            } catch (error) {
+                    if (!token) {
 
-                console.error(
-                    "Status Update Error:",
-                    error
-                );
+                        navigate("/");
 
+                        return;
 
-                toast.error(
-
-                    error.response
-                        ?.data
-                        ?.message ||
-
-                    "Failed to update complaint status"
-
-                );
-
-            }
-
-        };
+                    }
 
 
-    // ==================================================
-    // CLEAR FILTERS
-    // ==================================================
+                    await api.put(
+
+                        `/complaints/${complaintId}`,
+
+                        {
+                            status,
+                        },
+
+                        {
+                            headers: {
+                                Authorization:
+                                    token,
+                            },
+                        }
+
+                    );
+
+
+                    toast.success(
+                        "Complaint status updated successfully"
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Status Update Error:",
+                        error
+                    );
+
+                    setComplaints(
+                        (prevComplaints) =>
+                            prevComplaints.map(
+                                (complaint) =>
+                                    complaint._id ===
+                                    complaintId
+                                        ? {
+                                            ...complaint,
+                                            status:
+                                                oldStatus,
+                                        }
+                                        : complaint
+                            )
+                    );
+
+
+                    toast.error(
+                        error.response
+                            ?.data
+                            ?.message ||
+                        "Failed to update complaint status"
+                    );
+
+                }
+
+            },
+            [
+                complaints,
+                navigate,
+            ]
+        );
 
     const clearFilters = () => {
 
@@ -408,11 +429,6 @@ function FacultyDashboard() {
         setCategoryFilter("All");
 
     };
-
-
-    // ==================================================
-    // ERROR SCREEN
-    // ==================================================
 
     if (
         error &&
@@ -444,7 +460,6 @@ function FacultyDashboard() {
                 >
 
                     <FacultyHeader
-
                         facultyName={
                             facultyName
                         }
@@ -457,6 +472,17 @@ function FacultyDashboard() {
                             loading
                         }
 
+                        notifications={
+                            notifications
+                        }
+
+                        markAsRead={
+                            markAsRead
+                        }
+
+                        markAllAsRead={
+                            markAllAsRead
+                        }
                     />
 
 
@@ -574,10 +600,6 @@ function FacultyDashboard() {
     }
 
 
-    // ==================================================
-    // MAIN DASHBOARD
-    // ==================================================
-
     return (
 
         <div
@@ -602,11 +624,7 @@ function FacultyDashboard() {
                 "
             >
 
-
-                {/* ================= HEADER ================= */}
-
                 <FacultyHeader
-
                     facultyName={
                         facultyName
                     }
@@ -619,10 +637,18 @@ function FacultyDashboard() {
                         loading
                     }
 
+                    notifications={
+                        notifications
+                    }
+
+                    markAsRead={
+                        markAsRead
+                    }
+
+                    markAllAsRead={
+                        markAllAsRead
+                    }
                 />
-
-
-                {/* ================= LOGOUT ================= */}
 
                 <div
                     className="
@@ -668,13 +694,8 @@ function FacultyDashboard() {
 
                 </div>
 
-
-                {/* ================= STATS ================= */}
-
                 <section
-                    className="
-                        mt-8
-                    "
+                    className="mt-8"
                 >
 
                     <FacultyStats
@@ -685,17 +706,11 @@ function FacultyDashboard() {
 
                 </section>
 
-
-                {/* ================= FILTERS ================= */}
-
                 <section
-                    className="
-                        mt-8
-                    "
+                    className="mt-8"
                 >
 
                     <FacultyFilters
-
                         search={
                             search
                         }
@@ -703,7 +718,6 @@ function FacultyDashboard() {
                         setSearch={
                             setSearch
                         }
-
 
                         statusFilter={
                             statusFilter
@@ -713,7 +727,6 @@ function FacultyDashboard() {
                             setStatusFilter
                         }
 
-
                         priorityFilter={
                             priorityFilter
                         }
@@ -722,7 +735,6 @@ function FacultyDashboard() {
                             setPriorityFilter
                         }
 
-
                         categoryFilter={
                             categoryFilter
                         }
@@ -730,13 +742,9 @@ function FacultyDashboard() {
                         setCategoryFilter={
                             setCategoryFilter
                         }
-
                     />
 
                 </section>
-
-
-                {/* ================= RESULTS HEADER ================= */}
 
                 <section
                     className="
@@ -804,9 +812,6 @@ function FacultyDashboard() {
 
                     </div>
 
-
-                    {/* ================= CLEAR FILTERS ================= */}
-
                     {(
                         search ||
                         statusFilter !== "All" ||
@@ -835,9 +840,6 @@ function FacultyDashboard() {
                     )}
 
                 </section>
-
-
-                {/* ================= LOADING ================= */}
 
                 {loading ? (
 
@@ -872,10 +874,7 @@ function FacultyDashboard() {
 
                 ) : (
 
-                    /* ================= COMPLAINTS ================= */
-
                     <AssignedComplaintList
-
                         complaints={
                             filteredComplaints
                         }
@@ -887,7 +886,6 @@ function FacultyDashboard() {
                         onStatusUpdate={
                             handleStatusUpdate
                         }
-
                     />
 
                 )}
@@ -899,6 +897,4 @@ function FacultyDashboard() {
     );
 
 }
-
-
 export default FacultyDashboard;

@@ -16,47 +16,73 @@ function useNotifications(user) {
         setNotifications,
     ] = useState([]);
 
-    const fetchNotifications =
-        useCallback(async () => {
+    const fetchNotifications = useCallback(async () => {
 
-            try {
+    console.log("FETCH NOTIFICATIONS CALLED");
 
-                const token =
-                    localStorage.getItem("token");
+    try {
+
+        const token =
+            localStorage.getItem("token");
+
+        console.log(
+            "TOKEN EXISTS:",
+            !!token
+        );
+
+        if (!token) {
+
+            console.log(
+                "NO TOKEN FOUND"
+            );
+
+            return;
+
+        }
 
 
-                if (!token) {
-                    return;
+        console.log(
+            "CALLING /notifications API..."
+        );
+
+
+        const response =
+            await api.get(
+                "/notifications",
+                {
+                    headers: {
+                        Authorization: token,
+                    },
                 }
+            );
 
 
-                const response =
-                    await api.get(
-                        "/notifications",
-                        {
-                            headers: {
-                                Authorization:
-                                    token,
-                            },
-                        }
-                    );
+        console.log(
+            "NOTIFICATIONS RESPONSE:",
+            response.data
+        );
 
 
-                setNotifications(
-                    response.data?.notifications || []
-                );
+        setNotifications(
+            response.data?.notifications || []
+        );
 
 
-            } catch (error) {
+    } catch (error) {
 
-                console.error(
-                    "Fetch Notifications Error:",
-                    error
-                );
+        console.error(
+            "FETCH NOTIFICATIONS ERROR:",
+            error
+        );
 
-            }
+        console.error(
+            "ERROR RESPONSE:",
+            error.response?.data
+        );
 
-        }, []);
+    }
+
+}, []);
 
     const markAsRead =
         useCallback(async (id) => {

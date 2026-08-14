@@ -1,262 +1,403 @@
 import {
-    CheckCircle,
+    CheckCircle2,
+    UserRound,
     Clock3,
-    Loader2,
+    UserPlus,
+    RefreshCw,
+    AlertCircle,
+    CalendarClock,
 } from "lucide-react";
 
-function ComplaintTimeline({ status }) {
 
-    const steps = [
-        {
-            title: "Complaint Created",
-            description: "Your complaint has been successfully submitted.",
-            completed: true,
-            icon: CheckCircle,
-        },
-        {
-            title: "Pending",
-            description: "Your complaint is waiting for administration review.",
-            completed:
-                status === "Pending" ||
-                status === "In Progress" ||
-                status === "Resolved",
-            icon: Clock3,
-        },
-        {
-            title: "In Progress",
-            description: "Administration is currently working on your complaint.",
-            completed:
-                status === "In Progress" ||
-                status === "Resolved",
-            icon: Loader2,
-        },
-        {
-            title: "Resolved",
-            description: "Your complaint has been successfully resolved.",
-            completed:
-                status === "Resolved",
-            icon: CheckCircle,
-        },
-    ];
+function ComplaintTimeline({
+    history = [],
+}) {
+
+    const getIcon = (action) => {
+
+        switch (action) {
+
+            case "SUBMITTED":
+                return (
+                    <CheckCircle2
+                        size={18}
+                        className="text-emerald-600"
+                    />
+                );
+
+
+            case "ASSIGNED":
+                return (
+                    <UserPlus
+                        size={18}
+                        className="text-blue-600"
+                    />
+                );
+
+
+            case "REASSIGNED":
+                return (
+                    <RefreshCw
+                        size={18}
+                        className="text-indigo-600"
+                    />
+                );
+
+
+            case "STATUS_UPDATED":
+                return (
+                    <Clock3
+                        size={18}
+                        className="text-amber-600"
+                    />
+                );
+
+
+            case "PRIORITY_UPDATED":
+                return (
+                    <AlertCircle
+                        size={18}
+                        className="text-orange-600"
+                    />
+                );
+
+
+            case "DUE_DATE_UPDATED":
+                return (
+                    <CalendarClock
+                        size={18}
+                        className="text-purple-600"
+                    />
+                );
+
+
+            case "UNASSIGNED":
+                return (
+                    <UserRound
+                        size={18}
+                        className="text-red-600"
+                    />
+                );
+
+
+            default:
+                return (
+                    <Clock3
+                        size={18}
+                        className="text-slate-500"
+                    />
+                );
+
+        }
+
+    };
+
+    const formatDate = (date) => {
+
+        if (!date) {
+            return "";
+        }
+
+
+        const value =
+            new Date(date);
+
+
+        return value.toLocaleString(
+            "en-IN",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+            }
+        );
+
+    };
+
+    if (!history.length) {
+
+        return (
+
+            <section
+                className="
+                    mt-8
+                    rounded-3xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-5
+                    shadow-xl
+                    sm:p-8
+                "
+            >
+
+                <h2
+                    className="
+                        text-2xl
+                        font-bold
+                        text-slate-800
+                    "
+                >
+                    Complaint Timeline
+                </h2>
+
+
+                <p
+                    className="
+                        mt-2
+                        text-sm
+                        text-slate-500
+                    "
+                >
+                    No activity history is available
+                    for this complaint yet.
+                </p>
+
+            </section>
+
+        );
+
+    }
+
 
     return (
 
-        <div
+        <section
             className="
-                bg-white
+                mt-8
                 rounded-3xl
-                shadow-xl
                 border
                 border-slate-200
-                p-6
+                bg-white
+                p-5
+                shadow-xl
                 sm:p-8
-                mt-8
             "
         >
-
-            {/* HEADER */}
 
             <div className="mb-8">
 
                 <h2
                     className="
                         text-2xl
-                        sm:text-3xl
-                        font-extrabold
+                        font-bold
                         text-slate-800
                     "
                 >
-                    Complaint Progress
+                    Complaint Timeline
                 </h2>
 
-                <p className="mt-2 text-slate-500">
-                    Track the current progress of your complaint.
+
+                <p
+                    className="
+                        mt-1
+                        text-sm
+                        text-slate-500
+                    "
+                >
+                    Track every important action and
+                    status change for this complaint.
                 </p>
 
             </div>
 
-
-            {/* TIMELINE */}
-
             <div className="relative">
+                <div
+                    className="
+                        absolute
+                        left-[18px]
+                        top-5
+                        bottom-5
+                        w-px
+                        bg-slate-200
+                    "
+                />
 
-                {steps.map((step, index) => {
 
-                    const Icon = step.icon;
+                <div
+                    className="
+                        space-y-7
+                    "
+                >
 
-                    const isLast =
-                        index === steps.length - 1;
+                    {history.map(
+                        (item, index) => (
 
-                    const isCurrent =
-                        (status === "Pending" && index === 1) ||
-                        (status === "In Progress" && index === 2) ||
-                        (status === "Resolved" && index === 3);
-
-                    return (
-
-                        <div
-                            key={step.title}
-                            className="
-                                relative
-                                flex
-                                items-start
-                                gap-4
-                                sm:gap-5
-                            "
-                        >
-
-                            {/* CONNECTING LINE */}
-
-                            {!isLast && (
+                            <div
+                                key={
+                                    item._id ||
+                                    `${item.action}-${index}`
+                                }
+                                className="
+                                    relative
+                                    flex
+                                    gap-4
+                                "
+                            >
 
                                 <div
-                                    className={`
-                                        absolute
-                                        left-[23px]
-                                        top-12
-                                        w-[3px]
-                                        h-[calc(100%-20px)]
+                                    className="
+                                        relative
+                                        z-10
+                                        flex
+                                        h-9
+                                        w-9
+                                        shrink-0
+                                        items-center
+                                        justify-center
                                         rounded-full
-                                        ${
-                                            steps[index + 1].completed
-                                                ? "bg-green-400"
-                                                : "bg-slate-200"
-                                        }
-                                    `}
-                                />
+                                        border
+                                        border-slate-200
+                                        bg-white
+                                        shadow-sm
+                                    "
+                                >
 
-                            )}
+                                    {getIcon(
+                                        item.action
+                                    )}
 
+                                </div>
 
-                            {/* ICON */}
+                                <div
+                                    className="
+                                        min-w-0
+                                        flex-1
+                                        rounded-2xl
+                                        border
+                                        border-slate-100
+                                        bg-slate-50
+                                        p-4
+                                    "
+                                >
 
-                            <div
-                                className={`
-                                    relative
-                                    z-10
-                                    w-12
-                                    h-12
-                                    sm:w-14
-                                    sm:h-14
-                                    rounded-2xl
-                                    flex
-                                    items-center
-                                    justify-center
-                                    shrink-0
-                                    transition-all
-                                    duration-300
-                                    ${
-                                        step.completed
-                                            ? "bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-lg"
-                                            : "bg-slate-100 text-slate-400 border border-slate-200"
-                                    }
-                                    ${
-                                        isCurrent
-                                            ? "ring-4 ring-blue-100 scale-105"
-                                            : ""
-                                    }
-                                `}
-                            >
-
-                                <Icon
-                                    size={23}
-                                    className={
-                                        isCurrent &&
-                                        status === "In Progress"
-                                            ? "animate-spin"
-                                            : ""
-                                    }
-                                />
-
-                            </div>
-
-
-                            {/* CONTENT */}
-
-                            <div
-                                className={`
-                                    flex-1
-                                    pb-8
-                                    ${
-                                        isLast
-                                            ? "pb-0"
-                                            : ""
-                                    }
-                                `}
-                            >
-
-                                <div className="flex flex-wrap items-center gap-3">
-
-                                    <h3
-                                        className={`
-                                            text-lg
-                                            sm:text-xl
-                                            font-bold
-                                            ${
-                                                step.completed
-                                                    ? "text-slate-800"
-                                                    : "text-slate-400"
-                                            }
-                                        `}
+                                    <p
+                                        className="
+                                            text-sm
+                                            font-semibold
+                                            leading-relaxed
+                                            text-slate-800
+                                        "
                                     >
-                                        {step.title}
-                                    </h3>
+                                        {item.message}
+                                    </p>
+
+                                    <div
+                                        className="
+                                            mt-3
+                                            flex
+                                            flex-wrap
+                                            items-center
+                                            gap-2
+                                            text-xs
+                                            text-slate-500
+                                        "
+                                    >
+
+                                        {item.changedBy && (
+
+                                            <>
+                                                <span
+                                                    className="
+                                                        inline-flex
+                                                        items-center
+                                                        gap-1
+                                                        font-medium
+                                                        text-slate-600
+                                                    "
+                                                >
+
+                                                    <UserRound
+                                                        size={13}
+                                                    />
+
+                                                    {item
+                                                        .changedBy
+                                                        .fullName ||
+                                                        "Unknown user"}
+
+                                                </span>
 
 
-                                    {/* CURRENT STATUS */}
+                                                {item.changedByRole && (
 
-                                    {isCurrent && (
+                                                    <span
+                                                        className="
+                                                            rounded-full
+                                                            bg-indigo-50
+                                                            px-2.5
+                                                            py-1
+                                                            font-semibold
+                                                            capitalize
+                                                            text-indigo-700
+                                                        "
+                                                    >
+                                                        {
+                                                            item.changedByRole
+                                                        }
+                                                    </span>
+
+                                                )}
+
+                                            </>
+
+                                        )}
+
+
+                                        {item.createdAt && (
+
+                                            <span
+                                                className="
+                                                    text-slate-400
+                                                "
+                                            >
+                                                {formatDate(
+                                                    item.createdAt
+                                                )}
+                                            </span>
+
+                                        )}
+
+                                    </div>
+
+                                    {item.status && (
 
                                         <span
                                             className="
+                                                mt-3
+                                                inline-flex
+                                                rounded-full
+                                                bg-white
                                                 px-3
                                                 py-1
-                                                rounded-full
-                                                bg-blue-100
-                                                text-blue-700
                                                 text-xs
-                                                font-bold
+                                                font-semibold
+                                                text-slate-600
+                                                shadow-sm
                                             "
                                         >
-                                            Current Status
+                                            Status: {item.status}
                                         </span>
 
                                     )}
 
                                 </div>
 
-
-                                <p
-                                    className={`
-                                        mt-2
-                                        text-sm
-                                        sm:text-base
-                                        leading-6
-                                        ${
-                                            step.completed
-                                                ? "text-slate-500"
-                                                : "text-slate-400"
-                                        }
-                                    `}
-                                >
-                                    {step.description}
-                                </p>
-
                             </div>
 
-                        </div>
+                        )
+                    )}
 
-                    );
-
-                })}
+                </div>
 
             </div>
 
-        </div>
+        </section>
 
     );
 
 }
 
 export default ComplaintTimeline;
-

@@ -4,30 +4,56 @@ import toast from "react-hot-toast";
 
 function useComplaintDetails(id) {
 
-    const [complaint, setComplaint] = useState(null);
-    const [comments, setComments] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [
+        complaint,
+        setComplaint,
+    ] = useState(null);
 
-    const token = localStorage.getItem("token");
+
+    const [
+        comments,
+        setComments,
+    ] = useState([]);
+
+
+    const [
+        loading,
+        setLoading,
+    ] = useState(true);
+
 
     const fetchComplaint = async () => {
 
         try {
 
-            const response = await api.get(
-                `/complaints/${id}`,
-                {
-                    headers: {
-                        Authorization: token,
-                    },
-                }
+            const token =
+                localStorage.getItem("token");
+
+
+            const response =
+                await api.get(
+                    `/complaints/${id}`,
+                    {
+                        headers: {
+                            Authorization:
+                                token,
+                        },
+                    }
+                );
+
+
+            setComplaint(
+                response.data?.complaint || null
             );
 
-            setComplaint(response.data.complaint);
 
         } catch (error) {
 
-            console.log(error);
+            console.error(
+                "Fetch Complaint Error:",
+                error
+            );
+
 
             toast.error(
                 error.response?.data?.message ||
@@ -38,50 +64,87 @@ function useComplaintDetails(id) {
 
     };
 
+
     const fetchComments = async () => {
 
         try {
 
-            const response = await api.get(
-                `/complaints/${id}/comments`,
-                {
-                    headers: {
-                        Authorization: token,
-                    },
-                }
+            const token =
+                localStorage.getItem("token");
+
+
+            const response =
+                await api.get(
+                    `/complaints/${id}/comments`,
+                    {
+                        headers: {
+                            Authorization:
+                                token,
+                        },
+                    }
+                );
+
+
+            setComments(
+                response.data?.comments || []
             );
 
-            setComments(response.data.comments);
 
         } catch (error) {
 
-            console.log(error);
+            console.error(
+                "Fetch Comments Error:",
+                error
+            );
 
         }
 
     };
 
-    const addComment = async (message) => {
+
+    const addComment = async (
+        message
+    ) => {
 
         try {
 
+            const token =
+                localStorage.getItem("token");
+
+
             await api.post(
+
                 `/complaints/${id}/comment`,
-                { message },
+
+                {
+                    message,
+                },
+
                 {
                     headers: {
-                        Authorization: token,
+                        Authorization:
+                            token,
                     },
                 }
+
             );
 
-            toast.success("Comment Added");
 
-            fetchComments();
+            toast.success(
+                "Comment Added"
+            );
+
+
+            await fetchComments();
+
 
         } catch (error) {
 
-            console.log(error);
+            console.error(
+                "Add Comment Error:",
+                error
+            );
+
 
             toast.error(
                 error.response?.data?.message ||
@@ -92,31 +155,44 @@ function useComplaintDetails(id) {
 
     };
 
+
     useEffect(() => {
 
         const loadData = async () => {
 
             setLoading(true);
 
-            await fetchComplaint();
 
-            await fetchComments();
+            // Load complaint + comments together
+            await Promise.all([
+                fetchComplaint(),
+                fetchComments(),
+            ]);
+
 
             setLoading(false);
 
         };
 
+
         loadData();
 
+
     }, [id]);
+
 
     return {
 
         complaint,
+
         comments,
+
         loading,
+
         addComment,
+
         fetchComplaint,
+
         fetchComments,
 
     };

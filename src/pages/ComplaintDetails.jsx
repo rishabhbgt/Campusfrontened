@@ -40,9 +40,6 @@ function ComplaintDetails() {
 
     };
 
-
-    /* ================= LOADING ================= */
-
     if (loading) {
 
         return (
@@ -78,9 +75,6 @@ function ComplaintDetails() {
         );
 
     }
-
-
-    /* ================= NOT FOUND ================= */
 
     if (!complaint) {
 
@@ -189,9 +183,6 @@ function ComplaintDetails() {
 
             <main className="max-w-5xl mx-auto">
 
-
-                {/* ================= PAGE HEADER ================= */}
-
                 <div className="mb-8">
 
                     <button
@@ -245,9 +236,6 @@ function ComplaintDetails() {
 
                 </div>
 
-
-                {/* ================= COMPLAINT IMAGE ================= */}
-
                 {complaint.image && (
 
                     <div className="mb-8">
@@ -260,29 +248,17 @@ function ComplaintDetails() {
 
                 )}
 
-
-                {/* ================= COMPLAINT INFORMATION ================= */}
-
                 <ComplaintInfo
                     complaint={complaint}
                 />
 
-
-                {/* ================= TIMELINE ================= */}
-
                 <ComplaintTimeline
-                    status={complaint.status}
+                    history={complaint.history || []}
                 />
-
-
-                {/* ================= OVERDUE ALERT ================= */}
 
                 <OverdueAlert
                     complaint={complaint}
                 />
-
-
-                {/* ================= COMMENTS ================= */}
 
                 <section
                     className="

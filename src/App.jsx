@@ -82,9 +82,14 @@ function App() {
         }
       />
       <Route
-          path="/complaint/:id"
-          element={<ComplaintDetails />}
+        path="/complaint/:id"
+        element={
+            <ProtectedRoute>
+                <ComplaintDetails />
+            </ProtectedRoute>
+        }
       />
+      
       <Route path="*" element={<NotFound />} />
     </Routes>
     </>

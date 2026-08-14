@@ -15,11 +15,6 @@ function NotificationItem({
 
     const navigate = useNavigate();
 
-
-    // ==========================================
-    // NOTIFICATION ICON
-    // ==========================================
-
     const getIcon = () => {
 
         const message =
@@ -64,11 +59,6 @@ function NotificationItem({
         );
 
     };
-
-
-    // ==========================================
-    // TIME FORMAT
-    // ==========================================
 
     const getTime = (date) => {
 
@@ -138,29 +128,86 @@ function NotificationItem({
     };
 
 
-    // ==========================================
-    // CLICK NOTIFICATION
-    // ==========================================
+const handleClick = async () => {
 
-    const handleClick = async () => {
+    console.log(
+        "HANDLE CLICK RUNNING",
+        notification
+    );
 
-    const success =
-        notification.isRead
-            ? true
-            : await markAsRead(
-                notification._id
+    try {
+
+        if (!notification.isRead) {
+
+            const result =
+                await markAsRead(
+                    notification._id
+                );
+
+            console.log(
+                "MARK AS READ RESULT:",
+                result
             );
 
-    if (!success) {
-        return;
-    }
+            if (!result) {
+                return;
+            }
+        }
 
-    onClose?.();
+        console.log(
+            "CLOSING NOTIFICATION DROPDOWN"
+        );
 
-    if (notification.complaint?._id) {
+        onClose?.();
 
-        navigate(
-            `/complaint/${notification.complaint._id}`
+        let complaintId = null;
+
+        if (
+            notification.complaint &&
+            typeof notification.complaint === "object"
+        ) {
+
+            complaintId =
+                notification.complaint._id;
+
+        } else {
+
+            complaintId =
+                notification.complaint;
+
+        }
+
+
+        console.log(
+            "COMPLAINT ID:",
+            complaintId
+        );
+
+        if (complaintId) {
+
+            console.log(
+                "NAVIGATING TO:",
+                `/complaint/${complaintId}`
+            );
+
+            navigate(
+                `/complaint/${complaintId}`
+            );
+
+            return;
+        }
+
+
+        console.log(
+            "NO COMPLAINT ID FOUND"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "NOTIFICATION CLICK ERROR:",
+            error
         );
 
     }
@@ -171,39 +218,62 @@ function NotificationItem({
     return (
 
         <button
-            type="button"
-            onClick={handleClick}
-            className={`
-                group
-                flex
-                w-full
-                gap-4
-                p-5
-                text-left
+    type="button"
+    onMouseDown={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
 
-                border-b
-                border-slate-100
+        console.log(
+            "NOTIFICATION MOUSE DOWN",
+            notification
+        );
+    }}
+    onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
 
-                transition-all
-                duration-200
+        console.log(
+            "NOTIFICATION CLICKED",
+            notification
+        );
 
-                hover:bg-indigo-50
+        handleClick();
+    }}
+    title="Open notification"
+    className={`
+        relative
+        z-10
+        pointer-events-auto
 
-                focus:outline-none
-                focus:bg-indigo-50
-                focus:ring-2
-                focus:ring-inset
-                focus:ring-indigo-500
+        group
+        flex
+        w-full
+        cursor-pointer
+        gap-4
+        p-5
+        text-left
 
-                ${
-                    !notification.isRead
-                        ? "bg-indigo-50/60"
-                        : "bg-white"
-                }
-            `}
-        >
+        border-b
+        border-slate-100
 
-            {/* Icon */}
+        transition-all
+        duration-200
+
+        hover:bg-indigo-50
+
+        focus:outline-none
+        focus:bg-indigo-50
+        focus:ring-2
+        focus:ring-inset
+        focus:ring-indigo-500
+
+        ${
+            !notification.isRead
+                ? "bg-indigo-50/60"
+                : "bg-white"
+        }
+    `}
+>
 
             <div
                 className={`
@@ -232,9 +302,6 @@ function NotificationItem({
 
             </div>
 
-
-            {/* Content */}
-
             <div className="min-w-0 flex-1">
 
                 <div
@@ -261,9 +328,6 @@ function NotificationItem({
                     >
                         {notification.message}
                     </p>
-
-
-                    {/* Unread Dot */}
 
                     {!notification.isRead && (
 
@@ -305,9 +369,6 @@ function NotificationItem({
                             notification.createdAt
                         )}
                     </p>
-
-
-                    {/* Open indicator */}
 
                     <ArrowUpRight
                         size={15}

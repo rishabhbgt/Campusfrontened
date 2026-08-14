@@ -9,37 +9,46 @@ function NotificationDropdown({
     onClose,
 }) {
 
-    const unreadCount = notifications.filter(
-        (notification) => !notification.isRead
-    ).length;
+    const unreadCount =
+        notifications.filter(
+            (notification) =>
+                !notification.isRead
+        ).length;
+
 
     return (
 
         <div
             className="
-                absolute
-                right-0
-                top-full
-                mt-3
+                fixed
+                left-2
+                right-2
+                top-[76px]
 
-                w-[calc(100vw-2rem)]
+                w-auto
+                max-w-none
+
+                sm:absolute
+                sm:left-auto
+                sm:right-0
+                sm:top-[calc(100%+12px)]
+
                 sm:w-[380px]
                 md:w-[400px]
-
-                max-w-[400px]
-
-                bg-white/95
-                backdrop-blur-xl
-
-                rounded-3xl
-
-                shadow-2xl
-                border
-                border-slate-200
+                md:max-w-[400px]
 
                 overflow-hidden
 
-                z-[99999]
+                rounded-3xl
+
+                border
+                border-slate-200
+
+                bg-white
+
+                shadow-2xl
+
+                z-[999999]
 
                 animate-in
                 fade-in
@@ -48,19 +57,14 @@ function NotificationDropdown({
             "
         >
 
-            {/* Header */}
-
             <NotificationHeader
                 unreadCount={unreadCount}
                 markAllAsRead={markAllAsRead}
             />
 
-
-            {/* Notification List */}
-
             <div
                 className="
-                    max-h-[450px]
+                    max-h-[70vh]
                     overflow-y-auto
                     overscroll-contain
                 "
@@ -72,16 +76,26 @@ function NotificationDropdown({
 
                 ) : (
 
-                    notifications.map((notification) => (
+                    notifications.map(
+                        (notification) => (
 
-                        <NotificationItem
-                            key={notification._id}
-                            notification={notification}
-                            markAsRead={markAsRead}
-                            onClose={onClose}
-                        />
+                            <NotificationItem
+                                key={
+                                    notification._id
+                                }
+                                notification={
+                                    notification
+                                }
+                                markAsRead={
+                                    markAsRead
+                                }
+                                onClose={
+                                    onClose
+                                }
+                            />
 
-                    ))
+                        )
+                    )
 
                 )}
 

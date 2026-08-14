@@ -4,10 +4,17 @@ import {
     RefreshCw,
 } from "lucide-react";
 
+import NotificationBell
+    from "../notifications/NotificationBell";
+
+
 function FacultyHeader({
     facultyName,
     onRefresh,
     loading = false,
+    notifications = [],
+    markAsRead,
+    markAllAsRead,
 }) {
 
     return (
@@ -15,7 +22,8 @@ function FacultyHeader({
         <header
             className="
                 relative
-                overflow-hidden
+                z-[100]
+                overflow-visible
                 rounded-3xl
                 border
                 border-white/60
@@ -23,12 +31,10 @@ function FacultyHeader({
                 backdrop-blur-xl
                 shadow-xl
                 shadow-slate-200/50
-                p-6
+                p-5
                 sm:p-8
             "
         >
-
-            {/* Decorative Background */}
 
             <div
                 className="
@@ -36,8 +42,8 @@ function FacultyHeader({
                     absolute
                     -top-24
                     -right-24
-                    w-64
                     h-64
+                    w-64
                     rounded-full
                     bg-indigo-200/30
                     blur-3xl
@@ -50,40 +56,36 @@ function FacultyHeader({
                     absolute
                     -bottom-24
                     -left-24
-                    w-64
                     h-64
+                    w-64
                     rounded-full
                     bg-blue-200/30
                     blur-3xl
                 "
             />
 
-
-            {/* Main Content */}
-
             <div
                 className="
                     relative
+                    z-[110]
                     flex
                     flex-col
+                    gap-5
+
                     lg:flex-row
                     lg:items-center
                     lg:justify-between
-                    gap-6
                 "
             >
-
-                {/* Left Section */}
 
                 <div
                     className="
                         flex
+                        min-w-0
                         items-start
                         gap-4
                     "
                 >
-
-                    {/* Icon */}
 
                     <div
                         className="
@@ -110,10 +112,11 @@ function FacultyHeader({
 
                     </div>
 
-
-                    {/* Text */}
-
-                    <div>
+                    <div
+                        className="
+                            min-w-0
+                        "
+                    >
 
                         <div
                             className="
@@ -127,11 +130,12 @@ function FacultyHeader({
                             <h1
                                 className="
                                     text-2xl
-                                    sm:text-3xl
-                                    lg:text-4xl
                                     font-bold
                                     tracking-tight
                                     text-slate-900
+
+                                    sm:text-3xl
+                                    lg:text-4xl
                                 "
                             >
                                 Faculty Dashboard
@@ -167,10 +171,12 @@ function FacultyHeader({
                         <p
                             className="
                                 mt-2
+                                max-w-2xl
                                 text-sm
-                                sm:text-base
-                                text-slate-500
                                 leading-relaxed
+                                text-slate-500
+
+                                sm:text-base
                             "
                         >
                             Welcome back
@@ -186,18 +192,20 @@ function FacultyHeader({
 
                 </div>
 
-
-                {/* Right Section */}
-
                 <div
                     className="
+                        relative
+                        z-[200]
+
                         flex
+                        w-full
                         items-center
+                        justify-end
                         gap-3
+
+                        lg:w-auto
                     "
                 >
-
-                    {/* Status */}
 
                     <div
                         className="
@@ -237,8 +245,29 @@ function FacultyHeader({
 
                     </div>
 
+                    <div
+                        className="
+                            relative
+                            z-[99999]
+                            shrink-0
+                        "
+                    >
 
-                    {/* Refresh Button */}
+                        <NotificationBell
+                            notifications={
+                                notifications
+                            }
+
+                            markAsRead={
+                                markAsRead
+                            }
+
+                            markAllAsRead={
+                                markAllAsRead
+                            }
+                        />
+
+                    </div>
 
                     <button
                         type="button"
@@ -251,6 +280,7 @@ function FacultyHeader({
                             inline-flex
                             h-12
                             w-12
+                            shrink-0
                             items-center
                             justify-center
                             rounded-2xl
@@ -261,15 +291,18 @@ function FacultyHeader({
                             shadow-sm
                             transition-all
                             duration-300
+
                             hover:-translate-y-0.5
                             hover:border-indigo-300
                             hover:bg-indigo-50
                             hover:text-indigo-600
                             hover:shadow-md
+
                             focus:outline-none
                             focus:ring-2
                             focus:ring-indigo-500
                             focus:ring-offset-2
+
                             disabled:cursor-not-allowed
                             disabled:opacity-50
                         "
@@ -280,6 +313,7 @@ function FacultyHeader({
                             className={`
                                 transition-transform
                                 duration-500
+
                                 ${
                                     loading
                                         ? "animate-spin"
