@@ -16,73 +16,47 @@ function useNotifications(user) {
         setNotifications,
     ] = useState([]);
 
-    const fetchNotifications = useCallback(async () => {
+    const fetchNotifications =
+        useCallback(async () => {
 
-    console.log("FETCH NOTIFICATIONS CALLED");
+            try {
 
-    try {
-
-        const token =
-            localStorage.getItem("token");
-
-        console.log(
-            "TOKEN EXISTS:",
-            !!token
-        );
-
-        if (!token) {
-
-            console.log(
-                "NO TOKEN FOUND"
-            );
-
-            return;
-
-        }
+                const token =
+                    localStorage.getItem("token");
 
 
-        console.log(
-            "CALLING /notifications API..."
-        );
-
-
-        const response =
-            await api.get(
-                "/notifications",
-                {
-                    headers: {
-                        Authorization: token,
-                    },
+                if (!token) {
+                    return;
                 }
-            );
 
 
-        console.log(
-            "NOTIFICATIONS RESPONSE:",
-            response.data
-        );
+                const response =
+                    await api.get(
+                        "/notifications",
+                        {
+                            headers: {
+                                Authorization:
+                                    token,
+                            },
+                        }
+                    );
 
 
-        setNotifications(
-            response.data?.notifications || []
-        );
+                setNotifications(
+                    response.data?.notifications || []
+                );
 
 
-    } catch (error) {
+            } catch (error) {
 
-        console.error(
-            "FETCH NOTIFICATIONS ERROR:",
-            error
-        );
+                console.error(
+                    "Fetch Notifications Error:",
+                    error
+                );
 
-        console.error(
-            "ERROR RESPONSE:",
-            error.response?.data
-        );
+            }
 
-    }
-
-}, []);
+        }, []);
 
     const markAsRead =
         useCallback(async (id) => {
@@ -112,6 +86,7 @@ function useNotifications(user) {
                     }
 
                 );
+
 
                 setNotifications(
                     (prevNotifications) =>
@@ -180,6 +155,7 @@ function useNotifications(user) {
                     }
 
                 );
+
 
                 setNotifications(
                     (prevNotifications) =>
@@ -308,8 +284,8 @@ function useNotifications(user) {
 
         notifications,
 
-        // New notification API
         markAsRead,
+
         markAllAsRead,
 
     };

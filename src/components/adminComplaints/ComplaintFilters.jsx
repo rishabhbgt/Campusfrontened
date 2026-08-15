@@ -1,4 +1,8 @@
-import { Search, Filter } from "lucide-react";
+import {
+    Search,
+    Filter,
+} from "lucide-react";
+
 
 function ComplaintFilters({
 
@@ -17,23 +21,28 @@ function ComplaintFilters({
 
         <div
             className="
-                bg-white
-                rounded-3xl
-                shadow-md
-                p-6
                 mb-8
                 flex
                 flex-col
-                lg:flex-row
-                gap-5
                 items-center
                 justify-between
+                gap-5
+                rounded-3xl
+                bg-white
+                p-6
+                shadow-md
+
+                lg:flex-row
             "
         >
 
-            {/* Search */}
-
-            <div className="relative w-full lg:flex-1">
+            <div
+                className="
+                    relative
+                    w-full
+                    lg:flex-1
+                "
+            >
 
                 <Search
                     size={20}
@@ -46,6 +55,7 @@ function ComplaintFilters({
                     "
                 />
 
+
                 <input
 
                     type="text"
@@ -55,33 +65,50 @@ function ComplaintFilters({
                     value={search}
 
                     onChange={(e) =>
-                        setSearch(e.target.value)
+                        setSearch(
+                            e.target.value
+                        )
                     }
 
                     className="
                         w-full
-                        pl-12
-                        pr-5
-                        py-3
                         rounded-2xl
                         border
                         border-slate-300
+                        py-3
+                        pl-12
+                        pr-5
                         outline-none
+                        transition
+                        focus:border-indigo-500
                         focus:ring-4
                         focus:ring-indigo-100
-                        focus:border-indigo-500
-                        transition
                     "
 
                 />
 
             </div>
 
-            {/* Filters */}
+            <div
+                className="
+                    flex
+                    w-full
+                    flex-col
+                    gap-4
 
-            <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+                    sm:flex-row
 
-                <div className="relative">
+                    lg:w-auto
+                "
+            >
+
+                <div
+                    className="
+                        relative
+                        w-full
+                        sm:w-auto
+                    "
+                >
 
                     <Filter
                         size={18}
@@ -94,40 +121,59 @@ function ComplaintFilters({
                         "
                     />
 
+
                     <select
 
                         value={statusFilter}
 
                         onChange={(e) =>
-                            setStatusFilter(e.target.value)
+                            setStatusFilter(
+                                e.target.value
+                            )
                         }
 
                         className="
-                            pl-11
-                            pr-8
-                            py-3
+                            w-full
+                            appearance-none
                             rounded-2xl
                             border
                             border-slate-300
+                            py-3
+                            pl-11
+                            pr-8
                             outline-none
+                            transition
+                            focus:border-indigo-500
                             focus:ring-4
                             focus:ring-indigo-100
-                            focus:border-indigo-500
-                            appearance-none
+
+                            sm:w-auto
                         "
 
                     >
 
-                        <option value="All">All Status</option>
+                        <option value="All">
+                            All Status
+                        </option>
 
-                        <option value="Pending">Pending</option>
+
+                        <option value="Pending">
+                            Pending
+                        </option>
+
 
                         <option value="In Progress">
                             In Progress
                         </option>
 
+
                         <option value="Resolved">
                             Resolved
+                        </option>
+
+
+                        <option value="Overdue">
+                            Overdue
                         </option>
 
                     </select>
@@ -139,19 +185,25 @@ function ComplaintFilters({
                     value={priorityFilter}
 
                     onChange={(e) =>
-                        setPriorityFilter(e.target.value)
+                        setPriorityFilter(
+                            e.target.value
+                        )
                     }
 
                     className="
-                        px-5
-                        py-3
+                        w-full
                         rounded-2xl
                         border
                         border-slate-300
+                        px-5
+                        py-3
                         outline-none
+                        transition
+                        focus:border-indigo-500
                         focus:ring-4
                         focus:ring-indigo-100
-                        focus:border-indigo-500
+
+                        sm:w-auto
                     "
 
                 >
@@ -160,17 +212,21 @@ function ComplaintFilters({
                         All Priority
                     </option>
 
+
                     <option value="Low">
                         Low
                     </option>
+
 
                     <option value="Medium">
                         Medium
                     </option>
 
+
                     <option value="High">
                         High
                     </option>
+
 
                     <option value="Critical">
                         Critical

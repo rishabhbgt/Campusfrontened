@@ -7,6 +7,7 @@ function Signup() {
 
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
 
     const navigate = useNavigate();
@@ -25,6 +26,7 @@ function Signup() {
                     {
                         fullName,
                         email,
+                        phone,
                         password,
                     }
                 );
@@ -34,14 +36,13 @@ function Signup() {
                 response.data
             );
 
-
             toast.success(
-                "Signup Successful"
+                "OTP sent to your mobile number"
             );
 
-
-            navigate("/");
-
+            navigate(
+                `/verify-phone?phone=${phone}`
+            );
 
         } catch (error) {
 
@@ -100,8 +101,6 @@ function Signup() {
                     onSubmit={handleSubmit}
                 >
 
-                    {/* Full Name */}
-
                     <input
                         type="text"
                         placeholder="Full Name"
@@ -125,11 +124,9 @@ function Signup() {
                     />
 
 
-                    {/* Email */}
-
                     <input
                         type="email"
-                        placeholder="Email"
+                        placeholder="College Email"
                         value={email}
                         onChange={(e) =>
                             setEmail(
@@ -150,7 +147,30 @@ function Signup() {
                     />
 
 
-                    {/* Password */}
+                    <input
+                        type="tel"
+                        placeholder="Mobile Number"
+                        value={phone}
+                        onChange={(e) =>
+                            setPhone(
+                                e.target.value
+                            )
+                        }
+                        required
+                        maxLength={10}
+                        pattern="[0-9]{10}"
+                        className="
+                            mb-3
+                            w-full
+                            rounded-lg
+                            border
+                            p-2
+                            outline-none
+                            focus:ring-2
+                            focus:ring-blue-500
+                        "
+                    />
+
 
                     <input
                         type="password"
@@ -162,6 +182,7 @@ function Signup() {
                             )
                         }
                         required
+                        minLength={6}
                         className="
                             mb-5
                             w-full
@@ -174,8 +195,6 @@ function Signup() {
                         "
                     />
 
-
-                    {/* Signup */}
 
                     <button
                         type="submit"
@@ -195,8 +214,6 @@ function Signup() {
 
                 </form>
 
-
-                {/* Login */}
 
                 <p
                     className="

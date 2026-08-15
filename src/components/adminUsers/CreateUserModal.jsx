@@ -10,6 +10,7 @@ function CreateUserModal({
     const [form, setForm] = useState({
         fullName: "",
         email: "",
+        phone: "",
         password: "",
         role: "faculty",
     });
@@ -68,8 +69,6 @@ function CreateUserModal({
                     shadow-2xl
                 "
             >
-
-                {/* Header */}
 
                 <div
                     className="
@@ -156,8 +155,6 @@ function CreateUserModal({
                     className="space-y-4"
                 >
 
-                    {/* Full Name */}
-
                     <div>
 
                         <label
@@ -195,9 +192,6 @@ function CreateUserModal({
                         />
 
                     </div>
-
-
-                    {/* Email */}
 
                     <div>
 
@@ -238,7 +232,32 @@ function CreateUserModal({
                     </div>
 
 
-                    {/* Password */}
+
+                    <div>
+                        <input
+                            type="tel"
+                            name="phone"
+                            value={form.phone}
+                            onChange={handleChange}
+                            required
+                            maxLength={10}
+                            pattern="[0-9]{10}"
+                            placeholder="Mobile Number"
+                            className="
+                                w-full
+                                rounded-2xl
+                                border
+                                border-slate-200
+                                px-4
+                                py-3
+                                outline-none
+                                transition
+                                focus:border-indigo-500
+                                focus:ring-4
+                                focus:ring-indigo-500/10
+                            "
+                        />
+                    </div>
 
                     <div>
 

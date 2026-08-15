@@ -35,9 +35,6 @@ function AdminDashboard() {
 
     const [faculties, setFaculties] = useState([]);
 
-
-    // ================= FETCH COMPLAINTS =================
-
     const fetchComplaints = async () => {
 
         try {
@@ -75,8 +72,6 @@ function AdminDashboard() {
         }
 
     };
-
-    // ================= FETCH FACULTIES =================
 
 const fetchFaculties = async () => {
 
@@ -119,9 +114,6 @@ const fetchFaculties = async () => {
 
 };
 
-
-    // ================= UPDATE STATUS =================
-
     const updateStatus = async (id, data) => {
 
         try {
@@ -157,9 +149,6 @@ const fetchFaculties = async () => {
         }
 
     };
-
-
-    // ================= DOWNLOAD EXCEL =================
 
     const downloadExcel = async () => {
 
@@ -213,9 +202,6 @@ const fetchFaculties = async () => {
 
     };
 
-
-    // ================= DOWNLOAD PDF =================
-
     const downloadPDF = async () => {
 
         try {
@@ -268,18 +254,12 @@ const fetchFaculties = async () => {
 
     };
 
-
-    // ================= INITIAL FETCH =================
-
     useEffect(() => {
 
         fetchComplaints();
         fetchFaculties();
 
 }, []);
-
-
-    // ================= STATISTICS =================
 
     const total =
         complaints.length;
@@ -312,9 +292,6 @@ const fetchFaculties = async () => {
                 c.status !== "Resolved"
         ).length;
 
-
-    // ================= PIE DATA =================
-
     const pieData = [
 
         {
@@ -341,9 +318,6 @@ const fetchFaculties = async () => {
         "#22C55E",
     ];
 
-
-    // ================= FILTER =================
-
     const priorityOrder = {
         High: 3,
         Medium: 2,
@@ -362,9 +336,18 @@ const fetchFaculties = async () => {
                         search.toLowerCase()
                     );
 
+            const isOverdue =
+                complaint.dueDate &&
+                new Date(complaint.dueDate) < new Date() &&
+                complaint.status !== "Resolved";
+
+
             const matchStatus =
-                statusFilter === "All" ||
-                complaint.status === statusFilter;
+                statusFilter === "All"
+                    ? true
+                    : statusFilter === "Overdue"
+                        ? isOverdue
+                        : complaint.status === statusFilter;
 
             const matchPriority =
                 priorityFilter === "All" ||
@@ -404,14 +387,8 @@ const fetchFaculties = async () => {
 
         });
 
-
-    // ================= RECENT COMPLAINTS =================
-
     const recentComplaints =
         filteredComplaints.slice(0, 5);
-
-
-    // ================= CATEGORY DATA =================
 
     const categories = [
         "Hostel",
@@ -436,9 +413,6 @@ const fetchFaculties = async () => {
 
             })
         );
-
-
-    // ================= LOGOUT =================
 
     const handleLogout = () => {
 
@@ -481,9 +455,6 @@ const fetchFaculties = async () => {
                 "
             >
 
-
-                {/* ================= HEADER ================= */}
-
                 <header
                     className="
                         relative
@@ -522,12 +493,7 @@ const fetchFaculties = async () => {
                         "
                     >
 
-                        {/* LEFT */}
-
                         <AdminComplaintHeader />
-
-
-                        {/* RIGHT */}
 
                         <div
                             className="
@@ -539,9 +505,6 @@ const fetchFaculties = async () => {
                                 sm:gap-4
                             "
                         >
-
-                            {/* Notification */}
-
                             <div
                                 className="
                                     relative
@@ -552,9 +515,6 @@ const fetchFaculties = async () => {
                                 <AdminNotificationBell />
 
                             </div>
-
-
-                            {/* Manage Users */}
 
                             <button
                                 onClick={() =>
@@ -591,9 +551,6 @@ const fetchFaculties = async () => {
                             >
                                 Manage Users
                             </button>
-
-
-                            {/* Logout */}
 
                             <button
                                 onClick={
@@ -640,9 +597,6 @@ const fetchFaculties = async () => {
 
                     </div>
 
-
-                    {/* Mobile Manage Users */}
-
                     <button
                         onClick={() =>
                             navigate(
@@ -675,9 +629,6 @@ const fetchFaculties = async () => {
 
                 </header>
 
-
-                {/* ================= ANALYTICS ================= */}
-
                 <section className="mb-8">
 
                     <AnalyticsCards
@@ -691,9 +642,6 @@ const fetchFaculties = async () => {
 
                 </section>
 
-
-                {/* ================= COMPLAINT STATS ================= */}
-
                 <section className="mb-8">
 
                     <ComplaintStats
@@ -701,9 +649,6 @@ const fetchFaculties = async () => {
                     />
 
                 </section>
-
-
-                {/* ================= REPORT BUTTONS ================= */}
 
                 <section
                     className="
@@ -774,9 +719,6 @@ const fetchFaculties = async () => {
 
                 </section>
 
-
-                {/* ================= CHARTS ================= */}
-
                 <section
                     className="
                         grid
@@ -802,9 +744,6 @@ const fetchFaculties = async () => {
 
                 </section>
 
-
-                {/* ================= FILTERS ================= */}
-
                 <section className="mb-8">
 
                     <ComplaintFilters
@@ -828,9 +767,6 @@ const fetchFaculties = async () => {
 
                 </section>
 
-
-                {/* ================= RECENT ACTIVITY ================= */}
-
                 <section className="mb-8">
 
                     <RecentActivity
@@ -840,9 +776,6 @@ const fetchFaculties = async () => {
                     />
 
                 </section>
-
-
-                {/* ================= COMPLAINT TABLE ================= */}
 
                 <section>
 
