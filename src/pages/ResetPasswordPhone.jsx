@@ -1,64 +1,27 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
 import toast from "react-hot-toast";
 
-function ForgotPassword() {
+function ResetPasswordPhone() {
 
     const navigate = useNavigate();
+    const { phone } = useParams();
 
-    const [method, setMethod] = useState("email");
-
-    const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState("");
+    const [code, setCode] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
 
     const [loading, setLoading] = useState(false);
+    const [otpVerified, setOtpVerified] = useState(false);
 
-    const handleEmailSubmit = async (e) => {
 
-        e.preventDefault();
+    const verifyOtp = async () => {
 
-        setLoading(true);
-
-        try {
-
-            const response =
-                await api.post(
-                    "/auth/forgot-password",
-                    {
-                        email,
-                    }
-                );
-
-            toast.success(
-                response.data?.message ||
-                "Reset link sent to your email"
-            );
-
-        } catch (error) {
+        if (!/^[0-9]{6}$/.test(code)) {
 
             toast.error(
-                error.response?.data?.message ||
-                "Unable to process request"
-            );
-
-        } finally {
-
-            setLoading(false);
-
-        }
-
-    };
-
-
-    const handlePhoneSubmit = async (e) => {
-
-        e.preventDefault();
-
-        if (!/^[0-9]{10}$/.test(phone)) {
-
-            toast.error(
-                "Enter a valid 10-digit mobile number"
+                "Enter a valid 6-digit OTP"
             );
 
             return;
@@ -71,26 +34,93 @@ function ForgotPassword() {
 
             const response =
                 await api.post(
-                    "/auth/forgot-password-phone",
+                    "/auth/verify-password-reset-otp",
                     {
                         phone,
+                        code,
                     }
                 );
 
             toast.success(
                 response.data?.message ||
-                "OTP generated successfully"
+                "OTP verified successfully"
             );
 
-            navigate(
-                `/reset-password-phone/${phone}`
-            );
+            setOtpVerified(true);
 
         } catch (error) {
 
             toast.error(
                 error.response?.data?.message ||
-                "Unable to process request"
+                "Invalid OTP"
+            );
+
+        } finally {
+
+            setLoading(false);
+
+        }
+
+    };
+
+
+    const resetPassword = async (e) => {
+
+        e.preventDefault();
+
+        if (!otpVerified) {
+            toast.error(
+                "Please verify OTP first"
+            );
+            return;
+        }
+
+        if (password.length < 6) {
+
+            toast.error(
+                "Password must be at least 6 characters"
+            );
+
+            return;
+
+        }
+
+        if (password !== confirmPassword) {
+
+            toast.error(
+                "Passwords do not match"
+            );
+
+            return;
+
+        }
+
+        setLoading(true);
+
+        try {
+
+            const response =
+                await api.put(
+                    "/auth/reset-password-phone",
+                    {
+                        phone,
+                        code,
+                        password,
+                    }
+                );
+
+            toast.success(
+                response.data?.message ||
+                "Password reset successful"
+            );
+
+            navigate("/");
+
+        } catch (error) {
+
+            toast.error(
+                error.response?.data?.message ||
+                "Password reset failed"
             );
 
         } finally {
@@ -134,9 +164,8 @@ function ForgotPassword() {
                         font-bold
                     "
                 >
-                    Forgot Password
+                    Reset Password
                 </h1>
-
 
                 <p
                     className="
@@ -146,127 +175,28 @@ function ForgotPassword() {
                         text-slate-500
                     "
                 >
-                    Choose how you want to reset your password
+                    OTP for {phone}
                 </p>
 
 
-                <div
-                    className="
-                        mb-6
-                        flex
-                        gap-2
-                    "
-                >
+                {!otpVerified ? (
 
-                    <button
-                        type="button"
-                        onClick={() => setMethod("email")}
-                        className={`
-                            w-1/2
-                            rounded-lg
-                            p-3
-                            font-semibold
-                            ${
-                                method === "email"
-                                    ? "bg-blue-600 text-white"
-                                    : "bg-gray-200 text-gray-700"
-                            }
-                        `}
-                    >
-                        Email
-                    </button>
-
-
-                    <button
-                        type="button"
-                        onClick={() => setMethod("phone")}
-                        className={`
-                            w-1/2
-                            rounded-lg
-                            p-3
-                            font-semibold
-                            ${
-                                method === "phone"
-                                    ? "bg-blue-600 text-white"
-                                    : "bg-gray-200 text-gray-700"
-                            }
-                        `}
-                    >
-                        Mobile OTP
-                    </button>
-
-                </div>
-
-
-                {method === "email" ? (
-
-                    <form
-                        onSubmit={handleEmailSubmit}
-                    >
-
-                        <input
-                            type="email"
-                            placeholder="Registered Email"
-                            value={email}
-                            onChange={(e) =>
-                                setEmail(e.target.value)
-                            }
-                            required
-                            className="
-                                mb-4
-                                w-full
-                                rounded-lg
-                                border
-                                p-3
-                                outline-none
-                                focus:ring-2
-                                focus:ring-blue-500
-                            "
-                        />
-
-
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="
-                                w-full
-                                rounded-lg
-                                bg-blue-600
-                                p-3
-                                font-semibold
-                                text-white
-                                hover:bg-blue-700
-                                disabled:opacity-60
-                            "
-                        >
-                            {loading
-                                ? "Sending..."
-                                : "Send Reset Link"}
-                        </button>
-
-                    </form>
-
-                ) : (
-
-                    <form
-                        onSubmit={handlePhoneSubmit}
-                    >
+                    <div>
 
                         <input
                             type="text"
                             inputMode="numeric"
-                            maxLength={10}
-                            placeholder="Registered Mobile Number"
-                            value={phone}
+                            maxLength={6}
+                            placeholder="Enter OTP"
+                            value={code}
                             onChange={(e) =>
-                                setPhone(
+                                setCode(
                                     e.target.value.replace(
                                         /\D/g,
                                         ""
                                     )
                                 )
                             }
-                            required
                             className="
                                 mb-4
                                 w-full
@@ -279,6 +209,77 @@ function ForgotPassword() {
                             "
                         />
 
+                        <button
+                            type="button"
+                            onClick={verifyOtp}
+                            disabled={loading}
+                            className="
+                                w-full
+                                rounded-lg
+                                bg-blue-600
+                                p-3
+                                font-semibold
+                                text-white
+                                hover:bg-blue-700
+                                disabled:opacity-60
+                            "
+                        >
+                            {loading
+                                ? "Verifying..."
+                                : "Verify OTP"}
+                        </button>
+
+                    </div>
+
+                ) : (
+
+                    <form
+                        onSubmit={resetPassword}
+                    >
+
+                        <input
+                            type="password"
+                            placeholder="New Password"
+                            value={password}
+                            onChange={(e) =>
+                                setPassword(
+                                    e.target.value
+                                )
+                            }
+                            required
+                            className="
+                                mb-3
+                                w-full
+                                rounded-lg
+                                border
+                                p-3
+                                outline-none
+                                focus:ring-2
+                                focus:ring-blue-500
+                            "
+                        />
+
+                        <input
+                            type="password"
+                            placeholder="Confirm Password"
+                            value={confirmPassword}
+                            onChange={(e) =>
+                                setConfirmPassword(
+                                    e.target.value
+                                )
+                            }
+                            required
+                            className="
+                                mb-5
+                                w-full
+                                rounded-lg
+                                border
+                                p-3
+                                outline-none
+                                focus:ring-2
+                                focus:ring-blue-500
+                            "
+                        />
 
                         <button
                             type="submit"
@@ -295,34 +296,19 @@ function ForgotPassword() {
                             "
                         >
                             {loading
-                                ? "Generating OTP..."
-                                : "Send OTP"}
+                                ? "Resetting..."
+                                : "Reset Password"}
                         </button>
 
                     </form>
 
                 )}
 
-
-                <button
-                    type="button"
-                    onClick={() => navigate("/")}
-                    className="
-                        mt-4
-                        w-full
-                        text-sm
-                        font-semibold
-                        text-blue-600
-                        hover:underline
-                    "
-                >
-                    Back to Login
-                </button>
-
             </div>
 
         </div>
+
     );
 }
 
-export default ForgotPassword;
+export default ResetPasswordPhone;

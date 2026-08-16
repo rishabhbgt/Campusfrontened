@@ -15,6 +15,8 @@ import ComplaintDetails from "./pages/ComplaintDetails";
 import FacultyDashboard from "./pages/FacultyDashboard";
 import VerifyPhone from "./pages/VerifyPhone";
 import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPasswordPhone from "./pages/ResetPasswordPhone";
 
 
 function App() {
@@ -37,6 +39,16 @@ function App() {
       <Route
           path="/reset-password/:token"
           element={<ResetPassword />}
+      />
+
+      <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+      />
+
+      <Route
+          path="/reset-password-phone/:phone"
+          element={<ResetPasswordPhone />}
       />
       
       <Route
