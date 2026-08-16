@@ -161,7 +161,6 @@ function Login() {
                     CampusOne
                 </h1>
 
-
                 <h2
                     className="
                         text-xl
@@ -254,6 +253,22 @@ function Login() {
                         />
 
                     </div>
+
+                    <button
+                        type="button"
+                        onClick={() => navigate("/forgot-password")}
+                        className="
+                            mb-4
+                            w-full
+                            text-right
+                            text-sm
+                            font-semibold
+                            text-blue-600
+                            hover:underline
+                        "
+                    >
+                        Forgot Password?
+                    </button>
 
 
                     {/* LOGIN BUTTON */}
