@@ -41,17 +41,7 @@ function AdminDashboard() {
 
             setLoading(true);
 
-            const token =
-                localStorage.getItem("token");
-
-            const response = await api.get(
-                "/complaints/all",
-                {
-                    headers: {
-                        Authorization: token,
-                    },
-                }
-            );
+            const response = await api.get("/complaints/all");
 
             setComplaints(
                 response.data.complaints || []
@@ -77,17 +67,7 @@ const fetchFaculties = async () => {
 
     try {
 
-        const token =
-            localStorage.getItem("token");
-
-        const response = await api.get(
-            "/users",
-            {
-                headers: {
-                    Authorization: token,
-                },
-            }
-        );
+        const response = await api.get("/users");
 
         const facultyUsers =
             (response.data.users || [])
@@ -118,18 +98,7 @@ const fetchFaculties = async () => {
 
         try {
 
-            const token =
-                localStorage.getItem("token");
-
-            await api.put(
-                `/complaints/${id}`,
-                data,
-                {
-                    headers: {
-                        Authorization: token,
-                    },
-                }
-            );
+            await api.put(`/complaints/${id}`, data);
 
             toast.success(
                 "Complaint Updated"
@@ -154,18 +123,9 @@ const fetchFaculties = async () => {
 
         try {
 
-            const token =
-                localStorage.getItem("token");
-
-            const response = await api.get(
-                "/reports/excel",
-                {
-                    headers: {
-                        Authorization: token,
-                    },
-                    responseType: "blob",
-                }
-            );
+            const response = await api.get("/reports/excel", {
+                responseType: "blob",
+            });
 
             const url =
                 window.URL.createObjectURL(
@@ -206,18 +166,9 @@ const fetchFaculties = async () => {
 
         try {
 
-            const token =
-                localStorage.getItem("token");
-
-            const response = await api.get(
-                "/reports/pdf",
-                {
-                    headers: {
-                        Authorization: token,
-                    },
-                    responseType: "blob",
-                }
-            );
+            const response = await api.get("/reports/pdf", {
+                responseType: "blob",
+            });
 
             const url =
                 window.URL.createObjectURL(

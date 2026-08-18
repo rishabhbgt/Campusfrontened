@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import toast from "react-hot-toast";
 
 function useCreateComplaint() {
-
     const navigate = useNavigate();
 
     const [title, setTitle] = useState("");
@@ -15,115 +14,97 @@ function useCreateComplaint() {
     const [showPreview, setShowPreview] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const handleImage = (e) => {
-
-        const file = e.target.files[0];
-
+    const handleImage = (file) => {
         if (!file) return;
 
-        if (file.size > 5 * 1024 * 1024) {
-
-            toast.error("Image size should be less than 5 MB");
-
-            return;
-
-        }
-
-        const allowedTypes = [
-            "image/jpeg",
-            "image/png",
-            "image/jpg",
-            "image/webp",
-        ];
-
-        if (!allowedTypes.includes(file.type)) {
-
-            toast.error("Only JPG, PNG and WEBP images are allowed");
-
-            return;
-
-        }
-
         setImage(file);
-        setPreview(URL.createObjectURL(file));
-        setShowPreview(false);
 
+        const previewUrl = URL.createObjectURL(file);
+        setPreview(previewUrl);
+
+        setShowPreview(false);
     };
 
     const removeImage = () => {
+        if (preview) {
+            URL.revokeObjectURL(preview);
+        }
 
         setImage(null);
         setPreview("");
         setShowPreview(false);
-
     };
 
-    const handleSubmit = async (e) => {
+    useEffect(() => {
+        return () => {
+            if (preview) {
+                URL.revokeObjectURL(preview);
+            }
+        };
+    }, [preview]);
 
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        try {
+        if (!title.trim()) {
+            toast.error("Complaint title is required");
+            return;
+        }
 
+        if (!description.trim()) {
+            toast.error("Complaint description is required");
+            return;
+        }
+
+        if (!category) {
+            toast.error("Please select a category");
+            return;
+        }
+
+        try {
             setLoading(true);
 
             const token = localStorage.getItem("token");
 
+            if (!token) {
+                toast.error("Please login again");
+                navigate("/");
+                return;
+            }
+
             const formData = new FormData();
 
-            formData.append("title", title);
-            formData.append("description", description);
+            formData.append("title", title.trim());
+            formData.append("description", description.trim());
             formData.append("category", category);
 
             if (image) {
-
                 formData.append("image", image);
-
             }
 
-            await api.post(
+            await api.post("/complaints", formData);
 
-                "/complaints",
-
-                formData,
-
-                {
-                    headers: {
-                        Authorization: token,
-                    },
-                }
-
+            toast.success(
+                "Complaint Submitted Successfully"
             );
-
-            toast.success("Complaint Submitted Successfully");
 
             navigate("/dashboard");
-
-        }
-
-        catch (error) {
-
-            console.log(error);
-
-            toast.error(
-
-                error.response?.data?.message ||
-
-                "Submission Failed"
-
+        } catch (error) {
+            console.error(
+                "Create Complaint Error:",
+                error
             );
 
-        }
-
-        finally {
-
+            toast.error(
+                error.response?.data?.message ||
+                "Submission Failed"
+            );
+        } finally {
             setLoading(false);
-
         }
-
     };
 
     return {
-
         title,
         setTitle,
 
@@ -135,20 +116,16 @@ function useCreateComplaint() {
 
         image,
         preview,
-        showPreview,
 
+        showPreview,
         setShowPreview,
 
         loading,
 
         handleImage,
-
         removeImage,
-
         handleSubmit,
-
     };
-
 }
 
 export default useCreateComplaint;

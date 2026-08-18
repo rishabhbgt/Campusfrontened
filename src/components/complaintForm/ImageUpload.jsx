@@ -18,8 +18,6 @@ function ImageUpload({
 
         <div className="space-y-3">
 
-            {/* ================= LABEL ================= */}
-
             <div className="flex items-center justify-between">
 
                 <label
@@ -38,9 +36,6 @@ function ImageUpload({
                 </span>
 
             </div>
-
-
-            {/* ================= UPLOAD AREA ================= */}
 
             <label
                 htmlFor="imageUpload"
@@ -125,9 +120,6 @@ function ImageUpload({
 
             </label>
 
-
-            {/* ================= FILE INPUT ================= */}
-
             <input
                 id="imageUpload"
                 type="file"
@@ -138,9 +130,6 @@ function ImageUpload({
                     const file = e.target.files[0];
 
                     if (!file) return;
-
-
-                    // File Size Validation
 
                     if (
                         file.size >
@@ -156,9 +145,6 @@ function ImageUpload({
                         return;
 
                     }
-
-
-                    // File Type Validation
 
                     const allowed = [
                         "image/jpeg",
@@ -182,12 +168,10 @@ function ImageUpload({
 
 
                     handleImage(file);
+                    e.target.value = "";
 
                 }}
             />
-
-
-            {/* ================= IMAGE PREVIEW ================= */}
 
             {(preview || currentImage) && (
 
@@ -222,9 +206,6 @@ function ImageUpload({
 
                     </div>
 
-
-                    {/* Preview Image */}
-
                     <img
                         src={
                             preview ||
@@ -248,9 +229,6 @@ function ImageUpload({
                         "
                     />
 
-
-                    {/* Selected File Name */}
-
                     {image && (
 
                         <p
@@ -266,9 +244,6 @@ function ImageUpload({
                         </p>
 
                     )}
-
-
-                    {/* Remove Button */}
 
                     <button
                         type="button"

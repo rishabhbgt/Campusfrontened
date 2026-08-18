@@ -4,7 +4,6 @@ import api from "../services/api";
 import toast from "react-hot-toast";
 
 function useEditComplaint(id) {
-
     const navigate = useNavigate();
 
     const [title, setTitle] = useState("");
@@ -12,198 +11,189 @@ function useEditComplaint(id) {
     const [category, setCategory] = useState("");
 
     const [image, setImage] = useState(null);
-
     const [preview, setPreview] = useState("");
 
     const [showPreview, setShowPreview] = useState(false);
-
     const [loading, setLoading] = useState(false);
 
     const [removeCurrentImage, setRemoveCurrentImage] =
-useState(false);
+        useState(false);
 
     const fetchComplaint = async () => {
-
         try {
-
-            const token = localStorage.getItem("token");
-
             const response = await api.get(
-                `/complaints/${id}`,
-                {
-                    headers: {
-                        Authorization: token,
-                    },
-                }
+                `/complaints/${id}`
             );
 
-            const complaint = response.data.complaint;
+            const complaint =
+                response.data.complaint;
 
-            setTitle(complaint.title);
+            setTitle(complaint.title || "");
+            setDescription(
+                complaint.description || ""
+            );
+            setCategory(complaint.category || "");
 
-            setDescription(complaint.description);
-
-            setCategory(complaint.category);
-
-            setPreview(complaint.image);
-
-        }
-
-        catch (error) {
-
-            console.log(error);
+            setPreview(complaint.image || "");
+            setImage(null);
+            setRemoveCurrentImage(false);
+        } catch (error) {
+            console.error(
+                "Fetch Complaint Error:",
+                error
+            );
 
             toast.error(
-
                 error.response?.data?.message ||
-
                 "Failed to load complaint."
-
             );
-
         }
-
     };
 
     useEffect(() => {
-
         fetchComplaint();
-
     }, [id]);
 
     const handleImage = (file) => {
-
         if (!file) return;
 
         if (file.size > 5 * 1024 * 1024) {
-
-            toast.error("Image size should be less than 5 MB");
-
+            toast.error(
+                "Image size should be less than 5 MB"
+            );
             return;
-
         }
 
         const allowedTypes = [
-
             "image/jpeg",
-
             "image/png",
-
             "image/jpg",
-
             "image/webp",
-
         ];
 
         if (!allowedTypes.includes(file.type)) {
-
-            toast.error("Only JPG, PNG and WEBP images are allowed");
-
+            toast.error(
+                "Only JPG, PNG and WEBP images are allowed"
+            );
             return;
-
         }
 
+        if (preview?.startsWith("blob:")) {
+            URL.revokeObjectURL(preview);
+        }
+
+        const previewUrl =
+            URL.createObjectURL(file);
+
         setImage(file);
-
-        setPreview(URL.createObjectURL(file));
-
+        setPreview(previewUrl);
         setRemoveCurrentImage(false);
-        
         setShowPreview(false);
-
-
     };
 
     const removeImage = () => {
-
-        setImage(null);
-
-        setPreview("");
-
-        setRemoveCurrentImage(true);
-
-        setShowPreview(false);
-
-
+        if (preview?.startsWith("blob:")) {
+            URL.revokeObjectURL(preview);
         }
 
-    const updateComplaint = async (e) => {
+        setImage(null);
+        setPreview("");
+        setRemoveCurrentImage(true);
+        setShowPreview(false);
+    };
 
+    useEffect(() => {
+        return () => {
+            if (preview?.startsWith("blob:")) {
+                URL.revokeObjectURL(preview);
+            }
+        };
+    }, [preview]);
+
+    const updateComplaint = async (e) => {
         e.preventDefault();
 
+        if (!title.trim()) {
+            toast.error(
+                "Complaint title is required"
+            );
+            return;
+        }
+
+        if (!description.trim()) {
+            toast.error(
+                "Complaint description is required"
+            );
+            return;
+        }
+
+        if (!category) {
+            toast.error(
+                "Please select a category"
+            );
+            return;
+        }
+
         try {
-
             setLoading(true);
-
-            const token = localStorage.getItem("token");
 
             const formData = new FormData();
 
-            formData.append("title", title);
+            formData.append(
+                "title",
+                title.trim()
+            );
 
-            formData.append("description", description);
+            formData.append(
+                "description",
+                description.trim()
+            );
 
-            formData.append("category", category);
+            formData.append(
+                "category",
+                category
+            );
 
             formData.append(
                 "removeImage",
-                removeCurrentImage ? "true" : "false"
+                removeCurrentImage
+                    ? "true"
+                    : "false"
             );
 
             if (image) {
-
-                formData.append("image", image);
-
+                formData.append(
+                    "image",
+                    image
+                );
             }
 
             await api.put(
-
                 `/complaints/edit/${id}`,
-
-                formData,
-
-                {
-
-                    headers: {
-
-                        Authorization: token,
-
-                    },
-
-                }
-
+                formData
             );
 
-            toast.success("Complaint Updated Successfully");
+            toast.success(
+                "Complaint Updated Successfully"
+            );
 
             navigate("/dashboard");
-
-        }
-
-        catch (error) {
-
-            console.log(error);
-
-            toast.error(
-
-                error.response?.data?.message ||
-
-                "Update Failed"
-
+        } catch (error) {
+            console.error(
+                "Update Complaint Error:",
+                error
             );
 
-        }
-
-        finally {
-
+            toast.error(
+                error.response?.data?.message ||
+                "Update Failed"
+            );
+        } finally {
             setLoading(false);
-
         }
-
     };
 
     return {
-
         title,
         setTitle,
 
@@ -214,25 +204,21 @@ useState(false);
         setCategory,
 
         image,
-
         preview,
 
         showPreview,
-
         setShowPreview,
 
         loading,
 
         handleImage,
-
         removeImage,
+
         removeCurrentImage,
         setRemoveCurrentImage,
 
         updateComplaint,
-
     };
-
 }
 
 export default useEditComplaint;

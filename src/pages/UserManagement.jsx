@@ -1,89 +1,84 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import toast from "react-hot-toast";
 
 function UserManagement() {
-
     const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const fetchUsers = async () => {
         try {
+            setLoading(true);
 
-            const token = localStorage.getItem("token");
+            const response = await api.get("/users");
 
-            const response = await api.get("/users", {
-                headers: {
-                    Authorization: token,
-                },
-            });
-
-            setUsers(response.data.users);
-
+            setUsers(response.data.users || []);
         } catch (error) {
-            console.log(error);
+            console.error("Fetch Users Error:", error);
+
+            toast.error(
+                error.response?.data?.message ||
+                "Failed to load users"
+            );
+        } finally {
+            setLoading(false);
         }
     };
 
     const blockUser = async (id) => {
-    try {
-        const token = localStorage.getItem("token");
+        try {
+            await api.put(`/users/block/${id}`);
 
-        await api.put(
-            `/users/block/${id}`,
-            {},
-            {
-                headers: {
-                    Authorization: token,
-                },
+            toast.success("User Blocked");
+
+            fetchUsers();
+        } catch (error) {
+            console.error("Block User Error:", error);
+
+            toast.error(
+                error.response?.data?.message ||
+                "Failed to block user"
+            );
+        }
+    };
+
+    const unblockUser = async (id) => {
+        try {
+            await api.put(`/users/unblock/${id}`);
+
+            toast.success("User Unblocked");
+
+            fetchUsers();
+        } catch (error) {
+            console.error("Unblock User Error:", error);
+
+            toast.error(
+                error.response?.data?.message ||
+                "Failed to unblock user"
+            );
+        }
+    };
+
+    const deleteUser = async (id) => {
+        try {
+            if (!window.confirm("Delete this user?")) {
+                return;
             }
-        );
 
-        fetchUsers();
+            await api.delete(`/users/${id}`);
 
-    } catch (error) {
-        console.log(error);
-    }
-};
+            toast.success("User Deleted");
 
-const unblockUser = async (id) => {
-    try {
-        const token = localStorage.getItem("token");
+            fetchUsers();
+        } catch (error) {
+            console.error("Delete User Error:", error);
 
-        await api.put(
-            `/users/unblock/${id}`,
-            {},
-            {
-                headers: {
-                    Authorization: token,
-                },
-            }
-        );
-
-        fetchUsers();
-
-    } catch (error) {
-        console.log(error);
-    }
-};
-
-const deleteUser = async (id) => {
-    try {
-
-        if (!window.confirm("Delete this user?")) return;
-
-        const token = localStorage.getItem("token");
-
-        await api.delete(`/users/${id}`, {
-            headers: {
-                Authorization: token,
-            },
-        });
-
-        fetchUsers();
-
-    } catch (error) {
-        console.log(error);
-    }
-};
+            toast.error(
+                error.response?.data?.message ||
+                "Failed to delete user"
+            );
+        }
+    };
 
     useEffect(() => {
         fetchUsers();
@@ -91,95 +86,117 @@ const deleteUser = async (id) => {
 
     return (
         <div className="min-h-screen bg-gray-100 p-8">
-
             <h1 className="text-3xl font-bold mb-6">
                 User Management
             </h1>
 
-            <div className="bg-white rounded-lg shadow">
+            <div className="bg-white rounded-lg shadow overflow-x-auto">
+                {loading ? (
+                    <div className="p-6 text-center text-gray-500">
+                        Loading users...
+                    </div>
+                ) : users.length === 0 ? (
+                    <div className="p-6 text-center text-gray-500">
+                        No users found.
+                    </div>
+                ) : (
+                    <table className="w-full">
+                        <thead className="bg-gray-200">
+                            <tr>
+                                <th className="p-3 text-left">
+                                    Name
+                                </th>
 
-                <table className="w-full">
+                                <th className="p-3 text-left">
+                                    Email
+                                </th>
 
-                <thead className="bg-gray-200">
+                                <th className="p-3 text-left">
+                                    Role
+                                </th>
 
-                <tr>
+                                <th className="p-3 text-left">
+                                    Status
+                                </th>
 
-                <th className="p-3">Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Action</th>
+                                <th className="p-3 text-left">
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
 
-                </tr>
+                        <tbody>
+                            {users.map((user) => (
+                                <tr
+                                    key={user._id}
+                                    className="border-b"
+                                >
+                                    <td className="p-3">
+                                        {user.fullName}
+                                    </td>
 
-                </thead>
+                                    <td className="p-3">
+                                        {user.email}
+                                    </td>
 
-                <tbody>
+                                    <td className="p-3">
+                                        {user.role}
+                                    </td>
 
-                {users.map((user)=>(
+                                    <td className="p-3">
+                                        {user.isBlocked ? (
+                                            <span className="font-semibold text-red-600">
+                                                Blocked
+                                            </span>
+                                        ) : (
+                                            <span className="font-semibold text-green-600">
+                                                Active
+                                            </span>
+                                        )}
+                                    </td>
 
-                <tr
-                key={user._id}
-                className="border-b"
-                >
+                                    <td className="p-3 space-x-2">
+                                        {user.isBlocked ? (
+                                            <button
+                                                onClick={() =>
+                                                    unblockUser(
+                                                        user._id
+                                                    )
+                                                }
+                                                className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                                            >
+                                                Unblock
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() =>
+                                                    blockUser(
+                                                        user._id
+                                                    )
+                                                }
+                                                className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                                            >
+                                                Block
+                                            </button>
+                                        )}
 
-                <td className="p-3">
-                {user.fullName}
-                </td>
-
-                <td>
-                {user.email}
-                </td>
-
-                <td>
-                {user.role}
-                </td>
-
-                <td>
-                {user.isBlocked ? "Blocked":"Active"}
-                </td>
-
-                <td className="space-x-2">
-
-    {user.isBlocked ? (
-
-        <button
-            onClick={() => unblockUser(user._id)}
-            className="bg-green-500 text-white px-3 py-1 rounded"
-        >
-            Unblock
-        </button>
-
-    ) : (
-
-        <button
-            onClick={() => blockUser(user._id)}
-            className="bg-yellow-500 text-white px-3 py-1 rounded"
-        >
-            Block
-        </button>
-
-    )}
-
-    <button
-        onClick={() => deleteUser(user._id)}
-        className="bg-red-500 text-white px-3 py-1 rounded"
-    >
-        Delete
-    </button>
-
-</td>
-
-                </tr>
-
-                ))}
-
-                </tbody>
-
-                </table>
-
+                                        <button
+                                            onClick={() =>
+                                                deleteUser(
+                                                    user._id
+                                                )
+                                            }
+                                            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
             </div>
-
         </div>
     );
 }
