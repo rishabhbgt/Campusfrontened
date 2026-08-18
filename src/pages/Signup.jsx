@@ -4,7 +4,6 @@ import api from "../services/api";
 import toast from "react-hot-toast";
 
 function Signup() {
-
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
@@ -12,57 +11,36 @@ function Signup() {
 
     const navigate = useNavigate();
 
-
     const handleSubmit = async (e) => {
-
         e.preventDefault();
 
-
         try {
-
-            const response =
-                await api.post(
-                    "/auth/signup",
-                    {
-                        fullName,
-                        email,
-                        phone,
-                        password,
-                    }
-                );
-
-
-            console.log(
-                response.data
+            const response = await api.post(
+                "/auth/signup",
+                {
+                    fullName,
+                    email,
+                    phone,
+                    password,
+                }
             );
 
-            toast.success(
-                "OTP sent to your mobile number"
-            );
+            console.log(response.data);
 
-            navigate(
-                `/verify-phone?phone=${phone}`
-            );
+            toast.success("Signup successful! Please login.");
 
+            navigate("/");
         } catch (error) {
-
             console.log(error);
 
-
             toast.error(
-                error.response
-                    ?.data
-                    ?.message ||
+                error.response?.data?.message ||
                 "Signup Failed"
             );
-
         }
-
     };
 
-
     return (
-
         <div
             className="
                 min-h-screen
@@ -73,7 +51,6 @@ function Signup() {
                 px-4
             "
         >
-
             <div
                 className="
                     w-full
@@ -84,7 +61,6 @@ function Signup() {
                     shadow-md
                 "
             >
-
                 <h1
                     className="
                         mb-6
@@ -96,19 +72,14 @@ function Signup() {
                     Signup
                 </h1>
 
-
-                <form
-                    onSubmit={handleSubmit}
-                >
+                <form onSubmit={handleSubmit}>
 
                     <input
                         type="text"
                         placeholder="Full Name"
                         value={fullName}
                         onChange={(e) =>
-                            setFullName(
-                                e.target.value
-                            )
+                            setFullName(e.target.value)
                         }
                         required
                         className="
@@ -122,16 +93,13 @@ function Signup() {
                             focus:ring-blue-500
                         "
                     />
-
 
                     <input
                         type="email"
                         placeholder="College Email"
                         value={email}
                         onChange={(e) =>
-                            setEmail(
-                                e.target.value
-                            )
+                            setEmail(e.target.value)
                         }
                         required
                         className="
@@ -146,15 +114,12 @@ function Signup() {
                         "
                     />
 
-
                     <input
                         type="tel"
                         placeholder="Mobile Number"
                         value={phone}
                         onChange={(e) =>
-                            setPhone(
-                                e.target.value
-                            )
+                            setPhone(e.target.value)
                         }
                         required
                         maxLength={10}
@@ -171,15 +136,12 @@ function Signup() {
                         "
                     />
 
-
                     <input
                         type="password"
                         placeholder="Password"
                         value={password}
                         onChange={(e) =>
-                            setPassword(
-                                e.target.value
-                            )
+                            setPassword(e.target.value)
                         }
                         required
                         minLength={6}
@@ -194,7 +156,6 @@ function Signup() {
                             focus:ring-blue-500
                         "
                     />
-
 
                     <button
                         type="submit"
@@ -214,7 +175,6 @@ function Signup() {
 
                 </form>
 
-
                 <p
                     className="
                         mt-5
@@ -227,9 +187,7 @@ function Signup() {
 
                     <button
                         type="button"
-                        onClick={() =>
-                            navigate("/")
-                        }
+                        onClick={() => navigate("/")}
                         className="
                             ml-1
                             font-semibold
@@ -239,15 +197,10 @@ function Signup() {
                     >
                         Login
                     </button>
-
                 </p>
-
             </div>
-
         </div>
-
     );
-
 }
 
 export default Signup;

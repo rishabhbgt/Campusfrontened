@@ -4,106 +4,39 @@ import api from "../services/api";
 import toast from "react-hot-toast";
 
 function ForgotPassword() {
-
     const navigate = useNavigate();
 
-    const [method, setMethod] = useState("email");
-
     const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState("");
-
     const [loading, setLoading] = useState(false);
 
     const handleEmailSubmit = async (e) => {
-
         e.preventDefault();
 
         setLoading(true);
 
         try {
-
-            const response =
-                await api.post(
-                    "/auth/forgot-password",
-                    {
-                        email,
-                    }
-                );
+            const response = await api.post(
+                "/auth/forgot-password",
+                {
+                    email,
+                }
+            );
 
             toast.success(
                 response.data?.message ||
                 "Reset link sent to your email"
             );
-
         } catch (error) {
-
             toast.error(
                 error.response?.data?.message ||
                 "Unable to process request"
             );
-
         } finally {
-
             setLoading(false);
-
         }
-
     };
-
-
-    const handlePhoneSubmit = async (e) => {
-
-        e.preventDefault();
-
-        if (!/^[0-9]{10}$/.test(phone)) {
-
-            toast.error(
-                "Enter a valid 10-digit mobile number"
-            );
-
-            return;
-
-        }
-
-        setLoading(true);
-
-        try {
-
-            const response =
-                await api.post(
-                    "/auth/forgot-password-phone",
-                    {
-                        phone,
-                    }
-                );
-
-            toast.success(
-                response.data?.message ||
-                "OTP generated successfully"
-            );
-
-            navigate(
-                `/reset-password-phone/${phone}`
-            );
-
-        } catch (error) {
-
-            toast.error(
-                error.response?.data?.message ||
-                "Unable to process request"
-            );
-
-        } finally {
-
-            setLoading(false);
-
-        }
-
-    };
-
 
     return (
-
         <div
             className="
                 flex
@@ -114,7 +47,6 @@ function ForgotPassword() {
                 px-4
             "
         >
-
             <div
                 className="
                     w-full
@@ -125,7 +57,6 @@ function ForgotPassword() {
                     shadow-md
                 "
             >
-
                 <h1
                     className="
                         mb-2
@@ -137,7 +68,6 @@ function ForgotPassword() {
                     Forgot Password
                 </h1>
 
-
                 <p
                     className="
                         mb-6
@@ -146,163 +76,49 @@ function ForgotPassword() {
                         text-slate-500
                     "
                 >
-                    Choose how you want to reset your password
+                    Enter your registered email to reset your password
                 </p>
 
-
-                <div
-                    className="
-                        mb-6
-                        flex
-                        gap-2
-                    "
-                >
+                <form onSubmit={handleEmailSubmit}>
+                    <input
+                        type="email"
+                        placeholder="Registered Email"
+                        value={email}
+                        onChange={(e) =>
+                            setEmail(e.target.value)
+                        }
+                        required
+                        className="
+                            mb-4
+                            w-full
+                            rounded-lg
+                            border
+                            p-3
+                            outline-none
+                            focus:ring-2
+                            focus:ring-blue-500
+                        "
+                    />
 
                     <button
-                        type="button"
-                        onClick={() => setMethod("email")}
-                        className={`
-                            w-1/2
+                        type="submit"
+                        disabled={loading}
+                        className="
+                            w-full
                             rounded-lg
+                            bg-blue-600
                             p-3
                             font-semibold
-                            ${
-                                method === "email"
-                                    ? "bg-blue-600 text-white"
-                                    : "bg-gray-200 text-gray-700"
-                            }
-                        `}
+                            text-white
+                            hover:bg-blue-700
+                            disabled:opacity-60
+                        "
                     >
-                        Email
+                        {loading
+                            ? "Sending..."
+                            : "Send Reset Link"}
                     </button>
-
-
-                    <button
-                        type="button"
-                        onClick={() => setMethod("phone")}
-                        className={`
-                            w-1/2
-                            rounded-lg
-                            p-3
-                            font-semibold
-                            ${
-                                method === "phone"
-                                    ? "bg-blue-600 text-white"
-                                    : "bg-gray-200 text-gray-700"
-                            }
-                        `}
-                    >
-                        Mobile OTP
-                    </button>
-
-                </div>
-
-
-                {method === "email" ? (
-
-                    <form
-                        onSubmit={handleEmailSubmit}
-                    >
-
-                        <input
-                            type="email"
-                            placeholder="Registered Email"
-                            value={email}
-                            onChange={(e) =>
-                                setEmail(e.target.value)
-                            }
-                            required
-                            className="
-                                mb-4
-                                w-full
-                                rounded-lg
-                                border
-                                p-3
-                                outline-none
-                                focus:ring-2
-                                focus:ring-blue-500
-                            "
-                        />
-
-
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="
-                                w-full
-                                rounded-lg
-                                bg-blue-600
-                                p-3
-                                font-semibold
-                                text-white
-                                hover:bg-blue-700
-                                disabled:opacity-60
-                            "
-                        >
-                            {loading
-                                ? "Sending..."
-                                : "Send Reset Link"}
-                        </button>
-
-                    </form>
-
-                ) : (
-
-                    <form
-                        onSubmit={handlePhoneSubmit}
-                    >
-
-                        <input
-                            type="text"
-                            inputMode="numeric"
-                            maxLength={10}
-                            placeholder="Registered Mobile Number"
-                            value={phone}
-                            onChange={(e) =>
-                                setPhone(
-                                    e.target.value.replace(
-                                        /\D/g,
-                                        ""
-                                    )
-                                )
-                            }
-                            required
-                            className="
-                                mb-4
-                                w-full
-                                rounded-lg
-                                border
-                                p-3
-                                outline-none
-                                focus:ring-2
-                                focus:ring-blue-500
-                            "
-                        />
-
-
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="
-                                w-full
-                                rounded-lg
-                                bg-blue-600
-                                p-3
-                                font-semibold
-                                text-white
-                                hover:bg-blue-700
-                                disabled:opacity-60
-                            "
-                        >
-                            {loading
-                                ? "Generating OTP..."
-                                : "Send OTP"}
-                        </button>
-
-                    </form>
-
-                )}
-
+                </form>
 
                 <button
                     type="button"
@@ -318,9 +134,7 @@ function ForgotPassword() {
                 >
                     Back to Login
                 </button>
-
             </div>
-
         </div>
     );
 }
