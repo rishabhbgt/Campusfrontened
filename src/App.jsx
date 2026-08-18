@@ -13,8 +13,8 @@ import AdminRoute from "./components/admin/AdminRoute";
 import EditComplaint from "./pages/EditComplaint";
 import ComplaintDetails from "./pages/ComplaintDetails";
 import FacultyDashboard from "./pages/FacultyDashboard";
+import ResetPassword from "./pages/ResetPassword";
 import ForgotPassword from "./pages/ForgotPassword";
-import ResetPasswordPhone from "./pages/ResetPasswordPhone";
 
 
 function App() {
@@ -29,6 +29,11 @@ function App() {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+
+      <Route
+          path="/reset-password/:token"
+          element={<ResetPassword />}
+      />
 
       <Route
           path="/forgot-password"
