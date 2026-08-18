@@ -45,7 +45,7 @@ function ResetPassword() {
         try {
 
             const response =
-                await api.put(
+                await api.post(
                     `/auth/reset-password/${token}`,
                     {
                         password,
