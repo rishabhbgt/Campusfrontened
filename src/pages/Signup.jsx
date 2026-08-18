@@ -12,7 +12,17 @@ function Signup() {
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
+
         e.preventDefault();
+        
+        const passwordRegex =  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-\\[\]\/+=;']).{8,}$/;
+
+        if (!passwordRegex.test(password)) {
+            toast.error(
+                "Password must contain 8+ characters, uppercase, lowercase, number and special character"
+            );
+            return;
+        }
 
         try {
             const response = await api.post(
@@ -144,7 +154,7 @@ function Signup() {
                             setPassword(e.target.value)
                         }
                         required
-                        minLength={6}
+                        minLength={8}
                         className="
                             mb-5
                             w-full

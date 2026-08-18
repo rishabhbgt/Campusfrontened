@@ -4,80 +4,55 @@ import api from "../services/api";
 import toast from "react-hot-toast";
 
 function ResetPassword() {
-
     const navigate = useNavigate();
     const { token } = useParams();
 
-    const [password, setPassword] =
-        useState("");
-
-    const [confirmPassword, setConfirmPassword] =
-        useState("");
-
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
 
     const handleSubmit = async (e) => {
-
         e.preventDefault();
 
+        const passwordRegex =
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-\\[\]\/+=;']).{8,}$/;
 
-        if (password.length < 6) {
-
+        if (!passwordRegex.test(password)) {
             toast.error(
-                "Password must be at least 6 characters"
+                "Password must contain 8+ characters, uppercase, lowercase, number and special character"
             );
-
             return;
-
         }
-
 
         if (password !== confirmPassword) {
-
-            toast.error(
-                "Passwords do not match"
-            );
-
+            toast.error("Passwords do not match");
             return;
-
         }
 
-
         try {
-
-            const response =
-                await api.post(
-                    `/auth/reset-password/${token}`,
-                    {
-                        password,
-                    }
-                );
-
+            const response = await api.post(
+                `/auth/reset-password/${token}`,
+                {
+                    password,
+                }
+            );
 
             toast.success(
                 response.data?.message ||
                 "Password reset successful"
             );
 
-
             navigate("/");
-
-
         } catch (error) {
+            console.log(error);
 
             toast.error(
-                error.response
-                    ?.data
-                    ?.message ||
+                error.response?.data?.message ||
                 "Password reset failed"
             );
-
         }
-
     };
 
-
     return (
-
         <div
             className="
                 flex
@@ -88,7 +63,6 @@ function ResetPassword() {
                 px-4
             "
         >
-
             <div
                 className="
                     w-full
@@ -99,7 +73,6 @@ function ResetPassword() {
                     shadow-md
                 "
             >
-
                 <h1
                     className="
                         mb-6
@@ -111,21 +84,16 @@ function ResetPassword() {
                     Reset Password
                 </h1>
 
-
-                <form
-                    onSubmit={handleSubmit}
-                >
-
+                <form onSubmit={handleSubmit}>
                     <input
                         type="password"
                         placeholder="New Password"
                         value={password}
                         onChange={(e) =>
-                            setPassword(
-                                e.target.value
-                            )
+                            setPassword(e.target.value)
                         }
                         required
+                        minLength={8}
                         className="
                             mb-3
                             w-full
@@ -138,17 +106,15 @@ function ResetPassword() {
                         "
                     />
 
-
                     <input
                         type="password"
                         placeholder="Confirm Password"
                         value={confirmPassword}
                         onChange={(e) =>
-                            setConfirmPassword(
-                                e.target.value
-                            )
+                            setConfirmPassword(e.target.value)
                         }
                         required
+                        minLength={8}
                         className="
                             mb-5
                             w-full
@@ -160,7 +126,6 @@ function ResetPassword() {
                             focus:ring-blue-500
                         "
                     />
-
 
                     <button
                         type="submit"
@@ -176,15 +141,10 @@ function ResetPassword() {
                     >
                         Reset Password
                     </button>
-
                 </form>
-
             </div>
-
         </div>
-
     );
-
 }
 
 export default ResetPassword;

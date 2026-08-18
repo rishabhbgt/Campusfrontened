@@ -13,8 +13,6 @@ import AdminRoute from "./components/admin/AdminRoute";
 import EditComplaint from "./pages/EditComplaint";
 import ComplaintDetails from "./pages/ComplaintDetails";
 import FacultyDashboard from "./pages/FacultyDashboard";
-import VerifyPhone from "./pages/VerifyPhone";
-import ResetPassword from "./pages/ResetPassword";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPasswordPhone from "./pages/ResetPasswordPhone";
 
@@ -31,24 +29,10 @@ function App() {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-      <Route
-          path="/verify-phone"
-          element={<VerifyPhone />}
-      />
-
-      <Route
-          path="/reset-password/:token"
-          element={<ResetPassword />}
-      />
 
       <Route
           path="/forgot-password"
           element={<ForgotPassword />}
-      />
-
-      <Route
-          path="/reset-password-phone/:phone"
-          element={<ResetPasswordPhone />}
       />
       
       <Route
