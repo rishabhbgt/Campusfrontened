@@ -12,177 +12,174 @@ function DashboardHeader({
     markAllAsRead,
     handleLogout,
 }) {
-
     return (
-
         <header
             className="
                 relative
                 z-50
-                bg-white/80
-                backdrop-blur-xl
+                overflow-hidden
                 rounded-3xl
-                shadow-xl
                 border
-                border-white/60
+                border-white/70
+                bg-white/90
+                shadow-2xl
+                backdrop-blur-xl
                 px-5
-                sm:px-8
                 py-5
+                sm:px-8
                 sm:py-6
             "
         >
+            <div
+                className="
+                    absolute
+                    inset-x-0
+                    top-0
+                    h-1
+                    bg-gradient-to-r
+                    from-indigo-600
+                    via-purple-600
+                    to-blue-600
+                "
+            />
 
             <div
                 className="
                     flex
                     flex-col
+                    gap-5
                     md:flex-row
                     md:items-center
                     md:justify-between
-                    gap-5
                 "
             >
-
-                {/* ================= LEFT SIDE ================= */}
-
                 <div className="flex items-center gap-4 sm:gap-5">
-
-                    {/* Profile Icon */}
-
                     <div
                         className="
-                            w-14
-                            h-14
-                            sm:w-16
-                            sm:h-16
-                            rounded-2xl
-                            bg-gradient-to-br
-                            from-blue-600
-                            to-indigo-600
-                            text-white
                             flex
+                            h-14
+                            w-14
+                            shrink-0
                             items-center
                             justify-center
+                            rounded-2xl
+                            bg-gradient-to-br
+                            from-indigo-600
+                            via-purple-600
+                            to-blue-600
+                            text-white
                             shadow-lg
-                            shrink-0
+                            shadow-indigo-200
+                            sm:h-16
+                            sm:w-16
                         "
                     >
-
                         <UserCircle2
                             size={34}
-                            className="sm:w-9 sm:h-9"
+                            className="sm:h-9 sm:w-9"
                         />
-
                     </div>
 
-
-                    {/* Welcome Text */}
-
-                    <div>
+                    <div className="min-w-0">
+                        <p
+                            className="
+                                mb-1
+                                text-xs
+                                font-semibold
+                                uppercase
+                                tracking-[0.18em]
+                                text-indigo-600
+                            "
+                        >
+                            CampusOne
+                        </p>
 
                         <h1
                             className="
-                                text-2xl
-                                sm:text-3xl
+                                text-xl
                                 font-extrabold
-                                text-slate-800
                                 tracking-tight
+                                text-slate-800
+                                sm:text-3xl
                             "
                         >
-
                             Welcome,
-
-                            <span className="text-blue-600">
-
+                            <span className="text-indigo-600">
                                 {" "}
                                 {user?.fullName}
-
                             </span>
-
                             {" "}👋
-
                         </h1>
-
 
                         <p
                             className="
-                                text-sm
-                                sm:text-base
-                                text-slate-500
                                 mt-1
+                                text-sm
+                                leading-6
+                                text-slate-500
+                                sm:text-base
                             "
                         >
-                            Manage all your complaints from one place.
+                            Manage your campus complaints
+                            from one place.
                         </p>
-
                     </div>
-
                 </div>
-
-
-                {/* ================= RIGHT SIDE ================= */}
 
                 <div
                     className="
                         flex
+                        w-full
                         items-center
                         justify-end
                         gap-3
+                        md:w-auto
                         sm:gap-4
                     "
                 >
-
                     <NotificationBell
                         notifications={notifications}
                         markAsRead={markAsRead}
                         markAllAsRead={markAllAsRead}
                     />
 
-
-                    {/* LOGOUT BUTTON */}
-
                     <button
+                        type="button"
                         onClick={handleLogout}
                         className="
                             flex
                             items-center
                             justify-center
                             gap-2
+                            rounded-2xl
                             bg-gradient-to-r
                             from-red-500
                             to-red-600
-                            hover:from-red-600
-                            hover:to-red-700
-                            text-white
                             px-4
-                            sm:px-5
                             py-3
-                            rounded-2xl
+                            font-semibold
+                            text-white
                             shadow-lg
-                            hover:shadow-xl
                             transition-all
                             duration-300
+                            hover:-translate-y-0.5
+                            hover:from-red-600
+                            hover:to-red-700
+                            hover:shadow-xl
                             active:scale-95
+                            sm:px-5
                         "
                     >
-
                         <LogOut size={18} />
 
                         <span>
                             Logout
                         </span>
-
                     </button>
-
                 </div>
-
             </div>
-
         </header>
-
     );
-
 }
 
 export default DashboardHeader;
-

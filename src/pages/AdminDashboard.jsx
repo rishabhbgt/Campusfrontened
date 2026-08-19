@@ -38,7 +38,7 @@ function AdminDashboard() {
                 response.data.complaints || []
             );
         } catch (error) {
-            console.log(error);
+            console.error(error);
 
             toast.error(
                 "Failed to load complaints"
@@ -85,7 +85,7 @@ function AdminDashboard() {
 
             await fetchComplaints();
         } catch (error) {
-            console.log(error);
+            console.error(error);
 
             toast.error(
                 error.response?.data?.message ||
@@ -150,7 +150,7 @@ function AdminDashboard() {
 
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.log(error);
+            console.error("Excel Download Error:", error);
 
             toast.error(
                 "Failed to download report"
@@ -190,7 +190,7 @@ function AdminDashboard() {
 
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.log(error);
+            console.error(error);
 
             toast.error(
                 "Failed to download PDF"
@@ -282,7 +282,7 @@ function AdminDashboard() {
                     : statusFilter === "Overdue"
                     ? isOverdue
                     : complaint.status ===
-                      statusFilter;
+                    statusFilter;
 
             const matchPriority =
                 priorityFilter === "All" ||

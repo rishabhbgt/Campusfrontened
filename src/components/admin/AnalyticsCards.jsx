@@ -7,7 +7,6 @@ import {
     AlarmClock,
 } from "lucide-react";
 
-
 function AnalyticsCards({
     total = 0,
     pending = 0,
@@ -16,100 +15,90 @@ function AnalyticsCards({
     highPriority = 0,
     overdue = 0,
 }) {
-
     const cards = [
-
         {
             title: "Total Complaints",
             value: total,
             icon: ClipboardList,
             bg: "from-indigo-500 to-blue-600",
+            lightBg: "bg-indigo-50",
+            iconColor: "text-indigo-600",
         },
-
         {
             title: "Pending",
             value: pending,
             icon: Clock3,
             bg: "from-yellow-400 to-orange-500",
+            lightBg: "bg-amber-50",
+            iconColor: "text-orange-500",
         },
-
         {
             title: "In Progress",
             value: inProgress,
             icon: LoaderCircle,
             bg: "from-sky-500 to-cyan-500",
+            lightBg: "bg-sky-50",
+            iconColor: "text-sky-600",
         },
-
         {
             title: "Resolved",
             value: resolved,
             icon: CheckCircle2,
             bg: "from-green-500 to-emerald-600",
+            lightBg: "bg-emerald-50",
+            iconColor: "text-emerald-600",
         },
-
         {
             title: "High Priority",
             value: highPriority,
             icon: AlertTriangle,
             bg: "from-red-500 to-rose-600",
+            lightBg: "bg-red-50",
+            iconColor: "text-red-600",
         },
-
         {
             title: "Overdue",
             value: overdue,
             icon: AlarmClock,
             bg: "from-orange-500 to-red-500",
+            lightBg: "bg-orange-50",
+            iconColor: "text-orange-600",
         },
-
     ];
 
-
     return (
-
         <div
             className="
                 grid
                 grid-cols-1
+                gap-5
                 sm:grid-cols-2
                 lg:grid-cols-3
                 2xl:grid-cols-6
-                gap-5
             "
         >
-
             {cards.map((card) => {
-
                 const Icon = card.icon;
 
                 return (
-
                     <div
                         key={card.title}
                         className="
+                            group
                             relative
                             overflow-hidden
-
                             rounded-3xl
-
-                            bg-white/90
-                            backdrop-blur-xl
-
                             border
-                            border-white/60
-
-                            shadow-lg
-
-                            hover:shadow-2xl
-                            hover:-translate-y-1
-
+                            border-white/70
+                            bg-white/90
+                            shadow-xl
+                            backdrop-blur-xl
                             transition-all
                             duration-300
-
-                            group
+                            hover:-translate-y-1
+                            hover:shadow-2xl
                         "
                     >
-
-
                         <div
                             className={`
                                 absolute
@@ -121,28 +110,23 @@ function AnalyticsCards({
                             `}
                         />
 
-
                         <div
                             className="
-                                p-5
-                                sm:p-6
-
+                                relative
                                 flex
                                 items-center
                                 justify-between
-
                                 gap-4
+                                p-5
+                                sm:p-6
                             "
                         >
-
-                            <div>
-
+                            <div className="min-w-0">
                                 <p
                                     className="
                                         text-sm
+                                        font-semibold
                                         text-slate-500
-                                        font-medium
-                                        whitespace-nowrap
                                     "
                                 >
                                     {card.title}
@@ -150,68 +134,63 @@ function AnalyticsCards({
 
                                 <h2
                                     className="
-                                        text-3xl
-                                        sm:text-4xl
-                                        font-bold
-                                        text-slate-800
                                         mt-2
+                                        text-3xl
+                                        font-extrabold
+                                        tracking-tight
+                                        text-slate-800
+                                        sm:text-4xl
                                     "
                                 >
                                     {card.value}
                                 </h2>
-
                             </div>
-
-
-                            {/* Icon */}
 
                             <div
                                 className={`
-                                    w-14
-                                    h-14
-                                    sm:w-16
-                                    sm:h-16
-
-                                    rounded-2xl
-
-                                    bg-gradient-to-r
-                                    ${card.bg}
-
                                     flex
+                                    h-14
+                                    w-14
+                                    shrink-0
                                     items-center
                                     justify-center
-
-                                    shadow-lg
-
-                                    shrink-0
-
-                                    group-hover:scale-110
-
+                                    rounded-2xl
+                                    ${card.lightBg}
                                     transition-transform
                                     duration-300
+                                    group-hover:scale-110
+                                    sm:h-16
+                                    sm:w-16
                                 `}
                             >
-
                                 <Icon
                                     size={28}
-                                    className="text-white"
+                                    className={card.iconColor}
                                 />
-
                             </div>
-
                         </div>
 
+                        <div
+                            className={`
+                                absolute
+                                -right-8
+                                -top-8
+                                h-24
+                                w-24
+                                rounded-full
+                                bg-gradient-to-br
+                                ${card.bg}
+                                opacity-10
+                                transition-transform
+                                duration-500
+                                group-hover:scale-150
+                            `}
+                        />
                     </div>
-
                 );
-
             })}
-
         </div>
-
     );
-
 }
-
 
 export default AnalyticsCards;

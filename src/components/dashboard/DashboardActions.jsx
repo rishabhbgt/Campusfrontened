@@ -1,158 +1,155 @@
 import {
-Plus,
-RefreshCw,
+    Plus,
+    RefreshCw,
 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
 
-function DashboardActions({
-onRefresh,
-}) {
+function DashboardActions({ onRefresh }) {
+    const navigate = useNavigate();
 
-const navigate = useNavigate();
-
-return (
-
-    <div
-        className="
-            flex
-            flex-col
-            sm:flex-row
-            sm:items-center
-            sm:justify-between
-            gap-5
-            mb-6
-        "
-    >
-
-        {/* ================= LEFT: SECTION TITLE ================= */}
-
-        <div>
-
-            <h2
-                className="
-                    text-2xl
-                    sm:text-3xl
-                    font-extrabold
-                    text-slate-800
-                    tracking-tight
-                "
-            >
-                My Complaints
-            </h2>
-
-            <p
-                className="
-                    mt-1
-                    text-sm
-                    sm:text-base
-                    text-slate-500
-                "
-            >
-                Track and manage your submitted complaints.
-            </p>
-
-        </div>
-
-
-        {/* ================= RIGHT: ACTION BUTTONS ================= */}
-
+    return (
         <div
             className="
                 flex
                 flex-col
+                gap-5
                 sm:flex-row
-                gap-3
-                w-full
-                sm:w-auto
+                sm:items-end
+                sm:justify-between
             "
         >
-
-            {/* REFRESH */}
-
-            <button
-                onClick={onRefresh}
-                className="
-                    group
-                    flex
-                    items-center
-                    justify-center
-                    gap-2
-                    px-5
-                    py-3
-                    rounded-2xl
-                    bg-white/80
-                    backdrop-blur-xl
-                    border
-                    border-slate-200
-                    text-slate-700
-                    font-medium
-                    shadow-md
-                    hover:bg-slate-50
-                    hover:border-indigo-300
-                    hover:shadow-lg
-                    transition-all
-                    duration-300
-                    active:scale-95
-                "
-            >
-
-                <RefreshCw
-                    size={18}
+            <div>
+                <p
                     className="
-                        transition-transform
-                        duration-500
-                        group-hover:rotate-180
+                        mb-1
+                        text-xs
+                        font-semibold
+                        uppercase
+                        tracking-[0.18em]
+                        text-indigo-600
                     "
-                />
+                >
+                    Complaint Management
+                </p>
 
-                Refresh
+                <h2
+                    className="
+                        text-2xl
+                        font-extrabold
+                        tracking-tight
+                        text-slate-800
+                        sm:text-3xl
+                    "
+                >
+                    My Complaints
+                </h2>
 
-            </button>
+                <p
+                    className="
+                        mt-1
+                        text-sm
+                        leading-6
+                        text-slate-500
+                        sm:text-base
+                    "
+                >
+                    Track and manage your submitted complaints.
+                </p>
+            </div>
 
-
-            {/* NEW COMPLAINT */}
-
-            <button
-                onClick={() =>
-                    navigate("/create-complaint")
-                }
+            <div
                 className="
-                    flex
-                    items-center
-                    justify-center
-                    gap-2
-                    px-5
-                    py-3
-                    rounded-2xl
-                    bg-gradient-to-r
-                    from-blue-600
-                    to-indigo-600
-                    hover:from-blue-700
-                    hover:to-indigo-700
-                    text-white
-                    font-semibold
-                    shadow-lg
-                    hover:shadow-xl
-                    transition-all
-                    duration-300
-                    active:scale-95
+                    grid
+                    w-full
+                    grid-cols-2
+                    gap-3
+                    sm:flex
+                    sm:w-auto
                 "
             >
+                <button
+                    type="button"
+                    onClick={onRefresh}
+                    className="
+                        group
+                        flex
+                        items-center
+                        justify-center
+                        gap-2
+                        rounded-2xl
+                        border
+                        border-white/70
+                        bg-white/90
+                        px-4
+                        py-3
+                        font-semibold
+                        text-slate-700
+                        shadow-lg
+                        backdrop-blur-xl
+                        transition-all
+                        duration-300
+                        hover:-translate-y-0.5
+                        hover:border-indigo-200
+                        hover:text-indigo-700
+                        hover:shadow-xl
+                        active:scale-95
+                        sm:px-5
+                    "
+                >
+                    <RefreshCw
+                        size={18}
+                        className="
+                            transition-transform
+                            duration-500
+                            group-hover:rotate-180
+                        "
+                    />
 
-                <Plus size={19} />
+                    <span>
+                        Refresh
+                    </span>
+                </button>
 
-                New Complaint
+                <button
+                    type="button"
+                    onClick={() =>
+                        navigate(
+                            "/create-complaint"
+                        )
+                    }
+                    className="
+                        flex
+                        items-center
+                        justify-center
+                        gap-2
+                        rounded-2xl
+                        bg-gradient-to-r
+                        from-indigo-600
+                        via-purple-600
+                        to-blue-600
+                        px-4
+                        py-3
+                        font-semibold
+                        text-white
+                        shadow-lg
+                        transition-all
+                        duration-300
+                        hover:-translate-y-0.5
+                        hover:shadow-xl
+                        active:scale-95
+                        sm:px-5
+                    "
+                >
+                    <Plus size={19} />
 
-            </button>
-
+                    <span>
+                        New Complaint
+                    </span>
+                </button>
+            </div>
         </div>
-
-    </div>
-
-);
-
-
+    );
 }
 
 export default DashboardActions;

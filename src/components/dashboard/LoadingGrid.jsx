@@ -1,187 +1,163 @@
 function LoadingGrid() {
-
     return (
-
         <section
             className="
                 grid
                 grid-cols-1
+                gap-5
                 sm:grid-cols-2
+                sm:gap-6
                 lg:grid-cols-3
                 xl:grid-cols-4
-                gap-5
-                sm:gap-6
             "
         >
-
-            {[1, 2, 3, 4, 5, 6, 7, 8].map(
-                (item) => (
-
+            {Array.from({ length: 8 }).map((_, index) => (
+                <div
+                    key={index}
+                    className="
+                        overflow-hidden
+                        rounded-3xl
+                        border
+                        border-white/70
+                        bg-white/90
+                        shadow-xl
+                        backdrop-blur-xl
+                    "
+                >
                     <div
-                        key={item}
                         className="
-                            bg-white/80
-                            backdrop-blur-xl
-                            rounded-3xl
-                            overflow-hidden
-                            border
-                            border-white/60
-                            shadow-lg
+                            h-52
+                            w-full
                             animate-pulse
+                            bg-gradient-to-r
+                            from-slate-100
+                            via-slate-200
+                            to-slate-100
                         "
-                    >
+                    />
 
-                        {/* Image Skeleton */}
+                    <div className="p-5 sm:p-6">
+                        <div
+                            className="
+                                flex
+                                items-start
+                                justify-between
+                                gap-4
+                            "
+                        >
+                            <div
+                                className="
+                                    h-6
+                                    w-2/3
+                                    animate-pulse
+                                    rounded-lg
+                                    bg-slate-200
+                                "
+                            />
+
+                            <div
+                                className="
+                                    h-6
+                                    w-20
+                                    animate-pulse
+                                    rounded-full
+                                    bg-slate-200
+                                "
+                            />
+                        </div>
+
+                        <div className="mt-5 space-y-2">
+                            <div
+                                className="
+                                    h-4
+                                    w-full
+                                    animate-pulse
+                                    rounded
+                                    bg-slate-200
+                                "
+                            />
+
+                            <div
+                                className="
+                                    h-4
+                                    w-5/6
+                                    animate-pulse
+                                    rounded
+                                    bg-slate-200
+                                "
+                            />
+
+                            <div
+                                className="
+                                    h-4
+                                    w-2/3
+                                    animate-pulse
+                                    rounded
+                                    bg-slate-200
+                                "
+                            />
+                        </div>
+
+                        <div className="mt-6 space-y-3">
+                            <div
+                                className="
+                                    h-9
+                                    animate-pulse
+                                    rounded-xl
+                                    bg-slate-100
+                                "
+                            />
+
+                            <div
+                                className="
+                                    h-9
+                                    animate-pulse
+                                    rounded-xl
+                                    bg-slate-100
+                                "
+                            />
+                        </div>
 
                         <div
                             className="
-                                w-full
-                                h-52
-                                bg-slate-200
+                                mt-6
+                                grid
+                                grid-cols-3
+                                gap-2
                             "
-                        />
-
-
-                        {/* Content Skeleton */}
-
-                        <div className="p-5 sm:p-6">
-
-                            {/* Title + Status */}
+                        >
+                            <div
+                                className="
+                                    h-10
+                                    animate-pulse
+                                    rounded-xl
+                                    bg-slate-200
+                                "
+                            />
 
                             <div
                                 className="
-                                    flex
-                                    justify-between
-                                    gap-4
+                                    h-10
+                                    animate-pulse
+                                    rounded-xl
+                                    bg-slate-200
                                 "
-                            >
-
-                                <div
-                                    className="
-                                        h-6
-                                        bg-slate-200
-                                        rounded-lg
-                                        w-2/3
-                                    "
-                                />
-
-                                <div
-                                    className="
-                                        h-6
-                                        bg-slate-200
-                                        rounded-full
-                                        w-20
-                                    "
-                                />
-
-                            </div>
-
-
-                            {/* Description */}
-
-                            <div className="mt-5 space-y-2">
-
-                                <div
-                                    className="
-                                        h-4
-                                        bg-slate-200
-                                        rounded
-                                        w-full
-                                    "
-                                />
-
-                                <div
-                                    className="
-                                        h-4
-                                        bg-slate-200
-                                        rounded
-                                        w-5/6
-                                    "
-                                />
-
-                                <div
-                                    className="
-                                        h-4
-                                        bg-slate-200
-                                        rounded
-                                        w-2/3
-                                    "
-                                />
-
-                            </div>
-
-
-                            {/* Details */}
-
-                            <div className="mt-6 space-y-3">
-
-                                <div
-                                    className="
-                                        h-9
-                                        bg-slate-100
-                                        rounded-xl
-                                    "
-                                />
-
-                                <div
-                                    className="
-                                        h-9
-                                        bg-slate-100
-                                        rounded-xl
-                                    "
-                                />
-
-                            </div>
-
-
-                            {/* Buttons */}
+                            />
 
                             <div
                                 className="
-                                    grid
-                                    grid-cols-3
-                                    gap-2
-                                    mt-6
+                                    h-10
+                                    animate-pulse
+                                    rounded-xl
+                                    bg-slate-200
                                 "
-                            >
-
-                                <div
-                                    className="
-                                        h-10
-                                        bg-slate-200
-                                        rounded-xl
-                                    "
-                                />
-
-                                <div
-                                    className="
-                                        h-10
-                                        bg-slate-200
-                                        rounded-xl
-                                    "
-                                />
-
-                                <div
-                                    className="
-                                        h-10
-                                        bg-slate-200
-                                        rounded-xl
-                                    "
-                                />
-
-                            </div>
-
+                            />
                         </div>
-
                     </div>
-
-                )
-            )}
-
+                </div>
+            ))}
         </section>
-
     );
-
 }
 
 export default LoadingGrid;

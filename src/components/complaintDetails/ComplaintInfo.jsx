@@ -3,7 +3,6 @@ import {
     FaEnvelope,
     FaCalendarAlt,
     FaTag,
-    FaFlag,
     FaClock,
 } from "react-icons/fa";
 

@@ -3,116 +3,79 @@ import {
     Filter,
 } from "lucide-react";
 
-
 function ComplaintFilters({
-
     search,
     setSearch,
-
     statusFilter,
     setStatusFilter,
-
     priorityFilter,
     setPriorityFilter,
-
 }) {
-
     return (
-
         <div
             className="
                 mb-8
-                flex
-                flex-col
-                items-center
-                justify-between
-                gap-5
+                w-full
                 rounded-3xl
-                bg-white
-                p-6
-                shadow-md
-
-                lg:flex-row
+                border
+                border-white/70
+                bg-white/90
+                p-4
+                shadow-xl
+                backdrop-blur-xl
+                sm:p-5
             "
         >
-
             <div
                 className="
-                    relative
-                    w-full
-                    lg:flex-1
+                    mb-4
+                    flex
+                    flex-col
+                    gap-1
+                    sm:flex-row
+                    sm:items-center
+                    sm:justify-between
                 "
             >
+                <div>
+                    <p
+                        className="
+                            text-xs
+                            font-semibold
+                            uppercase
+                            tracking-[0.18em]
+                            text-indigo-600
+                        "
+                    >
+                        Complaint Filters
+                    </p>
 
-                <Search
-                    size={20}
-                    className="
-                        absolute
-                        left-4
-                        top-1/2
-                        -translate-y-1/2
-                        text-slate-400
-                    "
-                />
-
-
-                <input
-
-                    type="text"
-
-                    placeholder="Search complaint..."
-
-                    value={search}
-
-                    onChange={(e) =>
-                        setSearch(
-                            e.target.value
-                        )
-                    }
-
-                    className="
-                        w-full
-                        rounded-2xl
-                        border
-                        border-slate-300
-                        py-3
-                        pl-12
-                        pr-5
-                        outline-none
-                        transition
-                        focus:border-indigo-500
-                        focus:ring-4
-                        focus:ring-indigo-100
-                    "
-
-                />
-
+                    <p
+                        className="
+                            mt-1
+                            text-sm
+                            text-slate-500
+                        "
+                    >
+                        Search and filter complaints by status or priority.
+                    </p>
+                </div>
             </div>
 
             <div
                 className="
                     flex
-                    w-full
                     flex-col
                     gap-4
-
-                    sm:flex-row
-
-                    lg:w-auto
+                    lg:flex-row
+                    lg:items-center
                 "
             >
-
-                <div
-                    className="
-                        relative
-                        w-full
-                        sm:w-auto
-                    "
-                >
-
-                    <Filter
-                        size={18}
+                <div className="relative flex-1">
+                    <Search
+                        size={20}
                         className="
+                            pointer-events-none
                             absolute
                             left-4
                             top-1/2
@@ -121,125 +84,167 @@ function ComplaintFilters({
                         "
                     />
 
-
-                    <select
-
-                        value={statusFilter}
-
+                    <input
+                        type="text"
+                        placeholder="Search complaints..."
+                        value={search}
                         onChange={(e) =>
-                            setStatusFilter(
+                            setSearch(
                                 e.target.value
                             )
                         }
+                        aria-label="Search complaints"
+                        className="
+                            w-full
+                            rounded-2xl
+                            border
+                            border-slate-200
+                            bg-slate-50
+                            py-3
+                            pl-12
+                            pr-4
+                            text-slate-700
+                            outline-none
+                            transition-all
+                            duration-300
+                            placeholder:text-slate-400
+                            focus:border-indigo-500
+                            focus:bg-white
+                            focus:ring-4
+                            focus:ring-indigo-100
+                        "
+                    />
+                </div>
 
+                <div
+                    className="
+                        grid
+                        w-full
+                        grid-cols-1
+                        gap-3
+                        sm:grid-cols-2
+                        lg:w-auto
+                        lg:grid-cols-2
+                    "
+                >
+                    <div className="relative">
+                        <Filter
+                            size={18}
+                            className="
+                                pointer-events-none
+                                absolute
+                                left-4
+                                top-1/2
+                                -translate-y-1/2
+                                text-slate-400
+                            "
+                        />
+
+                        <select
+                            value={statusFilter}
+                            onChange={(e) =>
+                                setStatusFilter(
+                                    e.target.value
+                                )
+                            }
+                            aria-label="Filter complaints by status"
+                            className="
+                                w-full
+                                appearance-none
+                                rounded-2xl
+                                border
+                                border-slate-200
+                                bg-slate-50
+                                py-3
+                                pl-11
+                                pr-8
+                                font-medium
+                                text-slate-700
+                                outline-none
+                                transition-all
+                                duration-300
+                                focus:border-indigo-500
+                                focus:bg-white
+                                focus:ring-4
+                                focus:ring-indigo-100
+                                lg:min-w-44
+                            "
+                        >
+                            <option value="All">
+                                All Status
+                            </option>
+
+                            <option value="Pending">
+                                Pending
+                            </option>
+
+                            <option value="In Progress">
+                                In Progress
+                            </option>
+
+                            <option value="Resolved">
+                                Resolved
+                            </option>
+
+                            <option value="Overdue">
+                                Overdue
+                            </option>
+                        </select>
+                    </div>
+
+                    <select
+                        value={priorityFilter}
+                        onChange={(e) =>
+                            setPriorityFilter(
+                                e.target.value
+                            )
+                        }
+                        aria-label="Filter complaints by priority"
                         className="
                             w-full
                             appearance-none
                             rounded-2xl
                             border
-                            border-slate-300
+                            border-slate-200
+                            bg-slate-50
+                            px-4
                             py-3
-                            pl-11
-                            pr-8
+                            font-medium
+                            text-slate-700
                             outline-none
-                            transition
+                            transition-all
+                            duration-300
                             focus:border-indigo-500
+                            focus:bg-white
                             focus:ring-4
                             focus:ring-indigo-100
-
-                            sm:w-auto
+                            lg:min-w-44
                         "
-
                     >
-
                         <option value="All">
-                            All Status
+                            All Priority
                         </option>
 
-
-                        <option value="Pending">
-                            Pending
+                        <option value="Low">
+                            Low
                         </option>
 
-
-                        <option value="In Progress">
-                            In Progress
+                        <option value="Medium">
+                            Medium
                         </option>
 
-
-                        <option value="Resolved">
-                            Resolved
+                        <option value="High">
+                            High
                         </option>
 
-
-                        <option value="Overdue">
-                            Overdue
+                        <option value="Critical">
+                            Critical
                         </option>
-
                     </select>
-
                 </div>
-
-                <select
-
-                    value={priorityFilter}
-
-                    onChange={(e) =>
-                        setPriorityFilter(
-                            e.target.value
-                        )
-                    }
-
-                    className="
-                        w-full
-                        rounded-2xl
-                        border
-                        border-slate-300
-                        px-5
-                        py-3
-                        outline-none
-                        transition
-                        focus:border-indigo-500
-                        focus:ring-4
-                        focus:ring-indigo-100
-
-                        sm:w-auto
-                    "
-
-                >
-
-                    <option value="All">
-                        All Priority
-                    </option>
-
-
-                    <option value="Low">
-                        Low
-                    </option>
-
-
-                    <option value="Medium">
-                        Medium
-                    </option>
-
-
-                    <option value="High">
-                        High
-                    </option>
-
-
-                    <option value="Critical">
-                        Critical
-                    </option>
-
-                </select>
-
             </div>
-
         </div>
-
     );
-
 }
 
 export default ComplaintFilters;

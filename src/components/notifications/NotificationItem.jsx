@@ -12,44 +12,35 @@ function NotificationItem({
     markAsRead,
     onClose,
 }) {
-
     const navigate = useNavigate();
 
     const getIcon = () => {
-
         const message =
             notification.message?.toLowerCase() || "";
-
 
         if (
             message.includes("resolved") ||
             message.includes("completed")
         ) {
-
             return (
                 <CheckCircle2
                     size={20}
                     className="text-emerald-600"
                 />
             );
-
         }
-
 
         if (
             message.includes("pending") ||
             message.includes("rejected")
         ) {
-
             return (
                 <AlertTriangle
                     size={20}
                     className="text-amber-500"
                 />
             );
-
         }
-
 
         return (
             <Bell
@@ -57,64 +48,37 @@ function NotificationItem({
                 className="text-indigo-600"
             />
         );
-
     };
 
     const getTime = (date) => {
-
         if (!date) {
             return "";
         }
 
+        const now = new Date();
+        const created = new Date(date);
 
-        const now =
-            new Date();
-
-        const created =
-            new Date(date);
-
-
-        const diff =
-            Math.floor(
-                (now - created) / 1000
-            );
-
+        const diff = Math.floor(
+            (now - created) / 1000
+        );
 
         if (diff < 60) {
-
             return diff <= 1
                 ? "Just now"
                 : `${diff}s ago`;
-
         }
-
 
         if (diff < 3600) {
-
-            return `${Math.floor(
-                diff / 60
-            )}m ago`;
-
+            return `${Math.floor(diff / 60)}m ago`;
         }
-
 
         if (diff < 86400) {
-
-            return `${Math.floor(
-                diff / 3600
-            )}h ago`;
-
+            return `${Math.floor(diff / 3600)}h ago`;
         }
-
 
         if (diff < 604800) {
-
-            return `${Math.floor(
-                diff / 86400
-            )}d ago`;
-
+            return `${Math.floor(diff / 86400)}d ago`;
         }
-
 
         return created.toLocaleDateString(
             "en-IN",
@@ -124,157 +88,92 @@ function NotificationItem({
                 year: "numeric",
             }
         );
-
     };
 
-
-const handleClick = async () => {
-
-    console.log(
-        "HANDLE CLICK RUNNING",
-        notification
-    );
-
-    try {
-
-        if (!notification.isRead) {
-
-            const result =
-                await markAsRead(
+    const handleClick = async () => {
+        try {
+            if (!notification.isRead) {
+                const result = await markAsRead(
                     notification._id
                 );
 
-            console.log(
-                "MARK AS READ RESULT:",
-                result
-            );
-
-            if (!result) {
-                return;
+                if (!result) {
+                    return;
+                }
             }
-        }
 
-        console.log(
-            "CLOSING NOTIFICATION DROPDOWN"
-        );
+            onClose?.();
 
-        onClose?.();
+            let complaintId = null;
 
-        let complaintId = null;
+            if (
+                notification.complaint &&
+                typeof notification.complaint === "object"
+            ) {
+                complaintId =
+                    notification.complaint._id;
+            } else {
+                complaintId =
+                    notification.complaint;
+            }
 
-        if (
-            notification.complaint &&
-            typeof notification.complaint === "object"
-        ) {
-
-            complaintId =
-                notification.complaint._id;
-
-        } else {
-
-            complaintId =
-                notification.complaint;
-
-        }
-
-
-        console.log(
-            "COMPLAINT ID:",
-            complaintId
-        );
-
-        if (complaintId) {
-
-            console.log(
-                "NAVIGATING TO:",
-                `/complaint/${complaintId}`
+            if (complaintId) {
+                navigate(
+                    `/complaint/${complaintId}`
+                );
+            }
+        } catch (error) {
+            console.error(
+                "NOTIFICATION CLICK ERROR:",
+                error
             );
-
-            navigate(
-                `/complaint/${complaintId}`
-            );
-
-            return;
         }
-
-
-        console.log(
-            "NO COMPLAINT ID FOUND"
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "NOTIFICATION CLICK ERROR:",
-            error
-        );
-
-    }
-
-};
-
+    };
 
     return (
-
         <button
-    type="button"
-    onMouseDown={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
+            type="button"
+            onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
 
-        console.log(
-            "NOTIFICATION MOUSE DOWN",
-            notification
-        );
-    }}
-    onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
+                handleClick();
+            }}
+            title="Open notification"
+            className={`
+                relative
+                z-10
+                pointer-events-auto
 
-        console.log(
-            "NOTIFICATION CLICKED",
-            notification
-        );
+                group
+                flex
+                w-full
+                cursor-pointer
+                gap-4
+                p-5
+                text-left
 
-        handleClick();
-    }}
-    title="Open notification"
-    className={`
-        relative
-        z-10
-        pointer-events-auto
+                border-b
+                border-slate-100
 
-        group
-        flex
-        w-full
-        cursor-pointer
-        gap-4
-        p-5
-        text-left
+                transition-all
+                duration-200
 
-        border-b
-        border-slate-100
+                hover:bg-indigo-50
 
-        transition-all
-        duration-200
+                focus:outline-none
+                focus:bg-indigo-50
+                focus:ring-2
+                focus:ring-inset
+                focus:ring-indigo-500
 
-        hover:bg-indigo-50
-
-        focus:outline-none
-        focus:bg-indigo-50
-        focus:ring-2
-        focus:ring-inset
-        focus:ring-indigo-500
-
-        ${
-            !notification.isRead
-                ? "bg-indigo-50/60"
-                : "bg-white"
-        }
-    `}
->
-
+                ${
+                    !notification.isRead
+                        ? "bg-indigo-50/60"
+                        : "bg-white"
+                }
+            `}
+        >
             <div
                 className={`
                     flex
@@ -297,13 +196,10 @@ const handleClick = async () => {
                     }
                 `}
             >
-
                 {getIcon()}
-
             </div>
 
             <div className="min-w-0 flex-1">
-
                 <div
                     className="
                         flex
@@ -312,7 +208,6 @@ const handleClick = async () => {
                         gap-3
                     "
                 >
-
                     <p
                         className={`
                             text-sm
@@ -330,7 +225,6 @@ const handleClick = async () => {
                     </p>
 
                     {!notification.isRead && (
-
                         <span
                             className="
                                 mt-1.5
@@ -343,11 +237,8 @@ const handleClick = async () => {
                             "
                             aria-label="Unread"
                         />
-
                     )}
-
                 </div>
-
 
                 <div
                     className="
@@ -358,7 +249,6 @@ const handleClick = async () => {
                         gap-3
                     "
                 >
-
                     <p
                         className="
                             text-xs
@@ -380,15 +270,10 @@ const handleClick = async () => {
                             group-hover:text-indigo-500
                         "
                     />
-
                 </div>
-
             </div>
-
         </button>
-
     );
-
 }
 
 export default NotificationItem;

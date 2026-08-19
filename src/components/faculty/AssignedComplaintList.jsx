@@ -1,3 +1,7 @@
+import {
+    ClipboardCheck,
+} from "lucide-react";
+
 import AssignedComplaintCard from "./AssignedComplaintCard";
 
 function AssignedComplaintList({
@@ -5,106 +9,88 @@ function AssignedComplaintList({
     onView,
     onStatusUpdate,
 }) {
-
-
     if (complaints.length === 0) {
-
         return (
-
             <div
                 className="
                     flex
-                    min-h-[320px]
+                    min-h-[340px]
                     items-center
                     justify-center
                     rounded-3xl
                     border
-                    border-dashed
-                    border-slate-300
-                    bg-white/70
+                    border-white/70
+                    bg-white/90
                     px-6
                     py-12
                     text-center
-                    shadow-sm
+                    shadow-xl
                     backdrop-blur-xl
                 "
             >
-
                 <div className="max-w-md">
-
                     <div
                         className="
                             mx-auto
                             flex
-                            h-16
-                            w-16
+                            h-20
+                            w-20
                             items-center
                             justify-center
-                            rounded-2xl
-                            bg-indigo-50
+                            rounded-3xl
+                            bg-gradient-to-br
+                            from-indigo-100
+                            to-blue-100
                             text-indigo-600
+                            shadow-inner
                         "
                     >
-
-                        <svg
-                            width="30"
-                            height="30"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-
-                            <path
-                                d="M9 11l3 3L22 4"
-                            />
-
-                            <path
-                                d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"
-                            />
-
-                        </svg>
-
+                        <ClipboardCheck size={38} />
                     </div>
-
-
-                    <h3
-                        className="
-                            mt-5
-                            text-xl
-                            font-bold
-                            text-slate-900
-                        "
-                    >
-                        No complaints assigned
-                    </h3>
-
 
                     <p
                         className="
+                            mt-6
+                            text-xs
+                            font-semibold
+                            uppercase
+                            tracking-[0.18em]
+                            text-indigo-600
+                        "
+                    >
+                        All caught up
+                    </p>
+
+                    <h3
+                        className="
                             mt-2
+                            text-2xl
+                            font-extrabold
+                            tracking-tight
+                            text-slate-900
+                        "
+                    >
+                        No Complaints Assigned
+                    </h3>
+
+                    <p
+                        className="
+                            mt-3
                             text-sm
                             leading-6
                             text-slate-500
+                            sm:text-base
                         "
                     >
-                        You're all caught up. New complaints
-                        assigned to you will appear here.
+                        New complaints assigned to you
+                        will appear here.
                     </p>
-
                 </div>
-
             </div>
-
         );
-
     }
 
-
     return (
-
         <section
             aria-label="Assigned complaints"
             className="
@@ -115,24 +101,18 @@ function AssignedComplaintList({
                 2xl:grid-cols-3
             "
         >
-
-            {complaints.map(
-                (complaint) => (
-
-                    <AssignedComplaintCard
-                        key={complaint._id}
-                        complaint={complaint}
-                        onView={onView}
-                        onStatusUpdate={onStatusUpdate}
-                    />
-
-                )
-            )}
-
+            {complaints.map((complaint) => (
+                <AssignedComplaintCard
+                    key={complaint._id}
+                    complaint={complaint}
+                    onView={onView}
+                    onStatusUpdate={
+                        onStatusUpdate
+                    }
+                />
+            ))}
         </section>
-
     );
-
 }
 
 export default AssignedComplaintList;

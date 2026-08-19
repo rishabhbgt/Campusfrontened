@@ -14,9 +14,7 @@ function AssignedComplaintCard({
     onView,
     onStatusUpdate,
 }) {
-
     const {
-
         title,
         description,
         category,
@@ -25,54 +23,40 @@ function AssignedComplaintCard({
         status,
         createdAt,
         createdBy,
-
     } = complaint;
 
-
-    // ==========================
-    // PRIORITY CONFIG
-    // ==========================
-
     const priorityConfig = {
-
         High: {
             label: "High Priority",
             className:
                 "border-red-200 bg-red-50 text-red-700",
-            iconClass:
-                "text-red-600",
+            iconClass: "text-red-600",
+            accent:
+                "from-red-500 to-rose-600",
         },
-
         Medium: {
             label: "Medium Priority",
             className:
                 "border-amber-200 bg-amber-50 text-amber-700",
-            iconClass:
-                "text-amber-600",
+            iconClass: "text-amber-600",
+            accent:
+                "from-amber-400 to-orange-500",
         },
-
         Low: {
             label: "Low Priority",
             className:
                 "border-emerald-200 bg-emerald-50 text-emerald-700",
-            iconClass:
-                "text-emerald-600",
+            iconClass: "text-emerald-600",
+            accent:
+                "from-emerald-500 to-green-600",
         },
-
     };
-
 
     const currentPriority =
         priorityConfig[priority] ||
         priorityConfig.Medium;
 
-
-    // ==========================
-    // DATE FORMATTER
-    // ==========================
-
     const formatDate = (date) => {
-
         if (!date) {
             return "Not specified";
         }
@@ -85,64 +69,46 @@ function AssignedComplaintCard({
                 year: "numeric",
             }
         );
-
     };
-
-
-    // ==========================
-    // OVERDUE CHECK
-    // ==========================
 
     const isOverdue =
         dueDate &&
         new Date(dueDate) < new Date() &&
         status !== "Resolved";
 
-
     return (
-
         <article
             className="
                 group
                 relative
+                flex
+                h-full
+                flex-col
                 overflow-hidden
                 rounded-3xl
                 border
-                border-white/60
-                bg-white/80
-                backdrop-blur-xl
+                border-white/70
+                bg-white/90
                 p-5
-                sm:p-6
-                shadow-lg
-                shadow-slate-200/40
+                shadow-xl
+                backdrop-blur-xl
                 transition-all
                 duration-300
                 hover:-translate-y-1
-                hover:shadow-xl
-                hover:shadow-slate-300/40
+                hover:shadow-2xl
+                sm:p-6
             "
         >
-
-            {/* Top Priority Indicator */}
-
             <div
                 className={`
                     absolute
                     inset-x-0
                     top-0
                     h-1
-                    ${
-                        priority === "High"
-                            ? "bg-gradient-to-r from-red-500 to-rose-600"
-                            : priority === "Low"
-                            ? "bg-gradient-to-r from-emerald-500 to-green-600"
-                            : "bg-gradient-to-r from-amber-400 to-orange-500"
-                    }
+                    bg-gradient-to-r
+                    ${currentPriority.accent}
                 `}
             />
-
-
-            {/* Header */}
 
             <div
                 className="
@@ -154,21 +120,16 @@ function AssignedComplaintCard({
                     sm:justify-between
                 "
             >
-
                 <div className="min-w-0">
-
                     <div
                         className="
+                            mb-3
                             flex
                             flex-wrap
                             items-center
                             gap-2
-                            mb-2
                         "
                     >
-
-                        {/* Category */}
-
                         <span
                             className="
                                 inline-flex
@@ -179,21 +140,15 @@ function AssignedComplaintCard({
                                 border-indigo-200
                                 bg-indigo-50
                                 px-3
-                                py-1
+                                py-1.5
                                 text-xs
                                 font-semibold
                                 text-indigo-700
                             "
                         >
-
                             <Tag size={13} />
-
                             {category || "Other"}
-
                         </span>
-
-
-                        {/* Priority */}
 
                         <span
                             className={`
@@ -203,49 +158,47 @@ function AssignedComplaintCard({
                                 rounded-full
                                 border
                                 px-3
-                                py-1
+                                py-1.5
                                 text-xs
                                 font-semibold
                                 ${currentPriority.className}
                             `}
                         >
-
                             <AlertTriangle
                                 size={13}
                                 className={
                                     currentPriority.iconClass
                                 }
                             />
-
                             {currentPriority.label}
-
                         </span>
-
                     </div>
-
-
-                    {/* Title */}
 
                     <h3
                         className="
-                            text-lg
-                            sm:text-xl
-                            font-bold
-                            leading-snug
-                            text-slate-900
                             line-clamp-2
+                            text-lg
+                            font-extrabold
+                            leading-6
+                            text-slate-900
+                            sm:text-xl
                         "
                     >
                         {title}
                     </h3>
-
                 </div>
 
-
-                {/* Status */}
-
-                <div className="flex shrink-0 flex-col items-end gap-2">
-
+                <div
+                    className="
+                        flex
+                        shrink-0
+                        flex-row
+                        items-center
+                        gap-2
+                        sm:flex-col
+                        sm:items-end
+                    "
+                >
                     <ComplaintStatusBadge
                         status={status}
                     />
@@ -258,6 +211,7 @@ function AssignedComplaintCard({
                                 e.target.value
                             )
                         }
+                        aria-label="Update complaint status"
                         className="
                             rounded-xl
                             border
@@ -278,7 +232,6 @@ function AssignedComplaintCard({
                             focus:ring-indigo-200
                         "
                     >
-
                         <option value="Pending">
                             Pending
                         </option>
@@ -290,43 +243,31 @@ function AssignedComplaintCard({
                         <option value="Resolved">
                             Resolved
                         </option>
-
                     </select>
-
                 </div>
-
             </div>
-
-
-            {/* Description */}
 
             <p
                 className="
                     mt-4
+                    line-clamp-3
                     text-sm
                     leading-6
                     text-slate-500
-                    line-clamp-3
                 "
             >
                 {description}
             </p>
 
-
-            {/* Metadata */}
-
             <div
                 className="
-                    mt-5
+                    mt-6
                     grid
                     grid-cols-1
-                    sm:grid-cols-2
                     gap-3
+                    sm:grid-cols-2
                 "
             >
-
-                {/* Created By */}
-
                 <div
                     className="
                         flex
@@ -335,17 +276,17 @@ function AssignedComplaintCard({
                         rounded-2xl
                         border
                         border-slate-100
-                        bg-slate-50/70
+                        bg-slate-50/80
                         px-4
                         py-3
                     "
                 >
-
                     <div
                         className="
                             flex
                             h-9
                             w-9
+                            shrink-0
                             items-center
                             justify-center
                             rounded-xl
@@ -354,18 +295,14 @@ function AssignedComplaintCard({
                             shadow-sm
                         "
                     >
-
                         <User size={17} />
-
                     </div>
 
-
                     <div className="min-w-0">
-
                         <p
                             className="
                                 text-[11px]
-                                font-medium
+                                font-semibold
                                 uppercase
                                 tracking-wide
                                 text-slate-400
@@ -385,13 +322,8 @@ function AssignedComplaintCard({
                             {createdBy?.fullName ||
                                 "Student"}
                         </p>
-
                     </div>
-
                 </div>
-
-
-                {/* Due Date */}
 
                 <div
                     className={`
@@ -405,16 +337,16 @@ function AssignedComplaintCard({
                         ${
                             isOverdue
                                 ? "border-red-200 bg-red-50"
-                                : "border-slate-100 bg-slate-50/70"
+                                : "border-slate-100 bg-slate-50/80"
                         }
                     `}
                 >
-
                     <div
                         className="
                             flex
                             h-9
                             w-9
+                            shrink-0
                             items-center
                             justify-center
                             rounded-xl
@@ -422,32 +354,24 @@ function AssignedComplaintCard({
                             shadow-sm
                         "
                     >
-
                         {isOverdue ? (
-
                             <AlertTriangle
                                 size={17}
                                 className="text-red-600"
                             />
-
                         ) : (
-
                             <CalendarDays
                                 size={17}
                                 className="text-slate-500"
                             />
-
                         )}
-
                     </div>
 
-
                     <div>
-
                         <p
                             className="
                                 text-[11px]
-                                font-medium
+                                font-semibold
                                 uppercase
                                 tracking-wide
                                 text-slate-400
@@ -471,19 +395,13 @@ function AssignedComplaintCard({
                                 ? "Overdue"
                                 : formatDate(dueDate)}
                         </p>
-
                     </div>
-
                 </div>
-
             </div>
-
-
-            {/* Footer */}
 
             <div
                 className="
-                    mt-5
+                    mt-auto
                     flex
                     flex-col
                     gap-4
@@ -495,9 +413,6 @@ function AssignedComplaintCard({
                     sm:justify-between
                 "
             >
-
-                {/* Created Date */}
-
                 <div
                     className="
                         flex
@@ -507,16 +422,9 @@ function AssignedComplaintCard({
                         text-slate-400
                     "
                 >
-
                     <Clock3 size={14} />
-
-                    Submitted{" "}
-                    {formatDate(createdAt)}
-
+                    Submitted {formatDate(createdAt)}
                 </div>
-
-
-                {/* View Button */}
 
                 <button
                     type="button"
@@ -526,7 +434,6 @@ function AssignedComplaintCard({
                     className="
                         inline-flex
                         w-full
-                        sm:w-auto
                         items-center
                         justify-center
                         gap-2
@@ -540,20 +447,18 @@ function AssignedComplaintCard({
                         font-semibold
                         text-white
                         shadow-lg
-                        shadow-indigo-500/20
                         transition-all
                         duration-300
                         hover:-translate-y-0.5
                         hover:shadow-xl
-                        hover:shadow-indigo-500/30
                         active:scale-95
                         focus:outline-none
                         focus:ring-2
                         focus:ring-indigo-500
                         focus:ring-offset-2
+                        sm:w-auto
                     "
                 >
-
                     View Complaint
 
                     <ArrowRight
@@ -564,15 +469,10 @@ function AssignedComplaintCard({
                             group-hover:translate-x-1
                         "
                     />
-
                 </button>
-
             </div>
-
         </article>
-
     );
-
 }
 
 export default AssignedComplaintCard;

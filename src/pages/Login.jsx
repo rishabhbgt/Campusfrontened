@@ -4,328 +4,340 @@ import api from "../services/api";
 import toast from "react-hot-toast";
 
 function Login() {
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const navigate = useNavigate();
 
-
     const handleLogin = async (e) => {
-
         e.preventDefault();
 
         if (!email || !password) {
-
             toast.error(
                 "Please enter email and password"
             );
-
             return;
-
         }
 
-
         try {
-
-            console.log(
-                "Sending Request..."
+            const response = await api.post(
+                "/auth/login",
+                {
+                    email,
+                    password,
+                }
             );
-
-
-            const response =
-                await api.post(
-                    "/auth/login",
-                    {
-                        email,
-                        password,
-                    }
-                );
-
-
-            console.log(
-                "Success:",
-                response.data
-            );
-
 
             const {
                 token,
                 user,
             } = response.data;
 
-
             localStorage.setItem(
                 "token",
                 token
             );
-
 
             localStorage.setItem(
                 "user",
                 JSON.stringify(user)
             );
 
-
             toast.success(
                 "Login Successful"
             );
 
-            if (
-                user.role === "admin"
-            ) {
-
-                navigate(
-                    "/admin-dashboard"
-                );
-
-            } else if (
-                user.role === "faculty"
-            ) {
-
-                navigate(
-                    "/faculty-dashboard"
-                );
-
+            if (user.role === "admin") {
+                navigate("/admin-dashboard");
+            } else if (user.role === "faculty") {
+                navigate("/faculty-dashboard");
             } else {
-
-                navigate(
-                    "/dashboard"
-                );
-
+                navigate("/dashboard");
             }
-
-
         } catch (error) {
-
-            console.log(
-                "Status:",
-                error.response?.status
-            );
-
-
-            console.log(
-                "Data:",
-                error.response?.data
-            );
-
-
             const message =
                 error.response
                     ?.data
                     ?.message ||
                 "Login Failed";
 
-
-            toast.error(
-                message
-            );
-
+            toast.error(message);
         }
-
     };
 
-
     return (
-
         <div
             className="
                 min-h-screen
-                bg-gray-100
                 flex
                 items-center
                 justify-center
+                bg-gradient-to-br
+                from-slate-100
+                via-blue-50
+                to-indigo-100
+                px-4
+                py-8
             "
         >
-
             <div
                 className="
                     w-full
-                    max-w-md
-                    bg-white
-                    shadow-lg
-                    rounded-xl
-                    p-8
+                    max-w-lg
+                    overflow-hidden
+                    rounded-3xl
+                    border
+                    border-white/70
+                    bg-white/90
+                    shadow-2xl
+                    backdrop-blur-xl
                 "
             >
-
-                <h1
+                {/* Header */}
+                <div
                     className="
-                        text-3xl
-                        font-bold
+                        bg-gradient-to-r
+                        from-indigo-600
+                        via-purple-600
+                        to-blue-600
+                        px-6
+                        py-8
                         text-center
-                        text-blue-600
-                        mb-6
+                        text-white
+                        sm:px-8
                     "
                 >
-                    CampusOne
-                </h1>
-
-                <h2
-                    className="
-                        text-xl
-                        font-semibold
-                        text-center
-                        mb-6
-                    "
-                >
-                    Login
-                </h2>
-
-
-                <form
-                    onSubmit={handleLogin}
-                >
-
-                    {/* EMAIL */}
-
-                    <div className="mb-4">
-
-                        <label
-                            className="
-                                block
-                                mb-2
-                                font-medium
-                            "
-                        >
-                            Email
-                        </label>
-
-
-                        <input
-                            type="email"
-                            placeholder="Enter your email"
-                            value={email}
-                            onChange={(e) =>
-                                setEmail(
-                                    e.target.value
-                                )
-                            }
-                            className="
-                                w-full
-                                border
-                                rounded-lg
-                                px-4
-                                py-2
-                                outline-none
-                                focus:ring-2
-                                focus:ring-blue-500
-                            "
-                        />
-
-                    </div>
-
-
-                    {/* PASSWORD */}
-
-                    <div className="mb-6">
-
-                        <label
-                            className="
-                                block
-                                mb-2
-                                font-medium
-                            "
-                        >
-                            Password
-                        </label>
-
-
-                        <input
-                            type="password"
-                            placeholder="Enter your password"
-                            value={password}
-                            onChange={(e) =>
-                                setPassword(
-                                    e.target.value
-                                )
-                            }
-                            className="
-                                w-full
-                                border
-                                rounded-lg
-                                px-4
-                                py-2
-                                outline-none
-                                focus:ring-2
-                                focus:ring-blue-500
-                            "
-                        />
-
-                    </div>
-
-                    <button
-                        type="button"
-                        onClick={() => navigate("/forgot-password")}
+                    <h1
                         className="
-                            mb-4
-                            w-full
-                            text-right
+                            text-3xl
+                            font-bold
+                            tracking-tight
+                        "
+                    >
+                        CampusOne
+                    </h1>
+
+                    <p
+                        className="
+                            mt-2
                             text-sm
-                            font-semibold
-                            text-blue-600
-                            hover:underline
+                            text-white/80
                         "
                     >
-                        Forgot Password?
-                    </button>
+                        Welcome back to your campus portal
+                    </p>
+                </div>
 
+                {/* Form */}
+                <div className="p-6 sm:p-8">
+                    <div className="mb-6">
+                        <h2
+                            className="
+                                text-2xl
+                                font-bold
+                                text-slate-800
+                            "
+                        >
+                            Welcome Back
+                        </h2>
 
-                    {/* LOGIN BUTTON */}
+                        <p
+                            className="
+                                mt-1
+                                text-sm
+                                text-slate-500
+                            "
+                        >
+                            Sign in to continue to CampusOne
+                        </p>
+                    </div>
 
-                    <button
-                        type="submit"
+                    <form
+                        onSubmit={handleLogin}
+                        className="space-y-5"
+                    >
+                        {/* Email */}
+                        <div>
+                            <label
+                                htmlFor="email"
+                                className="
+                                    mb-2
+                                    block
+                                    text-sm
+                                    font-semibold
+                                    text-slate-700
+                                "
+                            >
+                                Email Address
+                            </label>
+
+                            <input
+                                id="email"
+                                type="email"
+                                placeholder="Enter your college email"
+                                value={email}
+                                onChange={(e) =>
+                                    setEmail(
+                                        e.target.value
+                                    )
+                                }
+                                autoComplete="email"
+                                required
+                                className="
+                                    w-full
+                                    rounded-2xl
+                                    border
+                                    border-slate-200
+                                    bg-slate-50
+                                    px-4
+                                    py-3
+                                    text-slate-800
+                                    outline-none
+                                    transition
+                                    placeholder:text-slate-400
+                                    focus:border-indigo-500
+                                    focus:bg-white
+                                    focus:ring-4
+                                    focus:ring-indigo-100
+                                "
+                            />
+                        </div>
+
+                        {/* Password */}
+                        <div>
+                            <div
+                                className="
+                                    mb-2
+                                    flex
+                                    items-center
+                                    justify-between
+                                    gap-3
+                                "
+                            >
+                                <label
+                                    htmlFor="password"
+                                    className="
+                                        text-sm
+                                        font-semibold
+                                        text-slate-700
+                                    "
+                                >
+                                    Password
+                                </label>
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        navigate(
+                                            "/forgot-password"
+                                        )
+                                    }
+                                    className="
+                                        text-sm
+                                        font-semibold
+                                        text-indigo-600
+                                        transition
+                                        hover:text-indigo-800
+                                        hover:underline
+                                    "
+                                >
+                                    Forgot Password?
+                                </button>
+                            </div>
+
+                            <input
+                                id="password"
+                                type="password"
+                                placeholder="Enter your password"
+                                value={password}
+                                onChange={(e) =>
+                                    setPassword(
+                                        e.target.value
+                                    )
+                                }
+                                autoComplete="current-password"
+                                required
+                                className="
+                                    w-full
+                                    rounded-2xl
+                                    border
+                                    border-slate-200
+                                    bg-slate-50
+                                    px-4
+                                    py-3
+                                    text-slate-800
+                                    outline-none
+                                    transition
+                                    placeholder:text-slate-400
+                                    focus:border-indigo-500
+                                    focus:bg-white
+                                    focus:ring-4
+                                    focus:ring-indigo-100
+                                "
+                            />
+                        </div>
+
+                        {/* Login */}
+                        <button
+                            type="submit"
+                            className="
+                                w-full
+                                rounded-2xl
+                                bg-gradient-to-r
+                                from-indigo-600
+                                via-purple-600
+                                to-blue-600
+                                px-4
+                                py-3.5
+                                font-semibold
+                                text-white
+                                shadow-lg
+                                transition-all
+                                duration-300
+                                hover:-translate-y-0.5
+                                hover:shadow-xl
+                                active:scale-[0.99]
+                            "
+                        >
+                            Sign In
+                        </button>
+                    </form>
+
+                    {/* Signup */}
+                    <div
                         className="
-                            w-full
-                            bg-blue-600
-                            text-white
-                            py-2
-                            rounded-lg
-                            hover:bg-blue-700
-                            transition
+                            mt-6
+                            border-t
+                            border-slate-100
+                            pt-5
+                            text-center
                         "
                     >
-                        Login
-                    </button>
+                        <p className="text-sm text-slate-500">
+                            Don't have an account?
 
-                </form>
-
-
-                {/* SIGNUP */}
-
-                <p
-                    className="
-                        text-center
-                        mt-5
-                    "
-                >
-
-                    Don't have an account?
-
-                    <span
-                        onClick={() =>
-                            navigate(
-                                "/signup"
-                            )
-                        }
-                        className="
-                            text-blue-600
-                            cursor-pointer
-                            ml-1
-                            hover:underline
-                        "
-                    >
-                        Sign Up
-                    </span>
-
-                </p>
-
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    navigate("/signup")
+                                }
+                                className="
+                                    ml-1
+                                    font-semibold
+                                    text-indigo-600
+                                    transition
+                                    hover:text-indigo-800
+                                    hover:underline
+                                "
+                            >
+                                Create Account
+                            </button>
+                        </p>
+                    </div>
+                </div>
             </div>
-
         </div>
-
     );
-
 }
 
 export default Login;

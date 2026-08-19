@@ -13,39 +13,26 @@ import ImagePreviewModal from "../components/createComplaint/ImagePreviewModal";
 import useCreateComplaint from "../hooks/useCreateComplaint";
 
 function CreateComplaint() {
-
     const navigate = useNavigate();
 
     const {
-
         title,
         setTitle,
-
         description,
         setDescription,
-
         category,
         setCategory,
-
         image,
         preview,
         showPreview,
-
         setShowPreview,
-
         loading,
-
         handleImage,
-
         removeImage,
-
         handleSubmit,
-
     } = useCreateComplaint();
 
-
     return (
-
         <div
             className="
                 min-h-screen
@@ -53,155 +40,131 @@ function CreateComplaint() {
                 from-slate-100
                 via-blue-50
                 to-indigo-100
-                py-6
-                sm:py-10
                 px-4
+                py-6
                 sm:px-6
+                sm:py-10
             "
         >
-
-            <main className="max-w-3xl mx-auto">
-
-
-                {/* ================= BACK BUTTON ================= */}
-
+            <main className="mx-auto w-full max-w-3xl">
                 <button
                     type="button"
                     onClick={() => navigate(-1)}
                     className="
+                        mb-5
                         inline-flex
                         items-center
                         gap-2
+                        rounded-xl
+                        px-2
+                        py-2
+                        text-sm
+                        font-semibold
                         text-slate-600
-                        hover:text-blue-600
-                        font-medium
-                        transition
-                        mb-5
+                        transition-all
+                        duration-200
+                        hover:-translate-x-0.5
+                        hover:text-indigo-600
                     "
                 >
-
-                    <ArrowLeft size={19} />
-
+                    <ArrowLeft size={18} />
                     Back
-
                 </button>
-
-
-                {/* ================= FORM CARD ================= */}
 
                 <div
                     className="
-                        bg-white
-                        rounded-3xl
-                        shadow-2xl
-                        border
-                        border-white/60
                         overflow-hidden
+                        rounded-3xl
+                        border
+                        border-white/70
+                        bg-white/90
+                        shadow-2xl
+                        backdrop-blur-xl
                     "
                 >
-
-                    {/* TOP ACCENT */}
-
                     <div
                         className="
-                            h-2
+                            h-1.5
                             bg-gradient-to-r
-                            from-blue-600
-                            via-indigo-600
-                            to-purple-600
+                            from-indigo-600
+                            via-purple-600
+                            to-blue-600
                         "
                     />
 
-
-                    <div
-                        className="
-                            p-5
-                            sm:p-8
-                            lg:p-10
-                        "
-                    >
-
-                        {/* ================= HEADER ================= */}
-
+                    <div className="p-5 sm:p-8 lg:p-10">
                         <CreateHeader />
 
+                        <div className="mt-8">
+                            <ComplaintForm
+                                handleSubmit={handleSubmit}
+                            >
+                                <TitleInput
+                                    title={title}
+                                    setTitle={setTitle}
+                                />
 
-                        {/* ================= FORM ================= */}
+                                <DescriptionInput
+                                    description={description}
+                                    setDescription={setDescription}
+                                />
 
-                        <ComplaintForm
-                            handleSubmit={handleSubmit}
-                        >
+                                <CategorySelect
+                                    category={category}
+                                    setCategory={setCategory}
+                                />
 
-                            <TitleInput
-                                title={title}
-                                setTitle={setTitle}
-                            />
+                                <ImageUpload
+                                    image={image}
+                                    preview={preview}
+                                    handleImage={handleImage}
+                                    removeImage={removeImage}
+                                    setShowPreview={
+                                        setShowPreview
+                                    }
+                                />
 
-
-                            <DescriptionInput
-                                description={description}
-                                setDescription={setDescription}
-                            />
-
-
-                            <CategorySelect
-                                category={category}
-                                setCategory={setCategory}
-                            />
-
-
-                            <ImageUpload
-                                image={image}
-                                preview={preview}
-                                handleImage={handleImage}
-                                removeImage={removeImage}
-                                setShowPreview={
-                                    setShowPreview
-                                }
-                            />
-
-
-                            <SubmitButton
-                                loading={loading}
-                            />
-
-                        </ComplaintForm>
-
+                                <SubmitButton
+                                    loading={loading}
+                                />
+                            </ComplaintForm>
+                        </div>
                     </div>
-
                 </div>
 
-
-                {/* ================= HELPER TEXT ================= */}
-
-                <p
+                <div
                     className="
-                        text-center
-                        text-xs
-                        sm:text-sm
-                        text-slate-500
                         mt-5
+                        rounded-2xl
+                        border
+                        border-indigo-100
+                        bg-indigo-50/70
+                        px-4
+                        py-3
+                        text-center
                     "
                 >
-                    Please provide accurate details so the
-                    administration can resolve your complaint faster.
-                </p>
-
+                    <p
+                        className="
+                            text-xs
+                            leading-5
+                            text-slate-500
+                            sm:text-sm
+                        "
+                    >
+                        Please provide accurate details so the
+                        administration can resolve your complaint faster.
+                    </p>
+                </div>
             </main>
-
-
-            {/* ================= IMAGE PREVIEW ================= */}
 
             <ImagePreviewModal
                 preview={preview}
                 showPreview={showPreview}
                 setShowPreview={setShowPreview}
             />
-
         </div>
-
     );
-
 }
 
 export default CreateComplaint;

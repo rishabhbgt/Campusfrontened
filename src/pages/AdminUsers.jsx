@@ -29,7 +29,7 @@ function AdminUsers() {
 
             setUsers(response.data.users);
         } catch (error) {
-            console.log(error);
+            console.error("Admin Users Error:", error);
 
             toast.error(
                 error.response?.data?.message ||

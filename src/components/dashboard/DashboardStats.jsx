@@ -6,7 +6,6 @@ import {
 } from "lucide-react";
 
 function DashboardStats({ complaints }) {
-
     const total = complaints.length;
 
     const pending = complaints.filter(
@@ -25,6 +24,7 @@ function DashboardStats({ complaints }) {
         {
             title: "Total Complaints",
             value: total,
+            description: "All submitted complaints",
             icon: FileText,
             bg: "from-indigo-500 to-blue-600",
             lightBg: "bg-indigo-50",
@@ -33,6 +33,7 @@ function DashboardStats({ complaints }) {
         {
             title: "Pending",
             value: pending,
+            description: "Waiting for action",
             icon: Clock3,
             bg: "from-yellow-400 to-orange-500",
             lightBg: "bg-yellow-50",
@@ -41,6 +42,7 @@ function DashboardStats({ complaints }) {
         {
             title: "In Progress",
             value: progress,
+            description: "Currently being handled",
             icon: LoaderCircle,
             bg: "from-sky-500 to-cyan-500",
             lightBg: "bg-sky-50",
@@ -49,6 +51,7 @@ function DashboardStats({ complaints }) {
         {
             title: "Resolved",
             value: resolved,
+            description: "Successfully completed",
             icon: CheckCircle2,
             bg: "from-green-500 to-emerald-600",
             lightBg: "bg-green-50",
@@ -57,82 +60,73 @@ function DashboardStats({ complaints }) {
     ];
 
     return (
-
         <section className="mt-8">
-
             <div
                 className="
                     grid
                     grid-cols-1
+                    gap-5
                     sm:grid-cols-2
                     xl:grid-cols-4
-                    gap-5
                 "
             >
-
                 {stats.map((item) => {
-
                     const Icon = item.icon;
 
                     return (
-
                         <div
                             key={item.title}
                             className="
                                 group
                                 relative
                                 overflow-hidden
-                                bg-white/80
-                                backdrop-blur-xl
-                                border
-                                border-white/60
                                 rounded-3xl
-                                shadow-lg
-                                p-6
+                                border
+                                border-white/70
+                                bg-white/90
+                                p-5
+                                shadow-xl
+                                backdrop-blur-xl
                                 transition-all
                                 duration-300
                                 hover:-translate-y-1
                                 hover:shadow-2xl
+                                sm:p-6
                             "
                         >
-
-                            {/* Background Glow */}
-
+                            {/* Decorative glow */}
                             <div
                                 className={`
                                     absolute
                                     -right-10
                                     -top-10
-                                    w-28
                                     h-28
+                                    w-28
                                     rounded-full
                                     bg-gradient-to-br
                                     ${item.bg}
                                     opacity-10
-                                    group-hover:scale-150
                                     transition-transform
                                     duration-500
+                                    group-hover:scale-150
                                 `}
                             />
-
 
                             <div
                                 className="
                                     relative
                                     flex
-                                    items-center
+                                    items-start
                                     justify-between
+                                    gap-4
                                 "
                             >
-
-                                {/* Text */}
-
-                                <div>
-
+                                {/* Content */}
+                                <div className="min-w-0">
                                     <p
                                         className="
                                             text-sm
-                                            font-medium
+                                            font-semibold
                                             text-slate-500
                                         "
                                     >
@@ -142,9 +136,11 @@ function DashboardStats({ complaints }) {
                                     <h2
                                         className="
                                             mt-2
-                                            text-4xl
+                                            text-3xl
                                             font-extrabold
+                                            tracking-tight
                                             text-slate-800
+                                            sm:text-4xl
                                         "
                                     >
                                         {item.value}
@@ -152,75 +148,56 @@ function DashboardStats({ complaints }) {
 
                                     <p
                                         className="
-                                            mt-1
+                                            mt-2
                                             text-xs
+                                            leading-5
                                             text-slate-400
                                         "
                                     >
-                                        {item.title === "Total Complaints"
-                                            ? "All submitted complaints"
-                                            : item.title === "Pending"
-                                            ? "Waiting for action"
-                                            : item.title === "In Progress"
-                                            ? "Currently being handled"
-                                            : "Successfully completed"
-                                        }
+                                        {item.description}
                                     </p>
-
                                 </div>
 
-
                                 {/* Icon */}
-
                                 <div
                                     className={`
-                                        w-14
-                                        h-14
-                                        rounded-2xl
-                                        ${item.lightBg}
                                         flex
+                                        h-13
+                                        w-13
+                                        shrink-0
                                         items-center
                                         justify-center
+                                        rounded-2xl
+                                        ${item.lightBg}
                                         transition-all
                                         duration-300
                                         group-hover:scale-110
                                     `}
                                 >
-
                                     <Icon
-                                        size={28}
+                                        size={26}
                                         className={item.iconColor}
                                     />
-
                                 </div>
-
                             </div>
 
-
-                            {/* Bottom Gradient Line */}
-
+                            {/* Bottom accent */}
                             <div
                                 className={`
                                     absolute
                                     bottom-0
                                     left-0
-                                    w-full
                                     h-1
+                                    w-full
                                     bg-gradient-to-r
                                     ${item.bg}
                                 `}
                             />
-
                         </div>
-
                     );
-
                 })}
-
             </div>
-
         </section>
-
     );
 }
 

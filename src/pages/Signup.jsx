@@ -12,10 +12,10 @@ function Signup() {
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
-
         e.preventDefault();
-        
-        const passwordRegex =  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-\\[\]\/+=;']).{8,}$/;
+
+        const passwordRegex =
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-\\[\]/+=;']).{8,}$/;
 
         if (!passwordRegex.test(password)) {
             toast.error(
@@ -25,7 +25,7 @@ function Signup() {
         }
 
         try {
-            const response = await api.post(
+            await api.post(
                 "/auth/signup",
                 {
                     fullName,
@@ -35,13 +35,16 @@ function Signup() {
                 }
             );
 
-            console.log(response.data);
-
-            toast.success("Signup successful! Please login.");
+            toast.success(
+                "Signup successful! Please login."
+            );
 
             navigate("/");
         } catch (error) {
-            console.log(error);
+            console.error(
+                "Signup Error:",
+                error
+            );
 
             toast.error(
                 error.response?.data?.message ||
@@ -57,157 +60,331 @@ function Signup() {
                 flex
                 items-center
                 justify-center
-                bg-gray-100
+                bg-gradient-to-br
+                from-slate-100
+                via-blue-50
+                to-indigo-100
                 px-4
+                py-8
             "
         >
             <div
                 className="
                     w-full
-                    max-w-md
-                    rounded-xl
-                    bg-white
-                    p-8
-                    shadow-md
+                    max-w-lg
+                    overflow-hidden
+                    rounded-3xl
+                    border
+                    border-white/70
+                    bg-white/90
+                    shadow-2xl
+                    backdrop-blur-xl
                 "
             >
-                <h1
+                {/* Header */}
+                <div
                     className="
-                        mb-6
+                        bg-gradient-to-r
+                        from-indigo-600
+                        via-purple-600
+                        to-blue-600
+                        px-6
+                        py-8
                         text-center
-                        text-2xl
-                        font-bold
+                        text-white
+                        sm:px-8
                     "
                 >
-                    Signup
-                </h1>
-
-                <form onSubmit={handleSubmit}>
-
-                    <input
-                        type="text"
-                        placeholder="Full Name"
-                        value={fullName}
-                        onChange={(e) =>
-                            setFullName(e.target.value)
-                        }
-                        required
+                    <h1
                         className="
-                            mb-3
-                            w-full
-                            rounded-lg
-                            border
-                            p-2
-                            outline-none
-                            focus:ring-2
-                            focus:ring-blue-500
-                        "
-                    />
-
-                    <input
-                        type="email"
-                        placeholder="College Email"
-                        value={email}
-                        onChange={(e) =>
-                            setEmail(e.target.value)
-                        }
-                        required
-                        className="
-                            mb-3
-                            w-full
-                            rounded-lg
-                            border
-                            p-2
-                            outline-none
-                            focus:ring-2
-                            focus:ring-blue-500
-                        "
-                    />
-
-                    <input
-                        type="tel"
-                        placeholder="Mobile Number"
-                        value={phone}
-                        onChange={(e) =>
-                            setPhone(e.target.value)
-                        }
-                        required
-                        maxLength={10}
-                        pattern="[0-9]{10}"
-                        className="
-                            mb-3
-                            w-full
-                            rounded-lg
-                            border
-                            p-2
-                            outline-none
-                            focus:ring-2
-                            focus:ring-blue-500
-                        "
-                    />
-
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) =>
-                            setPassword(e.target.value)
-                        }
-                        required
-                        minLength={8}
-                        className="
-                            mb-5
-                            w-full
-                            rounded-lg
-                            border
-                            p-2
-                            outline-none
-                            focus:ring-2
-                            focus:ring-blue-500
-                        "
-                    />
-
-                    <button
-                        type="submit"
-                        className="
-                            w-full
-                            rounded-lg
-                            bg-blue-600
-                            p-2
-                            font-semibold
-                            text-white
-                            transition
-                            hover:bg-blue-700
+                            text-3xl
+                            font-bold
+                            tracking-tight
                         "
                     >
-                        Signup
-                    </button>
+                        CampusOne
+                    </h1>
 
-                </form>
-
-                <p
-                    className="
-                        mt-5
-                        text-center
-                        text-sm
-                        text-slate-600
-                    "
-                >
-                    Already have an account?
-
-                    <button
-                        type="button"
-                        onClick={() => navigate("/")}
+                    <p
                         className="
-                            ml-1
-                            font-semibold
-                            text-blue-600
-                            hover:underline
+                            mt-2
+                            text-sm
+                            text-white/80
                         "
                     >
-                        Login
-                    </button>
-                </p>
+                        Create your campus account
+                    </p>
+                </div>
+
+                {/* Form */}
+                <div className="p-6 sm:p-8">
+                    <form
+                        onSubmit={handleSubmit}
+                        className="space-y-5"
+                    >
+                        {/* Full Name */}
+                        <div>
+                            <label
+                                htmlFor="fullName"
+                                className="
+                                    mb-2
+                                    block
+                                    text-sm
+                                    font-semibold
+                                    text-slate-700
+                                "
+                            >
+                                Full Name
+                            </label>
+
+                            <input
+                                id="fullName"
+                                type="text"
+                                placeholder="Enter your full name"
+                                value={fullName}
+                                onChange={(e) =>
+                                    setFullName(
+                                        e.target.value
+                                    )
+                                }
+                                required
+                                className="
+                                    w-full
+                                    rounded-2xl
+                                    border
+                                    border-slate-200
+                                    bg-slate-50
+                                    px-4
+                                    py-3
+                                    text-slate-800
+                                    outline-none
+                                    transition
+                                    placeholder:text-slate-400
+                                    focus:border-indigo-500
+                                    focus:bg-white
+                                    focus:ring-4
+                                    focus:ring-indigo-100
+                                "
+                            />
+                        </div>
+
+                        {/* Email */}
+                        <div>
+                            <label
+                                htmlFor="email"
+                                className="
+                                    mb-2
+                                    block
+                                    text-sm
+                                    font-semibold
+                                    text-slate-700
+                                "
+                            >
+                                College Email
+                            </label>
+
+                            <input
+                                id="email"
+                                type="email"
+                                placeholder="Enter your college email"
+                                value={email}
+                                onChange={(e) =>
+                                    setEmail(
+                                        e.target.value
+                                    )
+                                }
+                                required
+                                className="
+                                    w-full
+                                    rounded-2xl
+                                    border
+                                    border-slate-200
+                                    bg-slate-50
+                                    px-4
+                                    py-3
+                                    text-slate-800
+                                    outline-none
+                                    transition
+                                    placeholder:text-slate-400
+                                    focus:border-indigo-500
+                                    focus:bg-white
+                                    focus:ring-4
+                                    focus:ring-indigo-100
+                                "
+                            />
+                        </div>
+
+                        {/* Phone */}
+                        <div>
+                            <label
+                                htmlFor="phone"
+                                className="
+                                    mb-2
+                                    block
+                                    text-sm
+                                    font-semibold
+                                    text-slate-700
+                                "
+                            >
+                                Mobile Number
+                            </label>
+
+                            <input
+                                id="phone"
+                                type="tel"
+                                inputMode="numeric"
+                                placeholder="Enter 10-digit mobile number"
+                                value={phone}
+                                onChange={(e) =>
+                                    setPhone(
+                                        e.target.value
+                                            .replace(
+                                                /\D/g,
+                                                ""
+                                            )
+                                    )
+                                }
+                                required
+                                maxLength={10}
+                                pattern="[0-9]{10}"
+                                className="
+                                    w-full
+                                    rounded-2xl
+                                    border
+                                    border-slate-200
+                                    bg-slate-50
+                                    px-4
+                                    py-3
+                                    text-slate-800
+                                    outline-none
+                                    transition
+                                    placeholder:text-slate-400
+                                    focus:border-indigo-500
+                                    focus:bg-white
+                                    focus:ring-4
+                                    focus:ring-indigo-100
+                                "
+                            />
+                        </div>
+
+                        {/* Password */}
+                        <div>
+                            <label
+                                htmlFor="password"
+                                className="
+                                    mb-2
+                                    block
+                                    text-sm
+                                    font-semibold
+                                    text-slate-700
+                                "
+                            >
+                                Password
+                            </label>
+
+                            <input
+                                id="password"
+                                type="password"
+                                placeholder="Create a strong password"
+                                value={password}
+                                onChange={(e) =>
+                                    setPassword(
+                                        e.target.value
+                                    )
+                                }
+                                required
+                                minLength={8}
+                                className="
+                                    w-full
+                                    rounded-2xl
+                                    border
+                                    border-slate-200
+                                    bg-slate-50
+                                    px-4
+                                    py-3
+                                    text-slate-800
+                                    outline-none
+                                    transition
+                                    placeholder:text-slate-400
+                                    focus:border-indigo-500
+                                    focus:bg-white
+                                    focus:ring-4
+                                    focus:ring-indigo-100
+                                "
+                            />
+
+                            <p
+                                className="
+                                    mt-2
+                                    text-xs
+                                    leading-5
+                                    text-slate-500
+                                "
+                            >
+                                Use 8+ characters with uppercase,
+                                lowercase, number and special
+                                character.
+                            </p>
+                        </div>
+
+                        {/* Signup */}
+                        <button
+                            type="submit"
+                            className="
+                                w-full
+                                rounded-2xl
+                                bg-gradient-to-r
+                                from-indigo-600
+                                via-purple-600
+                                to-blue-600
+                                px-4
+                                py-3.5
+                                font-semibold
+                                text-white
+                                shadow-lg
+                                transition-all
+                                duration-300
+                                hover:-translate-y-0.5
+                                hover:shadow-xl
+                                active:scale-[0.99]
+                            "
+                        >
+                            Create Account
+                        </button>
+                    </form>
+
+                    {/* Login */}
+                    <div
+                        className="
+                            mt-6
+                            border-t
+                            border-slate-100
+                            pt-5
+                            text-center
+                        "
+                    >
+                        <p className="text-sm text-slate-500">
+                            Already have an account?
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    navigate("/")
+                                }
+                                className="
+                                    ml-1
+                                    font-semibold
+                                    text-indigo-600
+                                    transition
+                                    hover:text-indigo-800
+                                    hover:underline
+                                "
+                            >
+                                Login
+                            </button>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     );
