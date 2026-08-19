@@ -1,17 +1,12 @@
 import ComplaintRow from "./ComplaintRow";
 
 function ComplaintTable({
-
     complaints,
-
     faculties,
-
     updateComplaintStatus,
-
+    archiveComplaint,
 }) {
-
     return (
-
         <div
             className="
                 overflow-x-auto
@@ -22,9 +17,7 @@ function ComplaintTable({
                 border-slate-200
             "
         >
-
             <table className="min-w-full">
-
                 <thead
                     className="
                         bg-gradient-to-r
@@ -34,9 +27,7 @@ function ComplaintTable({
                         text-white
                     "
                 >
-
                     <tr>
-
                         <th className="px-6 py-5 text-left font-semibold">
                             Complaint
                         </th>
@@ -64,37 +55,27 @@ function ComplaintTable({
                         <th className="px-6 py-5 text-center font-semibold">
                             Actions
                         </th>
-
                     </tr>
-
                 </thead>
 
                 <tbody>
-
                     {complaints.map((complaint) => (
-
                         <ComplaintRow
-
                             key={complaint._id}
-
                             complaint={complaint}
-
                             faculties={faculties}
-
-                            updateComplaintStatus={updateComplaintStatus}
-
+                            updateComplaintStatus={
+                                updateComplaintStatus
+                            }
+                            archiveComplaint={
+                                archiveComplaint
+                            }
                         />
-
                     ))}
-
                 </tbody>
-
             </table>
-
         </div>
-
     );
-
 }
 
 export default ComplaintTable;

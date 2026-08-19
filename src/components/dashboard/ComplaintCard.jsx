@@ -19,9 +19,6 @@ const navigate = useNavigate();
 const [showPreview, setShowPreview] =
     useState(false);
 
-
-// ================= STATUS COLOR =================
-
 const getStatusColor = (status) => {
 
     switch (status) {
@@ -69,8 +66,6 @@ return (
 
     <>
 
-        {/* ================= COMPLAINT CARD ================= */}
-
         <article
             className="
                 group
@@ -89,8 +84,6 @@ return (
                 flex-col
             "
         >
-
-            {/* ================= IMAGE ================= */}
 
             {complaint.image && (
 
@@ -118,8 +111,6 @@ return (
                         "
                     />
 
-                    {/* Image Overlay */}
-
                     <div
                         className="
                             absolute
@@ -134,8 +125,6 @@ return (
                             duration-300
                         "
                     />
-
-                    {/* View Image */}
 
                     <div
                         className="
@@ -163,9 +152,6 @@ return (
 
             )}
 
-
-            {/* ================= CARD CONTENT ================= */}
-
             <div
                 className="
                     p-5
@@ -175,8 +161,6 @@ return (
                     flex-1
                 "
             >
-
-                {/* Title + Status */}
 
                 <div
                     className="
@@ -220,9 +204,6 @@ return (
 
                 </div>
 
-
-                {/* Description */}
-
                 <p
                     className="
                         text-slate-500
@@ -235,9 +216,6 @@ return (
                     {complaint.description}
                 </p>
 
-
-                {/* ================= DETAILS ================= */}
-
                 <div
                     className="
                         mt-5
@@ -248,8 +226,6 @@ return (
                         text-sm
                     "
                 >
-
-                    {/* Category */}
 
                     <div
                         className="
@@ -301,9 +277,6 @@ return (
                         </div>
 
                     </div>
-
-
-                    {/* Date */}
 
                     <div
                         className="
@@ -367,9 +340,6 @@ return (
 
                 </div>
 
-
-                {/* ================= ACTION BUTTONS ================= */}
-
                 <div
                     className="
                         grid
@@ -378,8 +348,6 @@ return (
                         mt-6
                     "
                 >
-
-                    {/* VIEW */}
 
                     <button
                         onClick={() =>
@@ -415,9 +383,6 @@ return (
 
                     </button>
 
-
-                    {/* EDIT */}
-
                     <button
                         onClick={() =>
                             navigate(
@@ -451,9 +416,6 @@ return (
                         </span>
 
                     </button>
-
-
-                    {/* DELETE */}
 
                     <button
                         onClick={() =>
@@ -495,9 +457,6 @@ return (
 
         </article>
 
-
-        {/* ================= IMAGE PREVIEW MODAL ================= */}
-
         {showPreview && (
 
             <div
@@ -516,8 +475,6 @@ return (
                     p-5
                 "
             >
-
-                {/* Close Button */}
 
                 <button
                     onClick={() =>
@@ -543,9 +500,6 @@ return (
                     <X size={26} />
 
                 </button>
-
-
-                {/* Preview Image */}
 
                 <img
                     src={complaint.image}
