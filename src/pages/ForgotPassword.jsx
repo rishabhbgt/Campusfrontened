@@ -9,32 +9,43 @@ function ForgotPassword() {
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleEmailSubmit = async (e) => {
-        e.preventDefault();
+const handleEmailSubmit = async (e) => {
+    e.preventDefault();
 
-        setLoading(true);
+    console.log("FORGOT SUBMIT");
 
-        try {
-            const response = await api.post(
-                "/auth/forgot-password",
-                {
-                    email,
-                }
-            );
+    setLoading(true);
 
-            toast.success(
-                response.data?.message ||
-                "Reset link sent to your email"
-            );
-        } catch (error) {
-            toast.error(
-                error.response?.data?.message ||
-                "Unable to process request"
-            );
-        } finally {
-            setLoading(false);
-        }
-    };
+    try {
+        console.log("EMAIL:", email);
+
+        const response = await api.post(
+            "/auth/forgot-password",
+            {
+                email,
+            }
+        );
+
+        console.log("API RESPONSE:", response.data);
+
+        toast.success(
+            response.data?.message ||
+            "Reset link sent to your email"
+        );
+    } catch (error) {
+        console.error(
+            "API ERROR:",
+            error
+        );
+
+        toast.error(
+            error.response?.data?.message ||
+            "Unable to process request"
+        );
+    } finally {
+        setLoading(false);
+    }
+};
 
     return (
         <div
@@ -99,7 +110,6 @@ function ForgotPassword() {
                     </p>
                 </div>
 
-                {/* Content */}
                 <div className="p-6 sm:p-8">
                     <div className="mb-6">
                         <h2
@@ -178,6 +188,7 @@ function ForgotPassword() {
 
                         <button
                             type="submit"
+                            onClick={() => console.log("BUTTON CLICKED")}
                             disabled={loading}
                             className="
                                 w-full

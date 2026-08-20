@@ -11,49 +11,49 @@ function ResetPassword() {
     const [confirmPassword, setConfirmPassword] = useState("");
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+    e.preventDefault();
 
-        const passwordRegex =
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-\\[\]/+=;']).{8,}$/;
+    const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
-        if (!passwordRegex.test(password)) {
-            toast.error(
-                "Password must contain 8+ characters, uppercase, lowercase, number and special character"
-            );
-            return;
-        }
+    if (!passwordRegex.test(password)) {
+        toast.error(
+            "Password must contain 8+ characters, uppercase, lowercase, number and special character"
+        );
+        return;
+    }
 
-        if (password !== confirmPassword) {
-            toast.error("Passwords do not match");
-            return;
-        }
+    if (password !== confirmPassword) {
+        toast.error("Passwords do not match");
+        return;
+    }
 
-        try {
-            const response = await api.post(
-                `/auth/reset-password/${token}`,
-                {
-                    password,
-                }
-            );
+    try {
+        console.log("Calling reset API...");
 
-            toast.success(
-                response.data?.message ||
-                "Password reset successful"
-            );
+        const response = await api.post(
+            `/auth/reset-password/${token}`,
+            {
+                password,
+            }
+        );
 
-            navigate("/");
-        } catch (error) {
-            console.error(
-                "Reset Password Error:",
-                error
-            );
+        console.log("Reset API response:", response.data);
 
-            toast.error(
-                error.response?.data?.message ||
-                "Password reset failed"
-            );
-        }
-    };
+        toast.success(
+            response.data?.message || "Password reset successful"
+        );
+
+        navigate("/");
+    } catch (error) {
+        console.error("Reset Password Error:", error);
+
+        toast.error(
+            error.response?.data?.message ||
+            "Password reset failed"
+        );
+    }
+};
 
     return (
         <div
@@ -196,7 +196,6 @@ function ResetPassword() {
                             />
                         </div>
 
-                        {/* Confirm Password */}
                         <div>
                             <label
                                 htmlFor="confirmPassword"
