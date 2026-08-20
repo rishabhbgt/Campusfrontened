@@ -9,51 +9,68 @@ function ResetPassword() {
 
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    const passwordRegex =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+        console.log("UPDATE BUTTON CLICKED");
+        console.log("Token:", token);
+        console.log("Password entered:", password);
+        console.log("Confirm password:", confirmPassword);
 
-    if (!passwordRegex.test(password)) {
-        toast.error(
-            "Password must contain 8+ characters, uppercase, lowercase, number and special character"
-        );
-        return;
-    }
+        const passwordRegex =
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
-    if (password !== confirmPassword) {
-        toast.error("Passwords do not match");
-        return;
-    }
+        if (!passwordRegex.test(password)) {
+            toast.error(
+                "Password must contain 8+ characters, uppercase, lowercase, number and special character"
+            );
+            return;
+        }
 
-    try {
-        console.log("Calling reset API...");
+        if (password !== confirmPassword) {
+            toast.error("Passwords do not match");
+            return;
+        }
 
-        const response = await api.post(
-            `/auth/reset-password/${token}`,
-            {
-                password,
-            }
-        );
+        if (!token) {
+            toast.error("Invalid or missing reset token");
+            return;
+        }
 
-        console.log("Reset API response:", response.data);
+        try {
+            setLoading(true);
 
-        toast.success(
-            response.data?.message || "Password reset successful"
-        );
+            console.log("Calling reset API...");
 
-        navigate("/");
-    } catch (error) {
-        console.error("Reset Password Error:", error);
+            const response = await api.post(
+                `/auth/reset-password/${token}`,
+                {
+                    password,
+                }
+            );
 
-        toast.error(
-            error.response?.data?.message ||
-            "Password reset failed"
-        );
-    }
-};
+            console.log("Reset API response:", response.data);
+
+            toast.success(
+                response.data?.message || "Password reset successful"
+            );
+
+            setTimeout(() => {
+                navigate("/");
+            }, 1200);
+        } catch (error) {
+            console.error("Reset Password Error:", error);
+
+            toast.error(
+                error.response?.data?.message ||
+                    "Password reset failed"
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div
@@ -139,8 +156,8 @@ function ResetPassword() {
                                 text-slate-500
                             "
                         >
-                            Create a new strong password for
-                            your CampusOne account.
+                            Create a new strong password for your
+                            CampusOne account.
                         </p>
                     </div>
 
@@ -169,13 +186,12 @@ function ResetPassword() {
                                 placeholder="Enter your new password"
                                 value={password}
                                 onChange={(e) =>
-                                    setPassword(
-                                        e.target.value
-                                    )
+                                    setPassword(e.target.value)
                                 }
                                 autoComplete="new-password"
                                 required
                                 minLength={8}
+                                disabled={loading}
                                 className="
                                     w-full
                                     rounded-2xl
@@ -192,10 +208,13 @@ function ResetPassword() {
                                     focus:bg-white
                                     focus:ring-4
                                     focus:ring-indigo-100
+                                    disabled:cursor-not-allowed
+                                    disabled:opacity-60
                                 "
                             />
                         </div>
 
+                        {/* Confirm Password */}
                         <div>
                             <label
                                 htmlFor="confirmPassword"
@@ -223,6 +242,7 @@ function ResetPassword() {
                                 autoComplete="new-password"
                                 required
                                 minLength={8}
+                                disabled={loading}
                                 className="
                                     w-full
                                     rounded-2xl
@@ -239,6 +259,8 @@ function ResetPassword() {
                                     focus:bg-white
                                     focus:ring-4
                                     focus:ring-indigo-100
+                                    disabled:cursor-not-allowed
+                                    disabled:opacity-60
                                 "
                             />
                         </div>
@@ -258,6 +280,7 @@ function ResetPassword() {
                         {/* Submit */}
                         <button
                             type="submit"
+                            disabled={loading}
                             className="
                                 w-full
                                 rounded-2xl
@@ -275,12 +298,18 @@ function ResetPassword() {
                                 hover:-translate-y-0.5
                                 hover:shadow-xl
                                 active:scale-[0.99]
+                                disabled:cursor-not-allowed
+                                disabled:opacity-60
+                                disabled:hover:translate-y-0
                             "
                         >
-                            Update Password
+                            {loading
+                                ? "Updating Password..."
+                                : "Update Password"}
                         </button>
                     </form>
 
+                    {/* Back */}
                     <div
                         className="
                             mt-6
@@ -292,9 +321,8 @@ function ResetPassword() {
                     >
                         <button
                             type="button"
-                            onClick={() =>
-                                navigate("/")
-                            }
+                            onClick={() => navigate("/")}
+                            disabled={loading}
                             className="
                                 text-sm
                                 font-semibold
@@ -302,6 +330,8 @@ function ResetPassword() {
                                 transition
                                 hover:text-indigo-800
                                 hover:underline
+                                disabled:cursor-not-allowed
+                                disabled:opacity-50
                             "
                         >
                             ← Back to Login
@@ -314,3 +344,4 @@ function ResetPassword() {
 }
 
 export default ResetPassword;
+
