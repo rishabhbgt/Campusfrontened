@@ -17,7 +17,7 @@ function DashboardHeader({
             className="
                 relative
                 z-50
-                overflow-hidden
+                overflow-visible
                 rounded-3xl
                 border
                 border-white/70
@@ -30,12 +30,14 @@ function DashboardHeader({
                 sm:py-6
             "
         >
+            {/* Top gradient line */}
             <div
                 className="
                     absolute
                     inset-x-0
                     top-0
                     h-1
+                    rounded-t-3xl
                     bg-gradient-to-r
                     from-indigo-600
                     via-purple-600
@@ -43,16 +45,16 @@ function DashboardHeader({
                 "
             />
 
+            {/* Header Content */}
             <div
                 className="
                     flex
-                    flex-col
+                    items-center
+                    justify-between
                     gap-5
-                    md:flex-row
-                    md:items-center
-                    md:justify-between
                 "
             >
+                {/* User Info */}
                 <div className="flex items-center gap-4 sm:gap-5">
                     <div
                         className="
@@ -80,7 +82,7 @@ function DashboardHeader({
                         />
                     </div>
 
-                    <div className="min-w-0">
+                    <div className="min-w-0 pr-2">
                         <p
                             className="
                                 mb-1
@@ -126,28 +128,38 @@ function DashboardHeader({
                     </div>
                 </div>
 
+                {/* Actions */}
                 <div
                     className="
+                        absolute
+                        right-4
+                        top-4
+
                         flex
-                        w-full
                         items-center
-                        justify-end
-                        gap-3
-                        md:w-auto
-                        sm:gap-4
+                        gap-2
+
+                        sm:right-6
+                        sm:top-6
+                        sm:gap-3
+
+                        md:static
                     "
                 >
+                    {/* ONE NotificationBell ONLY */}
                     <NotificationBell
                         notifications={notifications}
                         markAsRead={markAsRead}
                         markAllAsRead={markAllAsRead}
                     />
 
+                    {/* Logout */}
                     <button
                         type="button"
                         onClick={handleLogout}
                         className="
                             flex
+                            h-11
                             items-center
                             justify-center
                             gap-2
@@ -156,7 +168,6 @@ function DashboardHeader({
                             from-red-500
                             to-red-600
                             px-4
-                            py-3
                             font-semibold
                             text-white
                             shadow-lg
@@ -167,12 +178,15 @@ function DashboardHeader({
                             hover:to-red-700
                             hover:shadow-xl
                             active:scale-95
+
+                            sm:h-auto
+                            sm:py-3
                             sm:px-5
                         "
                     >
                         <LogOut size={18} />
 
-                        <span>
+                        <span className="hidden sm:inline">
                             Logout
                         </span>
                     </button>
@@ -183,3 +197,4 @@ function DashboardHeader({
 }
 
 export default DashboardHeader;
+

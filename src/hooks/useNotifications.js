@@ -9,117 +9,135 @@ import socket from "../socket";
 import toast from "react-hot-toast";
 
 function useNotifications(user) {
-    const [
-        notifications,
-        setNotifications,
-    ] = useState([]);
+    const [notifications, setNotifications] = useState([]);
 
-    const fetchNotifications =
-        useCallback(async () => {
-            try {
-                const response = await api.get(
-                    "/notifications"
-                );
+    const userId = user?.id || user?._id;
+    const fetchNotifications = useCallback(async () => {
+        try {
+            const response = await api.get(
+                "/notifications"
+            );
 
-                setNotifications(
-                    response.data?.notifications || []
-                );
-            } catch (error) {
-                console.error(
-                    "Fetch Notifications Error:",
-                    error
-                );
-            }
-        }, []);
+            const data =
+                response.data?.notifications ??
+                response.data ??
+                [];
 
-    const markAsRead =
-        useCallback(async (id) => {
-            try {
-                await api.put(
-                    `/notifications/${id}/read`,
-                    {}
-                );
+            const notificationList = Array.isArray(data)
+                ? data
+                : [];
 
-                setNotifications(
-                    (prevNotifications) =>
-                        prevNotifications.map(
-                            (notification) =>
-                                notification._id === id
-                                    ? {
-                                          ...notification,
-                                          isRead: true,
-                                      }
-                                    : notification
-                        )
-                );
+            setNotifications(notificationList);
+        } catch (error) {
+            console.error(
+                "Fetch Notifications Error:",
+                error
+            );
 
-                return true;
-            } catch (error) {
-                console.error(
-                    "Mark Notification Read Error:",
-                    error
-                );
+            setNotifications([]);
+        }
+    }, []);
 
-                toast.error(
-                    error.response?.data?.message ||
-                    "Failed to mark notification as read"
-                );
+    const markAsRead = useCallback(async (id) => {
+        try {
+            await api.put(
+                `/notifications/${id}/read`,
+                {}
+            );
 
-                return false;
-            }
-        }, []);
+            setNotifications((previous) =>
+                previous.map((notification) =>
+                    notification._id === id
+                        ? {
+                              ...notification,
+                              isRead: true,
+                          }
+                        : notification
+                )
+            );
 
-    const markAllAsRead =
-        useCallback(async () => {
-            try {
-                await api.put(
-                    "/notifications/read-all",
-                    {}
-                );
+            return true;
+        } catch (error) {
+            console.error(
+                "Mark Notification Read Error:",
+                error
+            );
 
-                setNotifications(
-                    (prevNotifications) =>
-                        prevNotifications.map(
-                            (notification) => ({
-                                ...notification,
-                                isRead: true,
-                            })
-                        )
-                );
+            toast.error(
+                error.response?.data?.message ||
+                "Failed to mark notification as read"
+            );
 
-                toast.success(
-                    "All notifications marked as read"
-                );
+            return false;
+        }
+    }, []);
 
-                return true;
-            } catch (error) {
-                console.error(
-                    "Mark All Notifications Read Error:",
-                    error
-                );
+    const markAllAsRead = useCallback(async () => {
+        try {
+            await api.put(
+                "/notifications/read-all",
+                {}
+            );
 
-                toast.error(
-                    error.response?.data?.message ||
-                    "Failed to mark all notifications as read"
-                );
+            setNotifications((previous) =>
+                previous.map((notification) => ({
+                    ...notification,
+                    isRead: true,
+                }))
+            );
 
-                return false;
-            }
-        }, []);
+            toast.success(
+                "All notifications marked as read"
+            );
+
+            return true;
+        } catch (error) {
+            console.error(
+                "Mark All Notifications Read Error:",
+                error
+            );
+
+            toast.error(
+                error.response?.data?.message ||
+                "Failed to mark all notifications as read"
+            );
+
+            return false;
+        }
+    }, []);
+
 
     useEffect(() => {
         fetchNotifications();
     }, [fetchNotifications]);
 
     useEffect(() => {
-        if (!user?.id) {
+        const handleFocus = () => {
+            fetchNotifications();
+        };
+
+        window.addEventListener(
+            "focus",
+            handleFocus
+        );
+
+        return () => {
+            window.removeEventListener(
+                "focus",
+                handleFocus
+            );
+        };
+    }, [fetchNotifications]);
+
+    useEffect(() => {
+        if (!userId) {
             return;
         }
 
         const registerUser = () => {
             socket.emit(
                 "register",
-                user.id
+                userId
             );
         };
 
@@ -157,7 +175,7 @@ function useNotifications(user) {
             );
         };
     }, [
-        user?.id,
+        userId,
         fetchNotifications,
     ]);
 
