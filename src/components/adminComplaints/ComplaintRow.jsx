@@ -1,8 +1,10 @@
+import { useState } from "react";
 import RoleBadge from "../adminUsers/RoleBadge";
 import StatusDropdown from "./StatusDropdown";
 import PriorityDropdown from "./PriorityDropdown";
 import AssignFaculty from "./AssignFaculty";
 import ComplaintActions from "./ComplaintActions";
+import toast from "react-hot-toast";
 
 function ComplaintRow({
     complaint,
@@ -10,6 +12,69 @@ function ComplaintRow({
     updateComplaintStatus,
     archiveComplaint,
 }) {
+    const [updatingDueDate, setUpdatingDueDate] =
+        useState(false);
+
+    const formatDateForInput = (date) => {
+        if (!date) {
+            return "";
+        }
+
+        const parsedDate = new Date(date);
+
+        if (Number.isNaN(parsedDate.getTime())) {
+            return "";
+        }
+
+        const year = parsedDate.getFullYear();
+        const month = String(
+            parsedDate.getMonth() + 1
+        ).padStart(2, "0");
+        const day = String(
+            parsedDate.getDate()
+        ).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    };
+
+    const handleDueDateChange = async (e) => {
+        const value = e.target.value;
+
+        try {
+            setUpdatingDueDate(true);
+
+            await updateComplaintStatus(
+                complaint._id,
+                {
+                    status: complaint.status,
+                    priority: complaint.priority,
+                    dueDate: value || null,
+                    assignedTo:
+                        complaint.assignedTo?._id ||
+                        complaint.assignedTo ||
+                        null,
+                }
+            );
+
+            toast.success(
+                value
+                    ? "Due date updated"
+                    : "Due date removed"
+            );
+        } catch (error) {
+            console.error(
+                "Due Date Update Error:",
+                error
+            );
+
+            toast.error(
+                "Failed to update due date"
+            );
+        } finally {
+            setUpdatingDueDate(false);
+        }
+    };
+
     return (
         <tr
             className="
@@ -89,6 +154,74 @@ function ComplaintRow({
                         updateComplaintStatus
                     }
                 />
+            </td>
+
+            {/* ================= DUE DATE ================= */}
+            <td className="px-6 py-5 text-center align-top">
+                <div className="flex flex-col items-center gap-2">
+                    <input
+                        type="date"
+                        value={formatDateForInput(
+                            complaint.dueDate
+                        )}
+                        onChange={
+                            handleDueDateChange
+                        }
+                        disabled={updatingDueDate}
+                        aria-label="Set complaint due date"
+                        className="
+                            w-[155px]
+                            rounded-xl
+                            border
+                            border-slate-200
+                            bg-white
+                            px-3
+                            py-2.5
+                            text-sm
+                            font-medium
+                            text-slate-700
+                            shadow-sm
+                            outline-none
+                            transition-all
+                            duration-300
+                            hover:border-indigo-300
+                            focus:border-indigo-500
+                            focus:ring-4
+                            focus:ring-indigo-500/10
+                            disabled:cursor-not-allowed
+                            disabled:opacity-60
+                        "
+                    />
+
+                    {complaint.dueDate && (
+                        <span
+                            className={`
+                                rounded-full
+                                px-2.5
+                                py-1
+                                text-[11px]
+                                font-semibold
+                                ${
+                                    new Date(
+                                        complaint.dueDate
+                                    ) < new Date() &&
+                                    complaint.status !==
+                                        "Resolved"
+                                        ? "bg-red-50 text-red-600"
+                                        : "bg-indigo-50 text-indigo-600"
+                                }
+                            `}
+                        >
+                            {new Date(
+                                complaint.dueDate
+                            ) < new Date() &&
+                            complaint.status !==
+                                "Resolved"
+                                ? "Overdue"
+                                : "Scheduled"}
+                        </span>
+                    )}
+                </div>
             </td>
 
             <td className="px-6 py-5 text-center align-top">

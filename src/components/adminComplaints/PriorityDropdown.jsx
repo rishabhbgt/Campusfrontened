@@ -1,54 +1,38 @@
 function PriorityDropdown({
-
     complaint,
-
     updateComplaintStatus,
-
 }) {
-
     const priorityOptions = [
-
         "Low",
-
         "Medium",
-
         "High",
-
     ];
 
     return (
-
         <select
-
             value={complaint.priority || "Medium"}
-
             onChange={(e) =>
-
                 updateComplaintStatus(
-
                     complaint._id,
-
                     {
-
                         status: complaint.status,
-
                         priority: e.target.value,
-
-                        assignedTo: complaint.assignedTo?._id,
-
+                        dueDate:
+                            complaint.dueDate || null,
+                        assignedTo:
+                            complaint.assignedTo?._id ||
+                            complaint.assignedTo ||
+                            null,
                     }
-
                 )
-
             }
-
             className="
-                px-4
-                py-2
                 rounded-xl
                 border
                 border-slate-300
                 bg-white
+                px-4
+                py-2
                 text-sm
                 font-medium
                 shadow-sm
@@ -59,29 +43,18 @@ function PriorityDropdown({
                 focus:ring-2
                 focus:ring-indigo-300
             "
-
         >
-
             {priorityOptions.map((priority) => (
-
                 <option
-
                     key={priority}
-
                     value={priority}
-
                 >
-
                     {priority}
-
                 </option>
-
             ))}
-
         </select>
-
     );
-
 }
 
 export default PriorityDropdown;
+

@@ -19,7 +19,7 @@ function ComplaintTable({
             "
         >
             <div className="overflow-x-auto">
-                <table className="min-w-[1200px] w-full">
+                <table className="min-w-[1350px] w-full">
                     <thead>
                         <tr
                             className="
@@ -30,101 +30,35 @@ function ComplaintTable({
                                 text-white
                             "
                         >
-                            <th
-                                className="
-                                    px-6
-                                    py-4
-                                    text-left
-                                    text-xs
-                                    font-semibold
-                                    uppercase
-                                    tracking-wide
-                                "
-                            >
+                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide">
                                 Complaint
                             </th>
 
-                            <th
-                                className="
-                                    px-6
-                                    py-4
-                                    text-center
-                                    text-xs
-                                    font-semibold
-                                    uppercase
-                                    tracking-wide
-                                "
-                            >
+                            <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wide">
                                 Student
                             </th>
 
-                            <th
-                                className="
-                                    px-6
-                                    py-4
-                                    text-center
-                                    text-xs
-                                    font-semibold
-                                    uppercase
-                                    tracking-wide
-                                "
-                            >
+                            <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wide">
                                 Category
                             </th>
 
-                            <th
-                                className="
-                                    px-6
-                                    py-4
-                                    text-center
-                                    text-xs
-                                    font-semibold
-                                    uppercase
-                                    tracking-wide
-                                "
-                            >
+                            <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wide">
                                 Priority
                             </th>
 
-                            <th
-                                className="
-                                    px-6
-                                    py-4
-                                    text-center
-                                    text-xs
-                                    font-semibold
-                                    uppercase
-                                    tracking-wide
-                                "
-                            >
+                            <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wide">
+                                Due Date
+                            </th>
+
+                            <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wide">
                                 Status
                             </th>
 
-                            <th
-                                className="
-                                    px-6
-                                    py-4
-                                    text-center
-                                    text-xs
-                                    font-semibold
-                                    uppercase
-                                    tracking-wide
-                                "
-                            >
+                            <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wide">
                                 Faculty
                             </th>
 
-                            <th
-                                className="
-                                    px-6
-                                    py-4
-                                    text-center
-                                    text-xs
-                                    font-semibold
-                                    uppercase
-                                    tracking-wide
-                                "
-                            >
+                            <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wide">
                                 Actions
                             </th>
                         </tr>
@@ -152,3 +86,4 @@ function ComplaintTable({
 }
 
 export default ComplaintTable;
+
