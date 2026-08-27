@@ -11,7 +11,6 @@ import AdminNotificationBell from "../components/admin/AdminNotificationBell";
 
 import AdminComplaintHeader from "../components/adminComplaints/AdminComplaintHeader";
 import ComplaintFilters from "../components/adminComplaints/ComplaintFilters";
-import ComplaintStats from "../components/adminComplaints/ComplaintStats";
 import ComplaintTable from "../components/adminComplaints/ComplaintTable";
 import LoadingComplaints from "../components/adminComplaints/LoadingComplaints";
 import EmptyComplaints from "../components/adminComplaints/EmptyComplaints";
@@ -508,11 +507,6 @@ function AdminDashboard() {
                     />
                 </section>
 
-                <section className="mb-8">
-                    <ComplaintStats
-                        complaints={complaints}
-                    />
-                </section>
 
                 <section
                     className="
