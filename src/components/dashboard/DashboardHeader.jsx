@@ -24,13 +24,12 @@ function DashboardHeader({
                 bg-white/90
                 shadow-2xl
                 backdrop-blur-xl
-                px-5
+                px-4
                 py-5
                 sm:px-8
                 sm:py-6
             "
         >
-            {/* Top gradient line */}
             <div
                 className="
                     absolute
@@ -45,22 +44,31 @@ function DashboardHeader({
                 "
             />
 
-            {/* Header Content */}
             <div
                 className="
                     flex
-                    items-center
-                    justify-between
+                    flex-col
                     gap-5
+                    md:flex-row
+                    md:items-center
+                    md:justify-between
+                    md:gap-6
                 "
             >
-                {/* User Info */}
-                <div className="flex items-center gap-4 sm:gap-5">
+                <div
+                    className="
+                        flex
+                        min-w-0
+                        items-center
+                        gap-3
+                        sm:gap-5
+                    "
+                >
                     <div
                         className="
                             flex
-                            h-14
-                            w-14
+                            h-12
+                            w-12
                             shrink-0
                             items-center
                             justify-center
@@ -77,20 +85,21 @@ function DashboardHeader({
                         "
                     >
                         <UserCircle2
-                            size={34}
+                            size={30}
                             className="sm:h-9 sm:w-9"
                         />
                     </div>
 
-                    <div className="min-w-0 pr-2">
+                    <div className="min-w-0 flex-1">
                         <p
                             className="
                                 mb-1
-                                text-xs
+                                text-[10px]
                                 font-semibold
                                 uppercase
-                                tracking-[0.18em]
+                                tracking-[0.16em]
                                 text-indigo-600
+                                sm:text-xs
                             "
                         >
                             CampusOne
@@ -98,8 +107,10 @@ function DashboardHeader({
 
                         <h1
                             className="
-                                text-xl
+                                break-words
+                                text-lg
                                 font-extrabold
+                                leading-tight
                                 tracking-tight
                                 text-slate-800
                                 sm:text-3xl
@@ -109,17 +120,18 @@ function DashboardHeader({
                             <span className="text-indigo-600">
                                 {" "}
                                 {user?.fullName}
-                            </span>
-                            {" "}👋
+                            </span>{" "}
+                            👋
                         </h1>
 
                         <p
                             className="
                                 mt-1
-                                text-sm
-                                leading-6
+                                text-xs
+                                leading-5
                                 text-slate-500
                                 sm:text-base
+                                sm:leading-6
                             "
                         >
                             Manage your campus complaints
@@ -128,32 +140,27 @@ function DashboardHeader({
                     </div>
                 </div>
 
-                {/* Actions */}
                 <div
                     className="
-                        absolute
-                        right-4
-                        top-4
-
                         flex
+                        w-full
                         items-center
+                        justify-end
                         gap-2
-
-                        sm:right-6
-                        sm:top-6
-                        sm:gap-3
-
-                        md:static
+                        border-t
+                        border-slate-100
+                        pt-4
+                        md:w-auto
+                        md:border-t-0
+                        md:pt-0
                     "
                 >
-                    {/* ONE NotificationBell ONLY */}
                     <NotificationBell
                         notifications={notifications}
                         markAsRead={markAsRead}
                         markAllAsRead={markAllAsRead}
                     />
 
-                    {/* Logout */}
                     <button
                         type="button"
                         onClick={handleLogout}
@@ -178,15 +185,12 @@ function DashboardHeader({
                             hover:to-red-700
                             hover:shadow-xl
                             active:scale-95
-
-                            sm:h-auto
-                            sm:py-3
                             sm:px-5
                         "
                     >
                         <LogOut size={18} />
 
-                        <span className="hidden sm:inline">
+                        <span className="text-sm">
                             Logout
                         </span>
                     </button>
@@ -197,4 +201,3 @@ function DashboardHeader({
 }
 
 export default DashboardHeader;
-

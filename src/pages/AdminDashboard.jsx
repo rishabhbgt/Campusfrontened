@@ -1,630 +1,206 @@
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import api from "../services/api";
-import toast from "react-hot-toast";
-
-import AnalyticsCards from "../components/admin/AnalyticsCards";
-import StatusPieChart from "../components/admin/StatusPieChart";
-import CategoryBarChart from "../components/admin/CategoryBarChart";
-import RecentActivity from "../components/admin/RecentActivity";
-import AdminNotificationBell from "../components/admin/AdminNotificationBell";
-
-import AdminComplaintHeader from "../components/adminComplaints/AdminComplaintHeader";
-import ComplaintFilters from "../components/adminComplaints/ComplaintFilters";
-import ComplaintTable from "../components/adminComplaints/ComplaintTable";
-import LoadingComplaints from "../components/adminComplaints/LoadingComplaints";
-import EmptyComplaints from "../components/adminComplaints/EmptyComplaints";
-
-function AdminDashboard() {
-    const navigate = useNavigate();
-
-    const [complaints, setComplaints] = useState([]);
-    const [search, setSearch] = useState("");
-    const [statusFilter, setStatusFilter] = useState("All");
-    const [priorityFilter, setPriorityFilter] = useState("All");
-    const [loading, setLoading] = useState(true);
-    const [faculties, setFaculties] = useState([]);
-
-    const fetchComplaints = async () => {
-        try {
-            setLoading(true);
-
-            const response = await api.get(
-                "/complaints/all"
-            );
-
-            setComplaints(
-                response.data.complaints || []
-            );
-        } catch (error) {
-            console.error(error);
-
-            toast.error(
-                "Failed to load complaints"
-            );
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchFaculties = async () => {
-        try {
-            const response = await api.get("/users");
-
-            const facultyUsers =
-                (response.data.users || []).filter(
-                    (user) =>
-                        user.role === "faculty" &&
-                        !user.isBlocked
-                );
-
-            setFaculties(facultyUsers);
-        } catch (error) {
-            console.error(
-                "Failed to fetch faculties:",
-                error
-            );
-
-            toast.error(
-                "Failed to load faculty list"
-            );
-        }
-    };
-
-    const updateStatus = async (id, data) => {
-        try {
-            await api.put(
-                `/complaints/${id}`,
-                data
-            );
-
-            toast.success(
-                "Complaint Updated"
-            );
-
-            await fetchComplaints();
-        } catch (error) {
-            console.error(error);
-
-            toast.error(
-                error.response?.data?.message ||
-                "Failed to update"
-            );
-        }
-    };
-
-    const archiveComplaint = async (id) => {
-        try {
-            await api.put(
-                `/complaints/archive/${id}`
-            );
-
-            toast.success(
-                "Complaint Archived Successfully"
-            );
-
-            await fetchComplaints();
-        } catch (error) {
-            console.error(
-                "Archive Complaint Error:",
-                error
-            );
-
-            toast.error(
-                error.response?.data?.message ||
-                "Failed to archive complaint"
-            );
-        }
-    };
-
-    const downloadExcel = async () => {
-        try {
-            const response = await api.get(
-                "/reports/excel",
-                {
-                    responseType: "blob",
-                }
-            );
-
-            const url =
-                window.URL.createObjectURL(
-                    new Blob([response.data])
-                );
-
-            const link =
-                document.createElement("a");
-
-            link.href = url;
-
-            link.setAttribute(
-                "download",
-                "Complaint_Report.xlsx"
-            );
-
-            document.body.appendChild(link);
-
-            link.click();
-
-            link.remove();
-
-            window.URL.revokeObjectURL(url);
-        } catch (error) {
-            console.error("Excel Download Error:", error);
-
-            toast.error(
-                "Failed to download report"
-            );
-        }
-    };
-
-    const downloadPDF = async () => {
-        try {
-            const response = await api.get(
-                "/reports/pdf",
-                {
-                    responseType: "blob",
-                }
-            );
-
-            const url =
-                window.URL.createObjectURL(
-                    new Blob([response.data])
-                );
-
-            const link =
-                document.createElement("a");
-
-            link.href = url;
-
-            link.setAttribute(
-                "download",
-                "Complaint_Report.pdf"
-            );
-
-            document.body.appendChild(link);
-
-            link.click();
-
-            link.remove();
-
-            window.URL.revokeObjectURL(url);
-        } catch (error) {
-            console.error(error);
-
-            toast.error(
-                "Failed to download PDF"
-            );
-        }
-    };
-
-    useEffect(() => {
-        fetchComplaints();
-        fetchFaculties();
-    }, []);
-
-    const total =
-        complaints.length;
-
-    const pending =
-        complaints.filter(
-            (c) => c.status === "Pending"
-        ).length;
-
-    const inProgress =
-        complaints.filter(
-            (c) => c.status === "In Progress"
-        ).length;
-
-    const resolved =
-        complaints.filter(
-            (c) => c.status === "Resolved"
-        ).length;
-
-    const highPriority =
-        complaints.filter(
-            (c) => c.priority === "High"
-        ).length;
-
-    const overdue =
-        complaints.filter(
-            (c) =>
-                c.dueDate &&
-                new Date(c.dueDate) < new Date() &&
-                c.status !== "Resolved"
-        ).length;
-
-    const pieData = [
-        {
-            name: "Pending",
-            value: pending,
-        },
-        {
-            name: "In Progress",
-            value: inProgress,
-        },
-        {
-            name: "Resolved",
-            value: resolved,
-        },
-    ];
-
-    const COLORS = [
-        "#FACC15",
-        "#3B82F6",
-        "#22C55E",
-    ];
-
-    const priorityOrder = {
-        High: 3,
-        Medium: 2,
-        Low: 1,
-    };
-
-    const filteredComplaints = complaints
-        .filter((complaint) => {
-            const matchSearch =
-                complaint.title
-                    ?.toLowerCase()
-                    .includes(
-                        search.toLowerCase()
-                    );
-
-            const isOverdue =
-                complaint.dueDate &&
-                new Date(complaint.dueDate) <
-                    new Date() &&
-                complaint.status !== "Resolved";
-
-            const matchStatus =
-                statusFilter === "All"
-                    ? true
-                    : statusFilter === "Overdue"
-                    ? isOverdue
-                    : complaint.status ===
-                    statusFilter;
-
-            const matchPriority =
-                priorityFilter === "All" ||
-                complaint.priority ===
-                    priorityFilter;
-
-            return (
-                matchSearch &&
-                matchStatus &&
-                matchPriority
-            );
-        })
-        .sort((a, b) => {
-            const priorityA =
-                priorityOrder[a.priority] || 0;
-
-            const priorityB =
-                priorityOrder[b.priority] || 0;
-
-            if (
-                priorityB !== priorityA
-            ) {
-                return (
-                    priorityB -
-                    priorityA
-                );
-            }
-
-            return (
-                new Date(b.createdAt) -
-                new Date(a.createdAt)
-            );
-        });
-
-    const recentComplaints =
-        filteredComplaints.slice(0, 5);
-
-    const categories = [
-        "Hostel",
-        "Mess",
-        "Library",
-        "Classroom",
-        "Other",
-    ];
-
-    const categoryData =
-        categories.map((category) => ({
-            category,
-
-            complaints:
-                complaints.filter(
-                    (c) =>
-                        c.category === category
-                ).length,
-        }));
-
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-
-        toast.success("Logged Out");
-
-        navigate("/");
-    };
-
+import {
+    LogOut,
+    UserCircle2,
+} from "lucide-react";
+
+import NotificationBell from "../notifications/NotificationBell";
+
+function DashboardHeader({
+    user,
+    notifications,
+    markAsRead,
+    markAllAsRead,
+    handleLogout,
+}) {
     return (
-        <div
+        <header
             className="
-                min-h-screen
-                bg-gradient-to-br
-                from-slate-100
-                via-blue-50
-                to-indigo-100
+                relative
+                z-50
+                overflow-visible
+                rounded-3xl
+                border
+                border-white/70
+                bg-white/90
+                shadow-2xl
+                backdrop-blur-xl
+                px-5
+                py-5
+                sm:px-8
+                sm:py-6
             "
         >
-            <main
+            {/* Top gradient line */}
+            <div
                 className="
-                    max-w-[1600px]
-                    mx-auto
-                    px-4
-                    sm:px-6
-                    lg:px-8
-                    py-6
-                    sm:py-8
+                    absolute
+                    inset-x-0
+                    top-0
+                    h-1
+                    rounded-t-3xl
+                    bg-gradient-to-r
+                    from-indigo-600
+                    via-purple-600
+                    to-blue-600
+                "
+            />
+
+            {/* Header Content */}
+            <div
+                className="
+                    flex
+                    flex-col
+                    gap-5
+
+                    md:flex-row
+                    md:items-center
+                    md:justify-between
+                    md:gap-6
                 "
             >
-                <header
+                {/* User Info */}
+                <div
                     className="
-                        relative
-                        z-50
-                        bg-white/80
-                        backdrop-blur-xl
-                        rounded-3xl
-                        shadow-xl
-                        border
-                        border-white/60
-                        px-5
-                        sm:px-8
-                        py-5
-                        sm:py-6
-                        mb-8
+                        flex
+                        min-w-0
+                        items-center
+                        gap-4
+                        sm:gap-5
                     "
                 >
                     <div
                         className="
                             flex
-                            flex-col
-                            md:flex-row
-                            md:items-center
-                            md:justify-between
-                            gap-5
+                            h-14
+                            w-14
+                            shrink-0
+                            items-center
+                            justify-center
+                            rounded-2xl
+                            bg-gradient-to-br
+                            from-indigo-600
+                            via-purple-600
+                            to-blue-600
+                            text-white
+                            shadow-lg
+                            shadow-indigo-200
+                            sm:h-16
+                            sm:w-16
                         "
                     >
-                        <AdminComplaintHeader />
-
-                        <div
-                            className="
-                                flex
-                                items-center
-                                justify-end
-                                gap-3
-                                sm:gap-4
-                            "
-                        >
-                            <div
-                                className="
-                                    relative
-                                    z-[9999]
-                                "
-                            >
-                                <AdminNotificationBell />
-                            </div>
-
-                            <button
-                                onClick={() =>
-                                    navigate(
-                                        "/admin/users"
-                                    )
-                                }
-                                className="
-                                    hidden
-                                    sm:flex
-                                    items-center
-                                    justify-center
-                                    bg-gradient-to-r
-                                    from-purple-600
-                                    to-indigo-600
-                                    text-white
-                                    px-5
-                                    py-3
-                                    rounded-2xl
-                                    shadow-lg
-                                    hover:shadow-xl
-                                    hover:-translate-y-0.5
-                                    transition-all
-                                    duration-300
-                                "
-                            >
-                                Manage Users
-                            </button>
-
-                            <button
-                                onClick={handleLogout}
-                                className="
-                                    flex
-                                    items-center
-                                    justify-center
-                                    gap-2
-                                    bg-gradient-to-r
-                                    from-red-500
-                                    to-red-600
-                                    hover:from-red-600
-                                    hover:to-red-700
-                                    text-white
-                                    px-4
-                                    sm:px-5
-                                    py-3
-                                    rounded-2xl
-                                    shadow-lg
-                                    hover:shadow-xl
-                                    transition-all
-                                    duration-300
-                                    active:scale-95
-                                "
-                            >
-                                Logout
-                            </button>
-                        </div>
+                        <UserCircle2
+                            size={34}
+                            className="sm:h-9 sm:w-9"
+                        />
                     </div>
 
-                    <button
-                        onClick={() =>
-                            navigate(
-                                "/admin/users"
-                            )
-                        }
-                        className="
-                            sm:hidden
-                            w-full
-                            mt-5
-                            bg-gradient-to-r
-                            from-purple-600
-                            to-indigo-600
-                            text-white
-                            px-5
-                            py-3
-                            rounded-2xl
-                            shadow-lg
-                        "
-                    >
-                        Manage Users
-                    </button>
-                </header>
+                    <div className="min-w-0 flex-1">
+                        <p
+                            className="
+                                mb-1
+                                text-xs
+                                font-semibold
+                                uppercase
+                                tracking-[0.18em]
+                                text-indigo-600
+                            "
+                        >
+                            CampusOne
+                        </p>
 
-                <section className="mb-8">
-                    <AnalyticsCards
-                        total={total}
-                        pending={pending}
-                        inProgress={inProgress}
-                        resolved={resolved}
-                        highPriority={highPriority}
-                        overdue={overdue}
-                    />
-                </section>
+                        <h1
+                            className="
+                                break-words
+                                text-xl
+                                font-extrabold
+                                leading-tight
+                                tracking-tight
+                                text-slate-800
+                                sm:text-3xl
+                            "
+                        >
+                            Welcome,
+                            <span className="text-indigo-600">
+                                {" "}
+                                {user?.fullName}
+                            </span>{" "}
+                            👋
+                        </h1>
 
+                        <p
+                            className="
+                                mt-1
+                                text-sm
+                                leading-6
+                                text-slate-500
+                                sm:text-base
+                            "
+                        >
+                            Manage your campus complaints
+                            from one place.
+                        </p>
+                    </div>
+                </div>
 
-                <section
+                {/* Actions */}
+                <div
                     className="
                         flex
-                        flex-col
-                        sm:flex-row
+                        w-full
+                        items-center
                         justify-end
-                        gap-3
-                        mb-8
+                        gap-2
+                        sm:gap-3
+
+                        md:w-auto
+                        md:shrink-0
                     "
                 >
+                    {/* Notification */}
+                    <NotificationBell
+                        notifications={notifications}
+                        markAsRead={markAsRead}
+                        markAllAsRead={markAllAsRead}
+                    />
+
+                    {/* Logout */}
                     <button
-                        onClick={downloadExcel}
+                        type="button"
+                        onClick={handleLogout}
                         className="
-                            flex-1
-                            sm:flex-none
-                            bg-green-600
+                            flex
+                            h-11
+                            items-center
+                            justify-center
+                            gap-2
+                            rounded-2xl
+                            bg-gradient-to-r
+                            from-red-500
+                            to-red-600
+                            px-4
+                            font-semibold
                             text-white
-                            px-5
-                            py-3
-                            rounded-xl
-                            hover:bg-green-700
-                            shadow-md
-                            transition
+                            shadow-lg
+                            transition-all
+                            duration-300
+                            hover:-translate-y-0.5
+                            hover:from-red-600
+                            hover:to-red-700
+                            hover:shadow-xl
+                            active:scale-95
+                            sm:px-5
                         "
                     >
-                        📊 Download Excel Report
+                        <LogOut size={18} />
+
+                        <span className="hidden sm:inline">
+                            Logout
+                        </span>
                     </button>
-
-                    <button
-                        onClick={downloadPDF}
-                        className="
-                            flex-1
-                            sm:flex-none
-                            bg-red-600
-                            text-white
-                            px-5
-                            py-3
-                            rounded-xl
-                            hover:bg-red-700
-                            shadow-md
-                            transition
-                        "
-                    >
-                        📄 Download PDF
-                    </button>
-                </section>
-
-                <section
-                    className="
-                        grid
-                        grid-cols-1
-                        lg:grid-cols-2
-                        gap-6
-                        mb-8
-                    "
-                >
-                    <StatusPieChart
-                        pieData={pieData}
-                        COLORS={COLORS}
-                    />
-
-                    <CategoryBarChart
-                        categoryData={categoryData}
-                    />
-                </section>
-
-                <section className="mb-8">
-                    <ComplaintFilters
-                        search={search}
-                        setSearch={setSearch}
-                        statusFilter={
-                            statusFilter
-                        }
-                        setStatusFilter={
-                            setStatusFilter
-                        }
-                        priorityFilter={
-                            priorityFilter
-                        }
-                        setPriorityFilter={
-                            setPriorityFilter
-                        }
-                    />
-                </section>
-
-                <section className="mb-8">
-                    <RecentActivity
-                        recentComplaints={
-                            recentComplaints
-                        }
-                    />
-                </section>
-
-                <section>
-                    {loading ? (
-                        <LoadingComplaints />
-                    ) : filteredComplaints.length ===
-                    0 ? (
-                        <EmptyComplaints />
-                    ) : (
-                        <ComplaintTable
-                            complaints={
-                                filteredComplaints
-                            }
-                            faculties={faculties}
-                            updateComplaintStatus={
-                                updateStatus
-                            }
-                            archiveComplaint={
-                                archiveComplaint
-                            }
-                        />
-                    )}
-                </section>
-            </main>
-        </div>
+                </div>
+            </div>
+        </header>
     );
 }
 
-export default AdminDashboard;
+export default DashboardHeader;
