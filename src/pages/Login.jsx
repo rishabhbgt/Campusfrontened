@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import toast from "react-hot-toast";
@@ -6,8 +6,33 @@ import toast from "react-hot-toast";
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [backendReady, setBackendReady] = useState(false);
+
+    const wakePromise = useRef(null);
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        wakePromise.current = api
+            .get("/", {
+                timeout: 70000,
+            })
+            .then(() => {
+                setBackendReady(true);
+            })
+            .catch((error) => {
+                console.log(
+                    "Backend wake-up error:",
+                    error
+                );
+                setBackendReady(false);
+            });
+
+        return () => {
+            wakePromise.current = null;
+        };
+    }, []);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -19,7 +44,22 @@ function Login() {
             return;
         }
 
+        setLoading(true);
+
         try {
+            if (!backendReady && wakePromise.current) {
+                toast.loading(
+                    "Connecting to CampusOne...",
+                    {
+                        id: "backend-wakeup",
+                    }
+                );
+
+                await wakePromise.current;
+
+                toast.dismiss("backend-wakeup");
+            }
+
             const response = await api.post(
                 "/auth/login",
                 {
@@ -54,7 +94,15 @@ function Login() {
             } else {
                 navigate("/dashboard");
             }
+
         } catch (error) {
+            toast.dismiss("backend-wakeup");
+
+            console.log(
+                "Login Error:",
+                error
+            );
+
             const message =
                 error.response
                     ?.data
@@ -62,6 +110,9 @@ function Login() {
                 "Login Failed";
 
             toast.error(message);
+
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -93,7 +144,6 @@ function Login() {
                     backdrop-blur-xl
                 "
             >
-                {/* Header */}
                 <div
                     className="
                         bg-gradient-to-r
@@ -128,7 +178,6 @@ function Login() {
                     </p>
                 </div>
 
-                {/* Form */}
                 <div className="p-6 sm:p-8">
                     <div className="mb-6">
                         <h2
@@ -156,7 +205,6 @@ function Login() {
                         onSubmit={handleLogin}
                         className="space-y-5"
                     >
-                        {/* Email */}
                         <div>
                             <label
                                 htmlFor="email"
@@ -203,7 +251,6 @@ function Login() {
                             />
                         </div>
 
-                        {/* Password */}
                         <div>
                             <div
                                 className="
@@ -277,9 +324,9 @@ function Login() {
                             />
                         </div>
 
-                        {/* Login */}
                         <button
                             type="submit"
+                            disabled={loading}
                             className="
                                 w-full
                                 rounded-2xl
@@ -297,13 +344,16 @@ function Login() {
                                 hover:-translate-y-0.5
                                 hover:shadow-xl
                                 active:scale-[0.99]
+                                disabled:cursor-not-allowed
+                                disabled:opacity-60
                             "
                         >
-                            Sign In
+                            {loading
+                                ? "Signing In..."
+                                : "Sign In"}
                         </button>
                     </form>
 
-                    {/* Signup */}
                     <div
                         className="
                             mt-6
