@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import api from "../services/api";
 import toast from "react-hot-toast";
 
@@ -8,6 +9,7 @@ function Login() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [backendReady, setBackendReady] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const wakePromise = useRef(null);
 
@@ -292,36 +294,74 @@ function Login() {
                                 </button>
                             </div>
 
-                            <input
-                                id="password"
-                                type="password"
-                                placeholder="Enter your password"
-                                value={password}
-                                onChange={(e) =>
-                                    setPassword(
-                                        e.target.value
-                                    )
-                                }
-                                autoComplete="current-password"
-                                required
-                                className="
-                                    w-full
-                                    rounded-2xl
-                                    border
-                                    border-slate-200
-                                    bg-slate-50
-                                    px-4
-                                    py-3
-                                    text-slate-800
-                                    outline-none
-                                    transition
-                                    placeholder:text-slate-400
-                                    focus:border-indigo-500
-                                    focus:bg-white
-                                    focus:ring-4
-                                    focus:ring-indigo-100
-                                "
-                            />
+                            {/* Password Input + Eye Icon */}
+                            <div className="relative">
+                                <input
+                                    id="password"
+                                    type={
+                                        showPassword
+                                            ? "text"
+                                            : "password"
+                                    }
+                                    placeholder="Enter your password"
+                                    value={password}
+                                    onChange={(e) =>
+                                        setPassword(
+                                            e.target.value
+                                        )
+                                    }
+                                    autoComplete="current-password"
+                                    required
+                                    className="
+                                        w-full
+                                        rounded-2xl
+                                        border
+                                        border-slate-200
+                                        bg-slate-50
+                                        px-4
+                                        py-3
+                                        pr-12
+                                        text-slate-800
+                                        outline-none
+                                        transition
+                                        placeholder:text-slate-400
+                                        focus:border-indigo-500
+                                        focus:bg-white
+                                        focus:ring-4
+                                        focus:ring-indigo-100
+                                    "
+                                />
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setShowPassword(
+                                            !showPassword
+                                        )
+                                    }
+                                    className="
+                                        absolute
+                                        right-4
+                                        top-1/2
+                                        -translate-y-1/2
+                                        text-slate-400
+                                        transition
+                                        hover:text-indigo-600
+                                        focus:outline-none
+                                    "
+                                    aria-label={
+                                        showPassword
+                                            ? "Hide password"
+                                            : "Show password"
+                                    }
+                                >
+                                    {showPassword ? (
+                                        <EyeOff size={20} />
+                                    ) : (
+                                        <Eye size={20} />
+                                    )}
+                                </button>
+                            </div>
                         </div>
 
                         <button
